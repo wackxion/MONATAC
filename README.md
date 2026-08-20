@@ -75,13 +75,13 @@ compradas a ciegas.
 ```
 Assets/
  ├─ Scenes/        # Escenas del juego
- ├─ Scripts/       # Lógica: Juego, Jugador, Carta, Turno, Accion...
- ├─ Prefabs/       # Objetos reutilizables (cartas, dados, UI)
- ├─ Sprites/       # Arte 2D
- └─ UI/            # Interfaz de usuario
+ └─ Settings/      # Configuración de render (URP)
 ProjectSettings/   # Configuración del proyecto Unity
 Packages/          # Dependencias
 ```
+
+> A medida que avance el desarrollo se sumarán las carpetas
+> `Scripts/`, `Prefabs/`, `Sprites/` y `UI/`.
 
 ---
 
