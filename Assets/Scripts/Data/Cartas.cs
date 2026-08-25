@@ -29,6 +29,12 @@ public abstract class Carta
     // Multiplicador sobre los dados (1 = no cambia nada; 2 = x2; etc.).
     public virtual int Multiplicador(TipoAccion accion) { return 1; }
 
+    // Dados extra que agrega la carta a la tirada (0 = ninguno).
+    public virtual int DadosExtra(TipoAccion accion) { return 0; }
+
+    // ¿La carta se va al descarte después de usarse? Por defecto no.
+    public virtual bool DebeDescartarse() { return false; }
+
     // Texto para mostrar en pantalla.
     public virtual string Descripcion() { return nombre; }
 }
@@ -81,6 +87,8 @@ public class CartaUnUso : Carta
         }
         return 0;
     }
+
+    public override bool DebeDescartarse() { return usada; }
 }
 
 // --- 3) VENCIMIENTO: da bonus durante varios turnos, con mantenimiento ---
@@ -88,33 +96,52 @@ public class CartaVencimiento : Carta
 {
     private TipoAccion accionAsociada;
     private int bonus;
-    public int turnosRestantes;
-    public int costoMantenimiento = 2;   // cuesta 2 monedas por turno seguir activa
+    public int usosRestantes;
+    public int costoPorUso = 2;      // del 2do uso en adelante cuesta 2 monedas
+    private bool yaSeUso = false;    // el PRIMER uso es gratis
 
-    public CartaVencimiento(string nombre, TipoAccion accion, int bonus, int turnos)
+    public CartaVencimiento(string nombre, TipoAccion accion, int bonus, int usos)
         : base(nombre, TipoCarta.Vencimiento)
     {
         this.accionAsociada = accion;
         this.bonus = bonus;
-        this.turnosRestantes = turnos;
+        this.usosRestantes = usos;
     }
 
-    public override int BonusPara(TipoAccion accion)
+    // ¿Sirve para esta acción y todavía le quedan usos?
+    public bool SirvePara(TipoAccion accion)
     {
-        return (accion == accionAsociada && turnosRestantes > 0) ? bonus : 0;
+        return accion == accionAsociada && usosRestantes > 0;
     }
 
-    // Se llama al final de cada turno: baja el contador.
-    public void Decrementar() { turnosRestantes--; }
+    // Costo del PRÓXIMO uso: el primero es gratis (0); los siguientes cuestan 2.
+    public int CostoDelProximoUso()
+    {
+        return yaSeUso ? costoPorUso : 0;
+    }
 
-    // ¿Se le acabaron los turnos?
-    public bool HaExpirado() { return turnosRestantes <= 0; }
+    // Usa la carta: aplica el bonus, marca que ya se usó y gasta un uso.
+    public int Usar()
+    {
+        yaSeUso = true;
+        usosRestantes--;
+        return bonus;
+    }
+
+    // ¿Se quedó sin usos?
+    public bool SinUsos() { return usosRestantes <= 0; }
+
+    public override string Descripcion()
+    {
+        return nombre + " (+" + bonus + " al " + accionAsociada + ", " + usosRestantes + " usos)";
+    }
 }
 
 // --- 4) REFLECTANTE: reacciona cuando te atacan (fuera de tu turno) ---
 public class CartaReflectante : Carta
 {
     private int danioReflejado;
+    public bool usada = false;   // se descarta después de reflejar una vez
 
     public CartaReflectante(string nombre, int danioReflejado)
         : base(nombre, TipoCarta.Reflectante)
@@ -122,26 +149,38 @@ public class CartaReflectante : Carta
         this.danioReflejado = danioReflejado;
     }
 
-    // Devuelve cuánto daño le rebota al atacante.
-    public int Reflejar() { return danioReflejado; }
+    // Devuelve cuánto daño le rebota al atacante y se marca como usada.
+    public int Reflejar()
+    {
+        usada = true;
+        return danioReflejado;
+    }
+
+    public override bool DebeDescartarse() { return usada; }
 }
 
 // --- 5) REACCIÓN: absorbe daño gastando monedas (Escudo de Monedas) ---
 public class CartaReaccion : Carta
 {
+    public bool usada = false;   // se descarta después de absorber una vez
+
     public CartaReaccion(string nombre) : base(nombre, TipoCarta.Reaccion) { }
 
     // Gasta monedas del jugador para absorber daño (2 monedas = 1 HP).
     // Devuelve el daño que QUEDA después de absorber.
     public int Absorber(int danio, Jugador jugador)
     {
+        int inicial = danio;
         // Mientras haya daño y le alcancen 2 monedas, absorbe 1 de HP.
         while (danio > 0 && jugador.GastarMonedas(2))
         {
             danio -= 1;
         }
+        if (danio < inicial) usada = true;   // si absorbió algo, queda usada
         return danio;
     }
+
+    public override bool DebeDescartarse() { return usada; }
 }
 
 // --- 6) GRUPAL: afecta a todos los jugadores al activarse ---
@@ -153,6 +192,93 @@ public class CartaGrupal : Carta
     // Por ahora es un molde; el efecto se implementará según la carta.
     public virtual void AplicarATodos(List<Jugador> jugadores)
     {
-        // (a implementar por cada carta grupal específica)
+        // (el efecto concreto se resuelve en el GameManager, que tiene el mazo/descarte)
     }
+}
+
+// --- Las 5 cartas grupales concretas (su efecto se resuelve en el GameManager) ---
+public class CartaLeyMarcial     : CartaGrupal { public CartaLeyMarcial()     : base("Ley Marcial") { } }
+public class CartaColecta        : CartaGrupal { public CartaColecta()        : base("Colecta") { } }
+public class CartaDescarteGrupal : CartaGrupal { public CartaDescarteGrupal() : base("Descarte Grupal") { } }
+public class CartaExceso         : CartaGrupal { public CartaExceso()         : base("Exceso") { } }
+public class CartaPenitencia     : CartaGrupal { public CartaPenitencia()     : base("Penitencia") { } }
+
+// --- COMODÍN ×2: multiplica el resultado de los dados. Un solo uso. ---
+public class CartaComodinMultiplicador : Carta
+{
+    private int factor;
+    private TipoAccion? accionAsociada;   // null = sirve para cualquier acción
+    public bool usada = false;
+
+    public CartaComodinMultiplicador(string nombre, int factor, TipoAccion? accion = null)
+        : base(nombre, TipoCarta.UnUso)   // se comporta como una carta de un solo uso
+    {
+        this.factor = factor;
+        this.accionAsociada = accion;
+    }
+
+    // Multiplica una vez. Si tiene acción asociada, solo multiplica esa acción.
+    public override int Multiplicador(TipoAccion accion)
+    {
+        if (usada) return 1;
+        if (accionAsociada != null && accion != accionAsociada) return 1;
+        usada = true;
+        return factor;
+    }
+
+    public override bool DebeDescartarse() { return usada; }
+    public override string Descripcion() { return nombre + " (x" + factor + ")"; }
+}
+
+// --- COMODÍN +1d4: agrega dados extra a la tirada. Un solo uso. ---
+public class CartaComodinDado : Carta
+{
+    private int dadosExtra;
+    public bool usada = false;
+
+    public CartaComodinDado(string nombre, int dadosExtra)
+        : base(nombre, TipoCarta.UnUso)
+    {
+        this.dadosExtra = dadosExtra;
+    }
+
+    // Al usarse agrega los dados extra una vez.
+    public override int DadosExtra(TipoAccion accion)
+    {
+        if (!usada) { usada = true; return dadosExtra; }
+        return 0;
+    }
+
+    public override bool DebeDescartarse() { return usada; }
+    public override string Descripcion() { return nombre + " (+" + dadosExtra + "d4)"; }
+}
+
+// --- BOLSILLO ROTO: reflectante que le roba monedas al atacante (un solo uso) ---
+public class CartaBolsilloRoto : Carta
+{
+    public int monedasARobar;
+    public bool usada = false;
+
+    public CartaBolsilloRoto(string nombre, int monedas)
+        : base(nombre, TipoCarta.Reflectante)
+    {
+        this.monedasARobar = monedas;
+    }
+
+    public override bool DebeDescartarse() { return usada; }
+}
+
+// --- VAMPIRISMO DEFENSIVO: reflectante que cura al defensor al ser atacado (un solo uso) ---
+public class CartaVampirismoDefensivo : Carta
+{
+    public int curacion;
+    public bool usada = false;
+
+    public CartaVampirismoDefensivo(string nombre, int curacion)
+        : base(nombre, TipoCarta.Reflectante)
+    {
+        this.curacion = curacion;
+    }
+
+    public override bool DebeDescartarse() { return usada; }
 }

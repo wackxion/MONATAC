@@ -52,6 +52,12 @@ public class Jugador
         monedas += cantidad;
     }
 
+    // Fija las monedas a un valor exacto (lo usa la carta grupal Colecta).
+    public void EstablecerMonedas(int cantidad)
+    {
+        monedas = (cantidad < 0) ? 0 : cantidad;
+    }
+
     // Intenta gastar monedas: devuelve true si le alcanzó.
     public bool GastarMonedas(int cantidad)
     {

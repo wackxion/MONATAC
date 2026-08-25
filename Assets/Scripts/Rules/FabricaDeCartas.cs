@@ -30,6 +30,7 @@ public static class FabricaDeCartas
         Agregar(2, () => new CartaVencimiento("Impulso", TipoAccion.Atacar, 5, 2));
         Agregar(2, () => new CartaVencimiento("Frenesi", TipoAccion.Atacar, 6, 3));
         Agregar(2, () => new CartaReflectante("Espejo de Sangre", 6));
+        Agregar(1, () => new CartaComodinMultiplicador("Golpe Critico", 3, TipoAccion.Atacar));
 
         // --- Monedas ---
         Agregar(2, () => new CartaPasiva("Vena de Oro", TipoAccion.Recolectar, 2));
@@ -37,17 +38,30 @@ public static class FabricaDeCartas
         Agregar(2, () => new CartaUnUso("Bolsa de Monedas", TipoAccion.Recolectar, 5));
         Agregar(2, () => new CartaVencimiento("Comerciante", TipoAccion.Recolectar, 5, 2));
         Agregar(3, () => new CartaVencimiento("Racha", TipoAccion.Recolectar, 6, 3));
+        Agregar(2, () => new CartaComodinMultiplicador("Golpe de Suerte", 2, TipoAccion.Recolectar));
+        Agregar(2, () => new CartaBolsilloRoto("Bolsillo Roto", 10));
 
         // --- Curacion ---
         Agregar(1, () => new CartaPasiva("Savia Vital", TipoAccion.Curarse, 2));
         Agregar(3, () => new CartaUnUso("Alivio", TipoAccion.Curarse, 4));
+        Agregar(1, () => new CartaUnUso("Regeneracion Total", TipoAccion.Curarse, 8));
+        Agregar(2, () => new CartaVampirismoDefensivo("Vampirismo Defensivo", 5));
         Agregar(2, () => new CartaVencimiento("Recuperacion", TipoAccion.Curarse, 5, 2));
         Agregar(2, () => new CartaVencimiento("Vitalidad Sostenida", TipoAccion.Curarse, 6, 3));
 
         // --- Proteccion ---
         Agregar(4, () => new CartaReaccion("Escudo de Monedas"));
 
-        // NOTA: las cartas grupales y los comodines se sumarán más adelante.
+        // --- Comodines ---
+        Agregar(1, () => new CartaComodinMultiplicador("Comodin x2", 2));
+        Agregar(1, () => new CartaComodinDado("Comodin +1d4", 1));
+
+        // --- Grupales (se activan al comprarse) ---
+        Agregar(1, () => new CartaLeyMarcial());
+        Agregar(1, () => new CartaColecta());
+        Agregar(1, () => new CartaDescarteGrupal());
+        Agregar(1, () => new CartaExceso());
+        Agregar(1, () => new CartaPenitencia());
 
         return new Mazo(cartas);
     }
