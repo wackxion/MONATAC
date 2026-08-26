@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: d04dd4612957da94e8c814e8c0a8f7e0
+guid: b0e9ae503fc8f9d41872f6cd8703c449
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -4965949671839889277
     second: Racha_0
+  - first:
+      213: -129259595053888796
+    second: Racha_1
+  - first:
+      213: 6791739779348930315
+    second: Racha_2
+  - first:
+      213: 4691544232814099741
+    second: Racha_3
+  - first:
+      213: 852653189120563502
+    second: Racha_4
+  - first:
+      213: -6823791634660889944
+    second: Racha_5
+  - first:
+      213: 5346725542577468601
+    second: Racha_6
+  - first:
+      213: -4035019610972029324
+    second: Racha_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 412
-        height: 616
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 388048d8517651bb0800000000000000
       internalID: -4965949671839889277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Racha_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ea80094517c43ef0800000000000000
+      internalID: -129259595053888796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Racha_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0f9bfa585b114e50800000000000000
+      internalID: 6791739779348930315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Racha_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1dbae47f96bb1140800000000000000
+      internalID: 4691544232814099741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Racha_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e299226de8b35db00800000000000000
+      internalID: 852653189120563502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Racha_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8aa61ca89a50d41a0800000000000000
+      internalID: -6823791634660889944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Racha_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b476d48d82633a40800000000000000
+      internalID: 5346725542577468601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Racha_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47ef642da0bb008c0800000000000000
+      internalID: -4035019610972029324
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Racha_0: -4965949671839889277
+      Racha_1: -129259595053888796
+      Racha_2: 6791739779348930315
+      Racha_3: 4691544232814099741
+      Racha_4: 852653189120563502
+      Racha_5: -6823791634660889944
+      Racha_6: 5346725542577468601
+      Racha_7: -4035019610972029324
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

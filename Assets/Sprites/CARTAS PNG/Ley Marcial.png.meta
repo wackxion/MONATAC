@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 8b43166b9012f9846800528397dd2648
+guid: 6b2f0ce8a0bce674890b966b546c0407
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -159585077275656538
     second: Ley Marcial_0
+  - first:
+      213: -8149199770648945748
+    second: Ley Marcial_1
+  - first:
+      213: 4802834017965899923
+    second: Ley Marcial_2
+  - first:
+      213: 2545164301787584065
+    second: Ley Marcial_3
+  - first:
+      213: -5017974381506105121
+    second: Ley Marcial_4
+  - first:
+      213: 8904069731717602598
+    second: Ley Marcial_5
+  - first:
+      213: 8505556887393215328
+    second: Ley Marcial_6
+  - first:
+      213: -1875521470505105793
+    second: Ley Marcial_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 417
-        height: 616
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 6aef78db73a09cdf0800000000000000
       internalID: -159585077275656538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ley Marcial_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cab56c22cf938ee80800000000000000
+      internalID: -8149199770648945748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ley Marcial_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3900504c71817a240800000000000000
+      internalID: 4802834017965899923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ley Marcial_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 146dd07927d325320800000000000000
+      internalID: 2545164301787584065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ley Marcial_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd0715ae2e29c5ab0800000000000000
+      internalID: -5017974381506105121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ley Marcial_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62dd556ce3c919b70800000000000000
+      internalID: 8904069731717602598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ley Marcial_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06323f9bceec90670800000000000000
+      internalID: 8505556887393215328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ley Marcial_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f76cce5d82fc8f5e0800000000000000
+      internalID: -1875521470505105793
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Ley Marcial_0: -159585077275656538
+      Ley Marcial_1: -8149199770648945748
+      Ley Marcial_2: 4802834017965899923
+      Ley Marcial_3: 2545164301787584065
+      Ley Marcial_4: -5017974381506105121
+      Ley Marcial_5: 8904069731717602598
+      Ley Marcial_6: 8505556887393215328
+      Ley Marcial_7: -1875521470505105793
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

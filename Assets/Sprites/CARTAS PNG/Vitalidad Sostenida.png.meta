@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 840e5ed11a4c3b0498d76ef981e1b631
+guid: 86745d080e1dd374ab288b68ec76bbec
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -2672229761909066520
     second: Vitalidad Sostenida_0
+  - first:
+      213: 1445029662902264506
+    second: Vitalidad Sostenida_1
+  - first:
+      213: 8590495265670476316
+    second: Vitalidad Sostenida_2
+  - first:
+      213: -7527732693181671323
+    second: Vitalidad Sostenida_3
+  - first:
+      213: 8242481997495107833
+    second: Vitalidad Sostenida_4
+  - first:
+      213: 5732612286939469403
+    second: Vitalidad Sostenida_5
+  - first:
+      213: -5338963724469555108
+    second: Vitalidad Sostenida_6
+  - first:
+      213: -608576136678002897
+    second: Vitalidad Sostenida_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 413
-        height: 615
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 8e4fe2b80355aead0800000000000000
       internalID: -2672229761909066520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vitalidad Sostenida_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab2213382d6cd0410800000000000000
+      internalID: 1445029662902264506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vitalidad Sostenida_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c12b6f20ee1973770800000000000000
+      internalID: 8590495265670476316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vitalidad Sostenida_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 568dfcacffe188790800000000000000
+      internalID: -7527732693181671323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vitalidad Sostenida_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f08f38c4bd236270800000000000000
+      internalID: 8242481997495107833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vitalidad Sostenida_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b56111690845e8f40800000000000000
+      internalID: 5732612286939469403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vitalidad Sostenida_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c50bb4697c038e5b0800000000000000
+      internalID: -5338963724469555108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vitalidad Sostenida_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2f27826a37ed87f0800000000000000
+      internalID: -608576136678002897
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Vitalidad Sostenida_0: -2672229761909066520
+      Vitalidad Sostenida_1: 1445029662902264506
+      Vitalidad Sostenida_2: 8590495265670476316
+      Vitalidad Sostenida_3: -7527732693181671323
+      Vitalidad Sostenida_4: 8242481997495107833
+      Vitalidad Sostenida_5: 5732612286939469403
+      Vitalidad Sostenida_6: -5338963724469555108
+      Vitalidad Sostenida_7: -608576136678002897
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

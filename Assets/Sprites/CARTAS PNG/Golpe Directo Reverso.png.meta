@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f6f03f46ffdae2541bc48516c50a2a7b
+guid: 0049db2e7007a8049857764714cab595
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2474178202431206547
-    second: Comodin x2_0
+      213: 2723485005420612528
+    second: Golpe Directo Reverso_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Comodin x2_0
+      name: Golpe Directo Reverso_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 417
-        height: 617
+        x: 53
+        y: 27
+        width: 2103
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3943de267fb065220800000000000000
-      internalID: 2474178202431206547
+      spriteID: 0bbc23bce23cbc520800000000000000
+      internalID: 2723485005420612528
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Comodin x2_0: 2474178202431206547
+      Golpe Directo Reverso_0: 2723485005420612528
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

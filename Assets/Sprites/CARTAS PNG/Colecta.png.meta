@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 83c01cc951010c843a795840ab440da6
+guid: 03bc98c2234f1e14eb314f09883d2e9b
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -7605706368869919164
     second: Colecta_0
+  - first:
+      213: -7867748319146574089
+    second: Colecta_1
+  - first:
+      213: 3931945377662545504
+    second: Colecta_2
+  - first:
+      213: -5234920669542585380
+    second: Colecta_3
+  - first:
+      213: -1066981526108512428
+    second: Colecta_4
+  - first:
+      213: -6507770466079951357
+    second: Colecta_5
+  - first:
+      213: 5645525533126895200
+    second: Colecta_6
+  - first:
+      213: -5474722612712054947
+    second: Colecta_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 414
-        height: 616
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 4461591ba5a137690800000000000000
       internalID: -7605706368869919164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Colecta_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fe771fb69420d290800000000000000
+      internalID: -7867748319146574089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Colecta_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06ea0d71d73119630800000000000000
+      internalID: 3931945377662545504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Colecta_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdb60980363d957b0800000000000000
+      internalID: -5234920669542585380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Colecta_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45fd56284f15131f0800000000000000
+      internalID: -1066981526108512428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Colecta_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 306b681ad31cfa5a0800000000000000
+      internalID: -6507770466079951357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Colecta_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0662d64af8fe85e40800000000000000
+      internalID: 5645525533126895200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Colecta_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5fdf714ac0e504b0800000000000000
+      internalID: -5474722612712054947
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Colecta_0: -7605706368869919164
+      Colecta_1: -7867748319146574089
+      Colecta_2: 3931945377662545504
+      Colecta_3: -5234920669542585380
+      Colecta_4: -1066981526108512428
+      Colecta_5: -6507770466079951357
+      Colecta_6: 5645525533126895200
+      Colecta_7: -5474722612712054947
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

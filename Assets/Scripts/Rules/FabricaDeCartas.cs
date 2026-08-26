@@ -53,8 +53,8 @@ public static class FabricaDeCartas
         Agregar(4, () => new CartaReaccion("Escudo de Monedas"));
 
         // --- Comodines ---
-        Agregar(1, () => new CartaComodinMultiplicador("Comodin x2", 2));
-        Agregar(1, () => new CartaComodinDado("Comodin +1d4", 1));
+        Agregar(1, () => new CartaComodinMultiplicador("Comodin Multiplicador", 2));
+        Agregar(1, () => new CartaComodinDado("Comodin Adicional", 1));
 
         // --- Grupales (se activan al comprarse) ---
         Agregar(1, () => new CartaLeyMarcial());

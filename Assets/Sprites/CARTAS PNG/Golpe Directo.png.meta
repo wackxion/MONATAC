@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 8ae384c669d713048a521d189664af98
+guid: 9bb64f9f279636a4bb8fe57d9c8b3793
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -6583408800847167040
     second: Golpe Directo_0
+  - first:
+      213: 4848547550534987590
+    second: Golpe Directo_1
+  - first:
+      213: 1027426310628425408
+    second: Golpe Directo_2
+  - first:
+      213: -5691598914594122442
+    second: Golpe Directo_3
+  - first:
+      213: 7581178856737268436
+    second: Golpe Directo_4
+  - first:
+      213: 7689116746652180945
+    second: Golpe Directo_5
+  - first:
+      213: 6222800120918814778
+    second: Golpe Directo_6
+  - first:
+      213: 4077005497784343770
+    second: Golpe Directo_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 424
-        height: 618
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 0c10356739803a4a0800000000000000
       internalID: -6583408800847167040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Directo_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64f6a3afe40894340800000000000000
+      internalID: 4848547550534987590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Directo_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ceb5e539c6224e00800000000000000
+      internalID: 1027426310628425408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Directo_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6355e9b41f06301b0800000000000000
+      internalID: -5691598914594122442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Directo_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d2e68ed002c53960800000000000000
+      internalID: 7581178856737268436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Directo_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d1e5b041fa35ba60800000000000000
+      internalID: 7689116746652180945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Directo_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a30bf9b7db3db5650800000000000000
+      internalID: 6222800120918814778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Directo_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adc10ca36ee649830800000000000000
+      internalID: 4077005497784343770
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Golpe Directo_0: -6583408800847167040
+      Golpe Directo_1: 4848547550534987590
+      Golpe Directo_2: 1027426310628425408
+      Golpe Directo_3: -5691598914594122442
+      Golpe Directo_4: 7581178856737268436
+      Golpe Directo_5: 7689116746652180945
+      Golpe Directo_6: 6222800120918814778
+      Golpe Directo_7: 4077005497784343770
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

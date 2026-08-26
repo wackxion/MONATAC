@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 41ede00e9670ded48afbdcba372cfdc7
+guid: ecc2678912d02d844a2d86bd1282316d
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -8134781505490244612
     second: Savia Vital_0
+  - first:
+      213: -2140999380106788974
+    second: Savia Vital_1
+  - first:
+      213: 2561529576884139809
+    second: Savia Vital_2
+  - first:
+      213: 5652121967599944107
+    second: Savia Vital_3
+  - first:
+      213: -387009972719952648
+    second: Savia Vital_4
+  - first:
+      213: -2262765871592867486
+    second: Savia Vital_5
+  - first:
+      213: -3619866981668665409
+    second: Savia Vital_6
+  - first:
+      213: 7754391351112088085
+    second: Savia Vital_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 415
-        height: 616
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: cfb26d712537b1f80800000000000000
       internalID: -8134781505490244612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Savia Vital_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29f37644864a942e0800000000000000
+      internalID: -2140999380106788974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Savia Vital_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 127f5df14916c8320800000000000000
+      internalID: 2561529576884139809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Savia Vital_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba10af9bbfe507e40800000000000000
+      internalID: 5652121967599944107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Savia Vital_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fc5e73fa7011aaf0800000000000000
+      internalID: -387009972719952648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Savia Vital_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26974ddad6a0990e0800000000000000
+      internalID: -2262765871592867486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Savia Vital_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb74977b826a3cdc0800000000000000
+      internalID: -3619866981668665409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Savia Vital_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51ab56c69d12d9b60800000000000000
+      internalID: 7754391351112088085
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Savia Vital_0: -8134781505490244612
+      Savia Vital_1: -2140999380106788974
+      Savia Vital_2: 2561529576884139809
+      Savia Vital_3: 5652121967599944107
+      Savia Vital_4: -387009972719952648
+      Savia Vital_5: -2262765871592867486
+      Savia Vital_6: -3619866981668665409
+      Savia Vital_7: 7754391351112088085
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 609ab577ddf85a8448234d41f84f1df5
+guid: 537f425880e773044bf7c60b0ae5ffcb
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -1461572571394147225
     second: Descarte Grupal_0
+  - first:
+      213: 6076426155788833008
+    second: Descarte Grupal_1
+  - first:
+      213: 3774282764499463235
+    second: Descarte Grupal_2
+  - first:
+      213: -8823982639075608833
+    second: Descarte Grupal_3
+  - first:
+      213: 8749790329048000874
+    second: Descarte Grupal_4
+  - first:
+      213: 6497471498303535551
+    second: Descarte Grupal_5
+  - first:
+      213: 7632141559103892214
+    second: Descarte Grupal_6
+  - first:
+      213: 3145621199360417405
+    second: Descarte Grupal_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 414
-        height: 615
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 76cf8947d7377bbe0800000000000000
       internalID: -1461572571394147225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Descarte Grupal_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f09fa7f46dc35450800000000000000
+      internalID: 6076426155788833008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Descarte Grupal_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34caed36d22f06430800000000000000
+      internalID: 3774282764499463235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Descarte Grupal_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff63fad8a8aea8580800000000000000
+      internalID: -8823982639075608833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Descarte Grupal_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a69ed0622ff7d6970800000000000000
+      internalID: 8749790329048000874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Descarte Grupal_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb97b9217e7ab2a50800000000000000
+      internalID: 6497471498303535551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Descarte Grupal_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fa22e9af40dae960800000000000000
+      internalID: 7632141559103892214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Descarte Grupal_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7ed0d980dd77ab20800000000000000
+      internalID: 3145621199360417405
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Descarte Grupal_0: -1461572571394147225
+      Descarte Grupal_1: 6076426155788833008
+      Descarte Grupal_2: 3774282764499463235
+      Descarte Grupal_3: -8823982639075608833
+      Descarte Grupal_4: 8749790329048000874
+      Descarte Grupal_5: 6497471498303535551
+      Descarte Grupal_6: 7632141559103892214
+      Descarte Grupal_7: 3145621199360417405
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

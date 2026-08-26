@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: e0c0a3ee194155d48a3b0d8a07d69dff
+guid: 15e68183ac5c62f4e9e39096a47d2a0a
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -9173197883209427040
     second: Recuperacion_0
+  - first:
+      213: -7092116881724578297
+    second: Recuperacion_1
+  - first:
+      213: -5200272475881060558
+    second: Recuperacion_2
+  - first:
+      213: -102591073735358872
+    second: Recuperacion_3
+  - first:
+      213: 2652536056755165591
+    second: Recuperacion_4
+  - first:
+      213: -2293213899064274051
+    second: Recuperacion_5
+  - first:
+      213: 2480967145361226783
+    second: Recuperacion_6
+  - first:
+      213: 5458304730705760806
+    second: Recuperacion_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 415
-        height: 615
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 0a7dfec702142b080800000000000000
       internalID: -9173197883209427040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Recuperacion_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 706614f854db39d90800000000000000
+      internalID: -7092116881724578297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Recuperacion_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2374ed34cbbe4d7b0800000000000000
+      internalID: -5200272475881060558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Recuperacion_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 866c0e446f5839ef0800000000000000
+      internalID: -102591073735358872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Recuperacion_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7999ec86d73bfc420800000000000000
+      internalID: 2652536056755165591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Recuperacion_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d731948db1edc20e0800000000000000
+      internalID: -2293213899064274051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Recuperacion_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1cbba6597a2e6220800000000000000
+      internalID: 2480967145361226783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Recuperacion_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6221d85bb3bcfbb40800000000000000
+      internalID: 5458304730705760806
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Recuperacion_0: -9173197883209427040
+      Recuperacion_1: -7092116881724578297
+      Recuperacion_2: -5200272475881060558
+      Recuperacion_3: -102591073735358872
+      Recuperacion_4: 2652536056755165591
+      Recuperacion_5: -2293213899064274051
+      Recuperacion_6: 2480967145361226783
+      Recuperacion_7: 5458304730705760806
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

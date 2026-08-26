@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class EfectoHoverCarta : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -10,40 +11,46 @@ public class EfectoHoverCarta : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     [Header("Animación de levantamiento")]
     public float cantidadLevantar = 1.5f;
-
- 
     public float velocidadAnimacion = 10f;
 
     [Header("Animación de escala")]
     public float escalaHover = 1.15f;
-
     public float velocidadEscala = 8f;
 
+    // [AGREGADO POR JULIAN] Frente y reverso de la carta
+    [Header("Voltear carta (frente / reverso)")]
+    [Tooltip("Image del frente de la carta (se oculta al hacer hover)")]
+    public Image imagenFrente;
+    [Tooltip("Image del reverso de la carta (se muestra al hacer hover)")]
+    public Image imagenReverso;
+
     // --- Variables internas ---
-    private Vector3 posicionOriginal;    // dónde estaba la carta antes del hover
-    private Vector3 posicionLevantada;   // posición a la que sube
-    private Vector3 escalaOriginal;      // tamaño original de la carta
-    private Vector3 escalaAgrandada;     // tamaño cuando está encima del mouse
-    private bool estaEncima = false;     // ¿el mouse está sobre esta carta?
+    private Vector3 posicionOriginal;
+    private Vector3 posicionLevantada;
+    private Vector3 escalaOriginal;
+    private Vector3 escalaAgrandada;
+    private bool estaEncima = false;
+    // [AGREGADO POR JULIAN] Bloquea el hover cuando no hay carta en el slot
+    private bool puedeHover = true;
 
     private void Start()
     {
-        // Si no se asignó un gráfico, animamos el mismo objeto
         if (graficoCarta == null)
             graficoCarta = transform;
 
-        // Guardamos la posición original para poder volver después
         posicionOriginal = graficoCarta.localPosition;
         posicionLevantada = posicionOriginal + new Vector3(0, cantidadLevantar, 0);
 
-        // Lo mismo con la escala
         escalaOriginal = graficoCarta.localScale;
         escalaAgrandada = escalaOriginal * escalaHover;
+
+        // [AGREGADO POR JULIAN] Al inicio, mostrar frente y ocultar reverso
+        MostrarFrente();
     }
 
     private void Update()
     {
-        // Movimiento suave: va hacia la posición objetivo (levanta o baja)
+        // Movimiento suave
         Vector3 objetivoPos = estaEncima ? posicionLevantada : posicionOriginal;
         graficoCarta.localPosition = Vector3.Lerp(
             graficoCarta.localPosition,
@@ -51,7 +58,7 @@ public class EfectoHoverCarta : MonoBehaviour, IPointerEnterHandler, IPointerExi
             Time.deltaTime * velocidadAnimacion
         );
 
-        // Escala suave: se agranda o vuelve al tamaño original
+        // Escala suave
         Vector3 objetivoEscala = estaEncima ? escalaAgrandada : escalaOriginal;
         graficoCarta.localScale = Vector3.Lerp(
             graficoCarta.localScale,
@@ -60,16 +67,42 @@ public class EfectoHoverCarta : MonoBehaviour, IPointerEnterHandler, IPointerExi
         );
     }
 
-    // El EventSystem de Unity llama esto cuando el mouse entra al área de la carta.
-    // Funciona con UI de Canvas
-    public void OnPointerEnter(PointerEventData eventData)
+    // [AGREGADO POR JULIAN] Muestra el frente y oculta el reverso
+    public void MostrarFrente()
     {
-        estaEncima = true;
+        if (imagenFrente != null) imagenFrente.gameObject.SetActive(true);
+        if (imagenReverso != null) imagenReverso.gameObject.SetActive(false);
     }
 
-    // El EventSystem llama esto cuando el mouse sale del área de la carta.
+    // [AGREGADO POR JULIAN] Muestra el reverso y oculta el frente
+    public void MostrarReverso()
+    {
+        if (imagenFrente != null) imagenFrente.gameObject.SetActive(false);
+        if (imagenReverso != null) imagenReverso.gameObject.SetActive(true);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!puedeHover) return;
+        estaEncima = true;
+        MostrarReverso();
+    }
+
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (!puedeHover) return;
         estaEncima = false;
+        MostrarFrente();
+    }
+
+    // [AGREGADO POR JULIAN] Activa o desactiva el hover desde el GameManager
+    public void SetHoverActivo(bool activo)
+    {
+        puedeHover = activo;
+        if (!activo)
+        {
+            estaEncima = false;
+            MostrarFrente();
+        }
     }
 }

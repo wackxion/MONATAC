@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 69a9c45b1dea13144855212190dbcb65
+guid: eb654fc671310714489f0d8f8ddf8a7e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8930625980742000158
-    second: Espejo de Sangre_0
+      213: 4107840299800635856
+    second: Espejo De Sangre_0
+  - first:
+      213: 5440872161254206066
+    second: Espejo De Sangre_1
+  - first:
+      213: -8656819565451079512
+    second: Espejo De Sangre_2
+  - first:
+      213: -2834811698709352700
+    second: Espejo De Sangre_3
+  - first:
+      213: -207873587343246405
+    second: Espejo De Sangre_4
+  - first:
+      213: -5333946399956239640
+    second: Espejo De Sangre_5
+  - first:
+      213: -5137155691369265912
+    second: Espejo De Sangre_6
+  - first:
+      213: 6355246574974830950
+    second: Espejo De Sangre_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +121,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Espejo de Sangre_0
+      name: Espejo De Sangre_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 415
-        height: 615
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +136,162 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2e1affbacfa001480800000000000000
-      internalID: -8930625980742000158
+      spriteID: 0d9a6a70dfaf10930800000000000000
+      internalID: 4107840299800635856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Espejo De Sangre_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27a6ed7576cd18b40800000000000000
+      internalID: 5440872161254206066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Espejo De Sangre_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a013a4987cccd780800000000000000
+      internalID: -8656819565451079512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Espejo De Sangre_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40fae4d87c9b8a8d0800000000000000
+      internalID: -2834811698709352700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Espejo De Sangre_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbb383cd21c7d1df0800000000000000
+      internalID: -207873587343246405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Espejo De Sangre_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ea72ab72040af5b0800000000000000
+      internalID: -5333946399956239640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Espejo De Sangre_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8050f04dd1825b8b0800000000000000
+      internalID: -5137155691369265912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Espejo De Sangre_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6698461a61f523850800000000000000
+      internalID: 6355246574974830950
       vertices: []
       indices: 
       edges: []
@@ -135,7 +310,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Espejo de Sangre_0: -8930625980742000158
+      Espejo De Sangre_0: 4107840299800635856
+      Espejo De Sangre_1: 5440872161254206066
+      Espejo De Sangre_2: -8656819565451079512
+      Espejo De Sangre_3: -2834811698709352700
+      Espejo De Sangre_4: -207873587343246405
+      Espejo De Sangre_5: -5333946399956239640
+      Espejo De Sangre_6: -5137155691369265912
+      Espejo De Sangre_7: 6355246574974830950
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

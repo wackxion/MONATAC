@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: d445eaa55a8f15740b8a17b426a9299a
+guid: cc2da4a25c57d3e478bab1e251954825
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5007998092299021643
-    second: Bolsa de Monedas_0
+      213: 6373275559548296339
+    second: Bolsa De Monedas_0
+  - first:
+      213: -808464994765442834
+    second: Bolsa De Monedas_1
+  - first:
+      213: -2853213804969276803
+    second: Bolsa De Monedas_2
+  - first:
+      213: -5829342807853978173
+    second: Bolsa De Monedas_3
+  - first:
+      213: 8866168939745278812
+    second: Bolsa De Monedas_4
+  - first:
+      213: 3158859932903093668
+    second: Bolsa De Monedas_5
+  - first:
+      213: -6082552078933143765
+    second: Bolsa De Monedas_6
+  - first:
+      213: 8809958808990552725
+    second: Bolsa De Monedas_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +121,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Bolsa de Monedas_0
+      name: Bolsa De Monedas_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 418
-        height: 615
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +136,162 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b4d215f3bbbff7540800000000000000
-      internalID: 5007998092299021643
+      spriteID: 39c1e86ba5c627850800000000000000
+      internalID: 6373275559548296339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bolsa De Monedas_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee0faa5ee51c7c4f0800000000000000
+      internalID: -808464994765442834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bolsa De Monedas_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7ac09e49295768d0800000000000000
+      internalID: -2853213804969276803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bolsa De Monedas_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cda2e7f9930a1fa0800000000000000
+      internalID: -5829342807853978173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bolsa De Monedas_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5b7e1cfca5fa0b70800000000000000
+      internalID: 8866168939745278812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bolsa De Monedas_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a537e36f5686db20800000000000000
+      internalID: 3158859932903093668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bolsa De Monedas_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2f40676c1f669ba0800000000000000
+      internalID: -6082552078933143765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bolsa De Monedas_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59294bf0cd2434a70800000000000000
+      internalID: 8809958808990552725
       vertices: []
       indices: 
       edges: []
@@ -135,7 +310,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Bolsa de Monedas_0: 5007998092299021643
+      Bolsa De Monedas_0: 6373275559548296339
+      Bolsa De Monedas_1: -808464994765442834
+      Bolsa De Monedas_2: -2853213804969276803
+      Bolsa De Monedas_3: -5829342807853978173
+      Bolsa De Monedas_4: 8866168939745278812
+      Bolsa De Monedas_5: 3158859932903093668
+      Bolsa De Monedas_6: -6082552078933143765
+      Bolsa De Monedas_7: 8809958808990552725
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

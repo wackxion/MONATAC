@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 23140cdafdeaf17469f40f81ae9e3fc2
+guid: db9d8197cdb72ee40b9786b45b33e6f8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5578137749329003180
-    second: Vena de Oro_0
+      213: 9037398907230972174
+    second: Vena De Oro_0
+  - first:
+      213: -5674269347764702046
+    second: Vena De Oro_1
+  - first:
+      213: 6671174747738555285
+    second: Vena De Oro_2
+  - first:
+      213: 8713982091258161055
+    second: Vena De Oro_3
+  - first:
+      213: 5958719669466670226
+    second: Vena De Oro_4
+  - first:
+      213: 8486320207498847964
+    second: Vena De Oro_5
+  - first:
+      213: -1614640243536519420
+    second: Vena De Oro_6
+  - first:
+      213: 8311766523700390196
+    second: Vena De Oro_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +121,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Vena de Oro_0
+      name: Vena De Oro_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 417
-        height: 616
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +136,162 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 45d3c0f65497692b0800000000000000
-      internalID: -5578137749329003180
+      spriteID: e0961078c6a4b6d70800000000000000
+      internalID: 9037398907230972174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vena De Oro_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a4f89e7712f041b0800000000000000
+      internalID: -5674269347764702046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vena De Oro_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59343817616c49c50800000000000000
+      internalID: 6671174747738555285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vena De Oro_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f97ee881b884ee870800000000000000
+      internalID: 8713982091258161055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vena De Oro_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 294a1bef7ff91b250800000000000000
+      internalID: 5958719669466670226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vena De Oro_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd6203a244775c570800000000000000
+      internalID: 8486320207498847964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vena De Oro_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40f94f3d045a799e0800000000000000
+      internalID: -1614640243536519420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vena De Oro_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 439252d9d93595370800000000000000
+      internalID: 8311766523700390196
       vertices: []
       indices: 
       edges: []
@@ -135,7 +310,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Vena de Oro_0: -5578137749329003180
+      Vena De Oro_0: 9037398907230972174
+      Vena De Oro_1: -5674269347764702046
+      Vena De Oro_2: 6671174747738555285
+      Vena De Oro_3: 8713982091258161055
+      Vena De Oro_4: 5958719669466670226
+      Vena De Oro_5: 8486320207498847964
+      Vena De Oro_6: -1614640243536519420
+      Vena De Oro_7: 8311766523700390196
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 9f3f240cd6120824794b8f723c50e18c
+guid: c46e73697c38c174dbf0b4929feb0f72
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -9136601786783337516
-    second: Golpe de Suerte_0
+      213: 5489846456874076018
+    second: Golpe De Suerte_0
+  - first:
+      213: 2238426779670080986
+    second: Golpe De Suerte_1
+  - first:
+      213: -6346725442805894485
+    second: Golpe De Suerte_2
+  - first:
+      213: -6426366165528706223
+    second: Golpe De Suerte_3
+  - first:
+      213: -5560191308433044501
+    second: Golpe De Suerte_4
+  - first:
+      213: 7283212448994169530
+    second: Golpe De Suerte_5
+  - first:
+      213: 4981539320870143345
+    second: Golpe De Suerte_6
+  - first:
+      213: 2943425311277292281
+    second: Golpe De Suerte_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +121,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Golpe de Suerte_0
+      name: Golpe De Suerte_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 412
-        height: 615
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +136,162 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4d3749c2515443180800000000000000
-      internalID: -9136601786783337516
+      spriteID: 2778a6d144adf2c40800000000000000
+      internalID: 5489846456874076018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe De Suerte_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adde4f1eb4d701f10800000000000000
+      internalID: 2238426779670080986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe De Suerte_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba2fe9e06d6ebe7a0800000000000000
+      internalID: -6346725442805894485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe De Suerte_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15382135506f0d6a0800000000000000
+      internalID: -6426366165528706223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe De Suerte_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: beb42a1d67b36d2b0800000000000000
+      internalID: -5560191308433044501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe De Suerte_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab2100e522b231560800000000000000
+      internalID: 7283212448994169530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe De Suerte_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1750b177e9bf12540800000000000000
+      internalID: 4981539320870143345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe De Suerte_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fa9395c9b529d820800000000000000
+      internalID: 2943425311277292281
       vertices: []
       indices: 
       edges: []
@@ -135,7 +310,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Golpe de Suerte_0: -9136601786783337516
+      Golpe De Suerte_0: 5489846456874076018
+      Golpe De Suerte_1: 2238426779670080986
+      Golpe De Suerte_2: -6346725442805894485
+      Golpe De Suerte_3: -6426366165528706223
+      Golpe De Suerte_4: -5560191308433044501
+      Golpe De Suerte_5: 7283212448994169530
+      Golpe De Suerte_6: 4981539320870143345
+      Golpe De Suerte_7: 2943425311277292281
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

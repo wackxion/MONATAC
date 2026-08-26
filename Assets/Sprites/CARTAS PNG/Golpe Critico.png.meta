@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: f7e07a7d738120a49bfc4454def636a2
+guid: cf41abcd881d9d34994ba624f17d44eb
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: 4034507744519149508
     second: Golpe Critico_0
+  - first:
+      213: -1885008276947469103
+    second: Golpe Critico_1
+  - first:
+      213: -5625815798625771985
+    second: Golpe Critico_2
+  - first:
+      213: -2055490165394174990
+    second: Golpe Critico_3
+  - first:
+      213: 8905975267853857972
+    second: Golpe Critico_4
+  - first:
+      213: 7783755598541485921
+    second: Golpe Critico_5
+  - first:
+      213: 3050558539984970020
+    second: Golpe Critico_6
+  - first:
+      213: 4842026117999596130
+    second: Golpe Critico_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 418
-        height: 612
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 4c750abfa637df730800000000000000
       internalID: 4034507744519149508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Critico_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dcffd595fa17d5e0800000000000000
+      internalID: -1885008276947469103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Critico_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2e512786561de1b0800000000000000
+      internalID: -5625815798625771985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Critico_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fb0f54c59e6973e0800000000000000
+      internalID: -2055490165394174990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Critico_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b4f7daf151689b70800000000000000
+      internalID: 8905975267853857972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Critico_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 167f58d0a74750c60800000000000000
+      internalID: 7783755598541485921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Critico_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 421a65e54d2c55a20800000000000000
+      internalID: 3050558539984970020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Critico_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2629784a915523340800000000000000
+      internalID: 4842026117999596130
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Golpe Critico_0: 4034507744519149508
+      Golpe Critico_1: -1885008276947469103
+      Golpe Critico_2: -5625815798625771985
+      Golpe Critico_3: -2055490165394174990
+      Golpe Critico_4: 8905975267853857972
+      Golpe Critico_5: 7783755598541485921
+      Golpe Critico_6: 3050558539984970020
+      Golpe Critico_7: 4842026117999596130
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

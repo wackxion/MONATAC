@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 2fecf29d3f1c9e14abe7aa6580b1587b
+guid: 325e5c8ddd8404d408471ebbed32790d
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: 8186515821126757175
     second: Alivio_0
+  - first:
+      213: -7712679201589327878
+    second: Alivio_1
+  - first:
+      213: 7361631578872293553
+    second: Alivio_2
+  - first:
+      213: 3139484539436635117
+    second: Alivio_3
+  - first:
+      213: -4280546230585426857
+    second: Alivio_4
+  - first:
+      213: -89529505848938264
+    second: Alivio_5
+  - first:
+      213: 363879337323701284
+    second: Alivio_6
+  - first:
+      213: 5711593108144780476
+    second: Alivio_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 414
-        height: 615
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 73b206ae3c85c9170800000000000000
       internalID: 8186515821126757175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alivio_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af789b2312f07f490800000000000000
+      internalID: -7712679201589327878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alivio_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b82bf9dae4c92660800000000000000
+      internalID: 7361631578872293553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alivio_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de393fe0e80b19b20800000000000000
+      internalID: 3139484539436635117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alivio_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75c7151f1e17894c0800000000000000
+      internalID: -4280546230585426857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alivio_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e035f6836de1cef0800000000000000
+      internalID: -89529505848938264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alivio_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 424a8425452cc0500800000000000000
+      internalID: 363879337323701284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alivio_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb4f988aba7a34f40800000000000000
+      internalID: 5711593108144780476
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Alivio_0: 8186515821126757175
+      Alivio_1: -7712679201589327878
+      Alivio_2: 7361631578872293553
+      Alivio_3: 3139484539436635117
+      Alivio_4: -4280546230585426857
+      Alivio_5: -89529505848938264
+      Alivio_6: 363879337323701284
+      Alivio_7: 5711593108144780476
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

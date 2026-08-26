@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 4d46277594603644cb4cd43f9d59e7e6
+guid: a9cc69116a919344483bb8e9372809d1
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: 7971426472354761332
     second: Exceso_0
+  - first:
+      213: 2239636396095451677
+    second: Exceso_1
+  - first:
+      213: 1960706006490954964
+    second: Exceso_2
+  - first:
+      213: -3186822287468114149
+    second: Exceso_3
+  - first:
+      213: -970976858818954123
+    second: Exceso_4
+  - first:
+      213: 1102604937807792397
+    second: Exceso_5
+  - first:
+      213: 4252784246416205247
+    second: Exceso_6
+  - first:
+      213: 1572374662686493578
+    second: Exceso_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 412
-        height: 616
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 47ac9d5642230ae60800000000000000
       internalID: 7971426472354761332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Exceso_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d123e47af69c41f10800000000000000
+      internalID: 2239636396095451677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Exceso_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dc3ed189b3d53b10800000000000000
+      internalID: 1960706006490954964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Exceso_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1f4a29930226c3d0800000000000000
+      internalID: -3186822287468114149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Exceso_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57cb8fcf0b56682f0800000000000000
+      internalID: -970976858818954123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Exceso_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0900ad595d3d4f00800000000000000
+      internalID: 1102604937807792397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Exceso_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb5e30a6dbce40b30800000000000000
+      internalID: 4252784246416205247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Exceso_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8bc047cc6232d510800000000000000
+      internalID: 1572374662686493578
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Exceso_0: 7971426472354761332
+      Exceso_1: 2239636396095451677
+      Exceso_2: 1960706006490954964
+      Exceso_3: -3186822287468114149
+      Exceso_4: -970976858818954123
+      Exceso_5: 1102604937807792397
+      Exceso_6: 4252784246416205247
+      Exceso_7: 1572374662686493578
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

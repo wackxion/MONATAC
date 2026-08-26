@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: d4167eceb25496147be97ecb539c7552
+guid: 54271ed0e8c728843b29e3457c8a1f25
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6022903670172013152
-    second: Escudo de Monedas_0
+      213: -8850361481725741762
+    second: Escudo De Monedas_0
+  - first:
+      213: -5973888447306372470
+    second: Escudo De Monedas_1
+  - first:
+      213: -8655908794712526875
+    second: Escudo De Monedas_2
+  - first:
+      213: -3333406658893791383
+    second: Escudo De Monedas_3
+  - first:
+      213: -1551982006951794067
+    second: Escudo De Monedas_4
+  - first:
+      213: -3084660915580266797
+    second: Escudo De Monedas_5
+  - first:
+      213: -2361114788342573358
+    second: Escudo De Monedas_6
+  - first:
+      213: -8461458882350622753
+    second: Escudo De Monedas_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +121,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Escudo de Monedas_0
+      name: Escudo De Monedas_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 412
-        height: 615
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +136,162 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 062dff03af6a59350800000000000000
-      internalID: 6022903670172013152
+      spriteID: e35ffe3af133d2580800000000000000
+      internalID: -8850361481725741762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Escudo De Monedas_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8a6e72bb1c781da0800000000000000
+      internalID: -5973888447306372470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Escudo De Monedas_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5efeafaefc800e780800000000000000
+      internalID: -8655908794712526875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Escudo De Monedas_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96fb6bc0e4c5db1d0800000000000000
+      internalID: -3333406658893791383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Escudo De Monedas_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6a27d16690467ae0800000000000000
+      internalID: -1551982006951794067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Escudo De Monedas_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d69e429d351135d0800000000000000
+      internalID: -3084660915580266797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Escudo De Monedas_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d65be61c92ab3fd0800000000000000
+      internalID: -2361114788342573358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Escudo De Monedas_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd7daeb2afbd29a80800000000000000
+      internalID: -8461458882350622753
       vertices: []
       indices: 
       edges: []
@@ -135,7 +310,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Escudo de Monedas_0: 6022903670172013152
+      Escudo De Monedas_0: -8850361481725741762
+      Escudo De Monedas_1: -5973888447306372470
+      Escudo De Monedas_2: -8655908794712526875
+      Escudo De Monedas_3: -3333406658893791383
+      Escudo De Monedas_4: -1551982006951794067
+      Escudo De Monedas_5: -3084660915580266797
+      Escudo De Monedas_6: -2361114788342573358
+      Escudo De Monedas_7: -8461458882350622753
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

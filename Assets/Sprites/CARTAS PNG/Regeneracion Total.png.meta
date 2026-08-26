@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: bdf4baad6ebd32d4cacad59532f221f8
+guid: 10357c09f9ac76340a4fcf95f3e30ba0
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -1903847478163295746
     second: Regeneracion Total_0
+  - first:
+      213: 2263179429806881246
+    second: Regeneracion Total_1
+  - first:
+      213: 3170506362838861338
+    second: Regeneracion Total_2
+  - first:
+      213: 7645750118930091872
+    second: Regeneracion Total_3
+  - first:
+      213: 5739392270607967491
+    second: Regeneracion Total_4
+  - first:
+      213: -5249235384538520624
+    second: Regeneracion Total_5
+  - first:
+      213: 2013538974187660914
+    second: Regeneracion Total_6
+  - first:
+      213: 7050201976830621672
+    second: Regeneracion Total_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 412
-        height: 615
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: ef1bd8d3ecc2495e0800000000000000
       internalID: -1903847478163295746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Regeneracion Total_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed93c9853bd686f10800000000000000
+      internalID: 2263179429806881246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Regeneracion Total_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a16402b2db6effb20800000000000000
+      internalID: 3170506362838861338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Regeneracion Total_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06f8a3869392b1a60800000000000000
+      internalID: 7645750118930091872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Regeneracion Total_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 305e53c8cda66af40800000000000000
+      internalID: 5739392270607967491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Regeneracion Total_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d3ab2aba38f627b0800000000000000
+      internalID: -5249235384538520624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Regeneracion Total_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2762cd1670781fb10800000000000000
+      internalID: 2013538974187660914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Regeneracion Total_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e7feb7285957d160800000000000000
+      internalID: 7050201976830621672
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Regeneracion Total_0: -1903847478163295746
+      Regeneracion Total_1: 2263179429806881246
+      Regeneracion Total_2: 3170506362838861338
+      Regeneracion Total_3: 7645750118930091872
+      Regeneracion Total_4: 5739392270607967491
+      Regeneracion Total_5: -5249235384538520624
+      Regeneracion Total_6: 2013538974187660914
+      Regeneracion Total_7: 7050201976830621672
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

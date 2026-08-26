@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 6f345d0b2cb64ba45b8a0a2e350ece3b
+guid: 1f68cff45128bbf43bf31dfc5ba7062a
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: 7876459106894385841
     second: Filo Eterno_0
+  - first:
+      213: -1803576990124416100
+    second: Filo Eterno_1
+  - first:
+      213: 2285134840949389676
+    second: Filo Eterno_2
+  - first:
+      213: -7496289972835274067
+    second: Filo Eterno_3
+  - first:
+      213: 5899624067432394035
+    second: Filo Eterno_4
+  - first:
+      213: -4073959312446927770
+    second: Filo Eterno_5
+  - first:
+      213: -3116569201324312343
+    second: Filo Eterno_6
+  - first:
+      213: 451274703288451273
+    second: Filo Eterno_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 321
-        height: 475
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 1b2945293ddce4d60800000000000000
       internalID: 7876459106894385841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Filo Eterno_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c93e092884868f6e0800000000000000
+      internalID: -1803576990124416100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Filo Eterno_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6938aad70e66bf10800000000000000
+      internalID: 2285134840949389676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Filo Eterno_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da2b4db9cf3d7f790800000000000000
+      internalID: -7496289972835274067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Filo Eterno_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33d27afe4dcafd150800000000000000
+      internalID: 5899624067432394035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Filo Eterno_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66cc43017936677c0800000000000000
+      internalID: -4073959312446927770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Filo Eterno_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e8342dd2d8bfb4d0800000000000000
+      internalID: -3116569201324312343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Filo Eterno_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c0c0a1a3ff334600800000000000000
+      internalID: 451274703288451273
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Filo Eterno_0: 7876459106894385841
+      Filo Eterno_1: -1803576990124416100
+      Filo Eterno_2: 2285134840949389676
+      Filo Eterno_3: -7496289972835274067
+      Filo Eterno_4: 5899624067432394035
+      Filo Eterno_5: -4073959312446927770
+      Filo Eterno_6: -3116569201324312343
+      Filo Eterno_7: 451274703288451273
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

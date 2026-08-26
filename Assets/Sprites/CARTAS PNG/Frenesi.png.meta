@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 4593e10e37b88b248ac38e2e3a573cf6
+guid: f1f047c4107ef7048a3577b96d6c267e
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -6991221411268658080
     second: Frenesi_0
+  - first:
+      213: -150453834064259656
+    second: Frenesi_1
+  - first:
+      213: -3870944407743287446
+    second: Frenesi_2
+  - first:
+      213: -7650269895338673532
+    second: Frenesi_3
+  - first:
+      213: -5702296393547600995
+    second: Frenesi_4
+  - first:
+      213: -4423360853981300414
+    second: Frenesi_5
+  - first:
+      213: 2557571926600987656
+    second: Frenesi_6
+  - first:
+      213: 1724455302277535093
+    second: Frenesi_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 415
-        height: 616
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 06cf933ea213afe90800000000000000
       internalID: -6991221411268658080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Frenesi_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b51189f80b79edf0800000000000000
+      internalID: -150453834064259656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Frenesi_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6f2d2ff194a74ac0800000000000000
+      internalID: -3870944407743287446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Frenesi_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48a39742018c4d590800000000000000
+      internalID: -7650269895338673532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Frenesi_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9baa9264af5dd0b0800000000000000
+      internalID: -5702296393547600995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Frenesi_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24973114db01d92c0800000000000000
+      internalID: -4423360853981300414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Frenesi_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 804309cdd125e7320800000000000000
+      internalID: 2557571926600987656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Frenesi_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5759a4bf5fe7ee710800000000000000
+      internalID: 1724455302277535093
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Frenesi_0: -6991221411268658080
+      Frenesi_1: -150453834064259656
+      Frenesi_2: -3870944407743287446
+      Frenesi_3: -7650269895338673532
+      Frenesi_4: -5702296393547600995
+      Frenesi_5: -4423360853981300414
+      Frenesi_6: 2557571926600987656
+      Frenesi_7: 1724455302277535093
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

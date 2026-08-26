@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 9557fed451326684cbe646ac94fc32a2
+guid: 239e005b59e5fd24193c862d2e128cfb
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: 4583351534406320611
     second: Golpe Rapido_0
+  - first:
+      213: -6262330222893094476
+    second: Golpe Rapido_1
+  - first:
+      213: -7291147464096602516
+    second: Golpe Rapido_2
+  - first:
+      213: 502068930555928300
+    second: Golpe Rapido_3
+  - first:
+      213: -5621996024680282973
+    second: Golpe Rapido_4
+  - first:
+      213: -8347435090379696325
+    second: Golpe Rapido_5
+  - first:
+      213: -4998339232609059860
+    second: Golpe Rapido_6
+  - first:
+      213: -8167242039572167485
+    second: Golpe Rapido_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 321
-        height: 477
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 3e1c709dfe55b9f30800000000000000
       internalID: 4583351534406320611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Rapido_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b9a34e67dbb719a0800000000000000
+      internalID: -6262330222893094476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Rapido_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c662885f204a0da90800000000000000
+      internalID: -7291147464096602516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Rapido_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ceedb824805b7f600800000000000000
+      internalID: 502068930555928300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Rapido_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a40644f668aaf1b0800000000000000
+      internalID: -5621996024680282973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Rapido_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b37994c0304f72c80800000000000000
+      internalID: -8347435090379696325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Rapido_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ceb307543f452aab0800000000000000
+      internalID: -4998339232609059860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Golpe Rapido_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c40aac03a028ae80800000000000000
+      internalID: -8167242039572167485
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Golpe Rapido_0: 4583351534406320611
+      Golpe Rapido_1: -6262330222893094476
+      Golpe Rapido_2: -7291147464096602516
+      Golpe Rapido_3: 502068930555928300
+      Golpe Rapido_4: -5621996024680282973
+      Golpe Rapido_5: -8347435090379696325
+      Golpe Rapido_6: -4998339232609059860
+      Golpe Rapido_7: -8167242039572167485
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

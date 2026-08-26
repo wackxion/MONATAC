@@ -45,6 +45,14 @@ public class GameManager : MonoBehaviour
     public Image[] cartasImagen;
     public Sprite[] spritesCartas;
 
+    // [AGREGADO POR JULIAN] Reversos de las cartas
+    [Header("Reversos de cartas (slots de la mano)")]
+    public Image[] cartasReverso;
+
+    // [AGREGADO POR JULIAN] Referencia al componente de animación de dados
+    [Header("Animación de dados")]
+    public AnimacionDados animacionDados;
+
     private int hpInicial = 40;          // 40 para probar rápido; el real es 100
     private int cantidadJugadores;       // lo define el menú (Config.cantidadJugadores)
 
@@ -64,6 +72,13 @@ public class GameManager : MonoBehaviour
     private bool puedeComprar = false;    // ¿puede comprar cartas este turno? (solo si Recolectó)
     private int turnosLeyMarcial = 0;     // turnos que quedan de Ley Marcial (todos deben Atacar)
     private bool juegoTerminado = false;
+
+    // [AGREGADO POR JULIAN] Variables para la animación de dados
+    private int totalDados;               // resultado final de los dados (sin bonus/mult)
+    private int totalFinal;               // resultado final con bonus y multiplicador
+    private int dadosExtra;               // dados extra por comodines
+    private int multiplicador;            // multiplicador por comodines
+    private int bonusCartas;              // bonus fijo por cartas
 
     // --- PATRÓN SINGLETON ---
     // Garantiza que exista UNA sola instancia del GameManager, accesible
@@ -157,24 +172,65 @@ public class GameManager : MonoBehaviour
         if (!haElegido) { Mensaje("Primero elegí una acción."); return; }
         if (yaTiro)     { Mensaje("Ya tiraste. Pasá el turno."); return; }
 
+        // [AGREGADO POR JULIAN] Bloquear si la animación de dados está corriendo
+        if (animacionDados != null && animacionDados.EstaAnimando()) return;
+
         Jugador jugador = Actual();
 
         // Orden fijo de las cartas elegidas: (1) dados extra, (2) multiplicador, (3) bonus fijo.
         int dadosBase = (accionElegida == TipoAccion.Curarse) ? 2 : 3;   // curarse: 2d4; el resto: 3d4
-        int extra = DadosExtraSeleccionados(accionElegida);   // comodín +1d4
-        int mult  = MultiplicadorSeleccionado(accionElegida); // comodín x2
-        int bonus = BonusSeleccionadas(jugador, accionElegida); // pasiva / un uso / vencimiento (paga por uso)
+        dadosExtra = DadosExtraSeleccionados(accionElegida);   // comodín +1d4
+        multiplicador = MultiplicadorSeleccionado(accionElegida); // comodín x2
+        bonusCartas = BonusSeleccionadas(jugador, accionElegida); // pasiva / un uso / vencimiento (paga por uso)
 
-        int total = TirarDados(dadosBase + extra) * mult + bonus;
+        // Tiramos los dados y obtenemos los valores individuales
+        int cantidadTotal = dadosBase + dadosExtra;
+        int[] valoresDados = new int[cantidadTotal];
+        totalDados = 0;
+        for (int i = 0; i < cantidadTotal; i++)
+        {
+            valoresDados[i] = dado.Tirar();
+            totalDados += valoresDados[i];
+        }
+        totalFinal = totalDados * multiplicador + bonusCartas;
+
+        // [AGREGADO POR JULIAN] Si hay animación, arrancamos la animación
+        if (animacionDados != null)
+        {
+            Mensaje("Tirando los dados...");
+            animacionDados.IniciarAnimacion(valoresDados, AplicarAccionPostAnimacion);
+        }
+        else
+        {
+            // Sin animación: aplicar directo (fallback por si no se asignó)
+            MostrarDadosFinales(valoresDados);
+            AplicarAccionPostAnimacion();
+        }
+    }
+
+    // [AGREGADO POR JULIAN] Muestra los valores finales en los textos de los dados
+    private void MostrarDadosFinales(int[] valores)
+    {
+        if (valores.Length > 0 && dado1Texto != null) dado1Texto.text = valores[0].ToString();
+        if (valores.Length > 1 && dado2Texto != null) dado2Texto.text = valores[1].ToString();
+        if (valores.Length > 2 && dado3Texto != null) dado3Texto.text = valores[2].ToString();
+    }
+
+    // [AGREGADO POR JULIAN] Se llama cuando la animación de dados termina.
+    // Aplica la acción (ataque/curarse/recolectar) con el resultado ya calculado.
+    private void AplicarAccionPostAnimacion()
+    {
+        Jugador jugador = Actual();
 
         if (accionElegida == TipoAccion.Atacar)
         {
             Jugador defensor = Objetivo();
+            int total = totalFinal;
             // 1) REACCIÓN (auto): el defensor absorbe daño gastando monedas (Escudo de Monedas).
             total = AplicarReaccion(defensor, total);
             // 2) Se aplica el daño que queda.
             defensor.RecibirDanio(total);
-            Mensaje(jugador.nombre + " ataca a " + defensor.nombre + " por " + total + " (x" + mult + ", bonus +" + bonus + ").");
+            Mensaje(jugador.nombre + " ataca a " + defensor.nombre + " por " + total + " (x" + multiplicador + ", bonus +" + bonusCartas + ").");
             // 3) REFLECTANTE (auto): el defensor devuelve daño al atacante (Espejo de Sangre).
             AplicarReflejo(defensor, jugador);
             // Las cartas defensivas usadas por el defensor van al descarte (son de un solo uso).
@@ -182,14 +238,14 @@ public class GameManager : MonoBehaviour
         }
         else if (accionElegida == TipoAccion.Curarse)
         {
-            jugador.Curar(total);
-            Mensaje(jugador.nombre + " se cura " + total + " HP.");
+            jugador.Curar(totalFinal);
+            Mensaje(jugador.nombre + " se cura " + totalFinal + " HP.");
         }
         else // Recolectar
         {
-            jugador.GanarMonedas(total);
+            jugador.GanarMonedas(totalFinal);
             puedeComprar = true;   // habilita el botón Comprar carta este turno
-            Mensaje(jugador.nombre + " recolecta " + total + " monedas. Podés comprar cartas (6 c/u) o acumular.");
+            Mensaje(jugador.nombre + " recolecta " + totalFinal + " monedas. Podés comprar cartas (6 c/u) o acumular.");
         }
 
         DescartarUsadas(jugador);       // saca de la mano las cartas de un solo uso ya gastadas
@@ -583,6 +639,17 @@ public class GameManager : MonoBehaviour
                         cartasImagen[i].color = Color.white;
                     }
 
+                    // [AGREGADO POR JULIAN] Asignar sprite de reverso
+                    Sprite reversoEncontrado = BuscarSprite(carta.nombre + " Reverso");
+                    if (cartasReverso != null && i < cartasReverso.Length && cartasReverso[i] != null)
+                    {
+                        cartasReverso[i].sprite = reversoEncontrado;
+                        cartasReverso[i].color = Color.white;
+                    }
+
+                    // [AGREGADO POR JULIAN] Activar hover si hay carta
+                    ActivarHoverSlot(i, true);
+
                     // Si hay imagen, no mostramos el texto. Si no hay, mostramos el nombre.
                     if (spriteEncontrado != null)
                         cartasTexto[i].text = "";
@@ -599,20 +666,42 @@ public class GameManager : MonoBehaviour
                         cartasImagen[i].sprite = null;
                         cartasImagen[i].color = new Color(0, 0, 0, 0.5f);
                     }
+
+                    // [AGREGADO POR JULIAN] Sin carta: ocultar reverso
+                    if (cartasReverso != null && i < cartasReverso.Length && cartasReverso[i] != null)
+                    {
+                        cartasReverso[i].sprite = null;
+                        cartasReverso[i].color = new Color(0, 0, 0, 0);
+                    }
+
+                    // [AGREGADO POR JULIAN] Desactivar hover si no hay carta
+                    ActivarHoverSlot(i, false);
                 }
             }
         }
     }
 
-    // [MODIFICADO POR JULIAN] Busca un sprite por nombre exacto.
-    // Los sprites se llaman igual que las cartas (ej: "Filo Eterno").
+    // [AGREGADO POR JULIAN] Activa o desactiva el hover de un slot de carta
+    private void ActivarHoverSlot(int indice, bool activo)
+    {
+        if (cartasImagen == null || indice >= cartasImagen.Length || cartasImagen[indice] == null) return;
+        EfectoHoverCarta hover = cartasImagen[indice].GetComponentInParent<EfectoHoverCarta>();
+        if (hover != null) hover.SetHoverActivo(activo);
+    }
+
+    // [MODIFICADO POR JULIAN] Busca un sprite por nombre, ignorando mayúsculas/minúsculas y sufijos "_0".
     private Sprite BuscarSprite(string nombreCarta)
     {
         if (spritesCartas == null) return null;
+        string nombreBuscado = nombreCarta.ToLower();
         for (int i = 0; i < spritesCartas.Length; i++)
         {
-            if (spritesCartas[i] != null && spritesCartas[i].name == nombreCarta)
-                return spritesCartas[i];
+            if (spritesCartas[i] != null)
+            {
+                string nombreSprite = spritesCartas[i].name.ToLower();
+                if (nombreSprite == nombreBuscado || nombreSprite == nombreBuscado + "_0")
+                    return spritesCartas[i];
+            }
         }
         return null;
     }

@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 49d5437857af28d4b8cf89419abeefaf
+guid: 26e743c92b041af46b0747662da0ce9f
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: 6606343891666959227
     second: Impulso_0
+  - first:
+      213: -4086560907971492749
+    second: Impulso_1
+  - first:
+      213: -7084867079375438113
+    second: Impulso_2
+  - first:
+      213: 3259863409099612474
+    second: Impulso_3
+  - first:
+      213: -7088135080847179501
+    second: Impulso_4
+  - first:
+      213: 8444426605280858016
+    second: Impulso_5
+  - first:
+      213: 7155029148316451694
+    second: Impulso_6
+  - first:
+      213: 8819988343523925953
+    second: Impulso_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 413
-        height: 617
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: b7b71ee74c27eab50800000000000000
       internalID: 6606343891666959227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Impulso_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3748c57718e9947c0800000000000000
+      internalID: -4086560907971492749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Impulso_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdeb7f4bdee7dad90800000000000000
+      internalID: -7084867079375438113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Impulso_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a312da3cf7c5d3d20800000000000000
+      internalID: 3259863409099612474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Impulso_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3118e12d2b2e1ad90800000000000000
+      internalID: -7088135080847179501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Impulso_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0af8f9bc141a03570800000000000000
+      internalID: 8444426605280858016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Impulso_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e63c7f6f915cb4360800000000000000
+      internalID: 7155029148316451694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Impulso_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cf54da0ba4e66a70800000000000000
+      internalID: 8819988343523925953
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Impulso_0: 6606343891666959227
+      Impulso_1: -4086560907971492749
+      Impulso_2: -7084867079375438113
+      Impulso_3: 3259863409099612474
+      Impulso_4: -7088135080847179501
+      Impulso_5: 8444426605280858016
+      Impulso_6: 7155029148316451694
+      Impulso_7: 8819988343523925953
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

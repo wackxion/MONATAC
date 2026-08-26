@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: f80581ff0487b6049a467c0bd0af2c08
+guid: cf280f9be0ba68b49bd0ba443d293573
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -2843385188201247984
     second: Vampirismo Defensivo_0
+  - first:
+      213: 750729742173281005
+    second: Vampirismo Defensivo_1
+  - first:
+      213: 9118847072328997150
+    second: Vampirismo Defensivo_2
+  - first:
+      213: -8080590120791608757
+    second: Vampirismo Defensivo_3
+  - first:
+      213: -3015365619989001418
+    second: Vampirismo Defensivo_4
+  - first:
+      213: -365159589238208345
+    second: Vampirismo Defensivo_5
+  - first:
+      213: -8296329719509282937
+    second: Vampirismo Defensivo_6
+  - first:
+      213: -3556922954192257135
+    second: Vampirismo Defensivo_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 416
-        height: 616
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: 01b48a97c344a88d0800000000000000
       internalID: -2843385188201247984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampirismo Defensivo_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dea1f8419b02b6a00800000000000000
+      internalID: 750729742173281005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampirismo Defensivo_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e19d74b3917ac8e70800000000000000
+      internalID: 9118847072328997150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampirismo Defensivo_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b427fa2191afbdf80800000000000000
+      internalID: -8080590120791608757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampirismo Defensivo_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63b41a8d1f44726d0800000000000000
+      internalID: -3015365619989001418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampirismo Defensivo_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a8012dc941beeaf0800000000000000
+      internalID: -365159589238208345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampirismo Defensivo_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78f022173148ddc80800000000000000
+      internalID: -8296329719509282937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampirismo Defensivo_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19fffe52b6543aec0800000000000000
+      internalID: -3556922954192257135
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Vampirismo Defensivo_0: -2843385188201247984
+      Vampirismo Defensivo_1: 750729742173281005
+      Vampirismo Defensivo_2: 9118847072328997150
+      Vampirismo Defensivo_3: -8080590120791608757
+      Vampirismo Defensivo_4: -3015365619989001418
+      Vampirismo Defensivo_5: -365159589238208345
+      Vampirismo Defensivo_6: -8296329719509282937
+      Vampirismo Defensivo_7: -3556922954192257135
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

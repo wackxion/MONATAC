@@ -1,10 +1,31 @@
 fileFormatVersion: 2
-guid: 532aa318370cf6b49b5a0e734ca52a3e
+guid: 9360b1d77bf46b145be483b80a1d1846
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -5877969086499906389
     second: Comerciante_0
+  - first:
+      213: -1737466284124612311
+    second: Comerciante_1
+  - first:
+      213: -4719233979664298840
+    second: Comerciante_2
+  - first:
+      213: -612690292096491274
+    second: Comerciante_3
+  - first:
+      213: -1632768128696092738
+    second: Comerciante_4
+  - first:
+      213: -839025415207360895
+    second: Comerciante_5
+  - first:
+      213: 7310427915596048359
+    second: Comerciante_6
+  - first:
+      213: 6719434239136319817
+    second: Comerciante_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,9 +125,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 414
-        height: 615
+        y: 27
+        width: 2188
+        height: 3098
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,6 +138,160 @@ TextureImporter:
       bones: []
       spriteID: bac127632424d6ea0800000000000000
       internalID: -5877969086499906389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Comerciante_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 2663
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 929d88dbe9743e7e0800000000000000
+      internalID: -1737466284124612311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Comerciante_2
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 1739
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ac0826f2b9e18eb0800000000000000
+      internalID: -4719233979664298840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Comerciante_3
+      rect:
+        serializedVersion: 2
+        x: 2164
+        y: 1493
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f0224eec694f77f0800000000000000
+      internalID: -612690292096491274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Comerciante_4
+      rect:
+        serializedVersion: 2
+        x: 2167
+        y: 635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb77d78a90e3759e0800000000000000
+      internalID: -1632768128696092738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Comerciante_5
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 485
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1866a0984de2b54f0800000000000000
+      internalID: -839025415207360895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Comerciante_6
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 458
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e7a339f47bd37560800000000000000
+      internalID: 7310427915596048359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Comerciante_7
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 347
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9494153e6d9304d50800000000000000
+      internalID: 6719434239136319817
       vertices: []
       indices: 
       edges: []
@@ -136,6 +311,13 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Comerciante_0: -5877969086499906389
+      Comerciante_1: -1737466284124612311
+      Comerciante_2: -4719233979664298840
+      Comerciante_3: -612690292096491274
+      Comerciante_4: -1632768128696092738
+      Comerciante_5: -839025415207360895
+      Comerciante_6: 7310427915596048359
+      Comerciante_7: 6719434239136319817
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
