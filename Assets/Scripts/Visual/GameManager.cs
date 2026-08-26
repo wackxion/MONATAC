@@ -40,6 +40,11 @@ public class GameManager : MonoBehaviour
     [Header("Mano de cartas (textos de las cartas de abajo)")]
     public TextMeshProUGUI[] cartasTexto;
 
+    // [MODIFICADO POR JULIAN] Imágenes de las cartas en los slots de la mano
+    [Header("Imágenes de cartas (slots de la mano)")]
+    public Image[] cartasImagen;
+    public Sprite[] spritesCartas;
+
     private int hpInicial = 40;          // 40 para probar rápido; el real es 100
     private int cantidadJugadores;       // lo define el menú (Config.cantidadJugadores)
 
@@ -564,15 +569,52 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < cartasTexto.Length; i++)
             {
                 if (cartasTexto[i] == null) continue;
+
                 if (i < enTurno.mano.Count)
                 {
                     Carta carta = enTurno.mano[i];
                     string usar = cartasSeleccionadas.Contains(carta) ? " [USAR]" : "";
-                    cartasTexto[i].text = carta.nombre + usar;
+
+                    // [MODIFICADO POR JULIAN] Asignar imagen de la carta si hay sprite disponible
+                    Sprite spriteEncontrado = BuscarSprite(carta.nombre);
+                    if (cartasImagen != null && i < cartasImagen.Length && cartasImagen[i] != null)
+                    {
+                        cartasImagen[i].sprite = spriteEncontrado;
+                        cartasImagen[i].color = Color.white;
+                    }
+
+                    // Si hay imagen, no mostramos el texto. Si no hay, mostramos el nombre.
+                    if (spriteEncontrado != null)
+                        cartasTexto[i].text = "";
+                    else
+                        cartasTexto[i].text = carta.nombre + usar;
                 }
-                else cartasTexto[i].text = "-";
+                else
+                {
+                    cartasTexto[i].text = "";
+
+                    // [MODIFICADO POR JULIAN] Sin carta: mostrar slot vacío semitransparente
+                    if (cartasImagen != null && i < cartasImagen.Length && cartasImagen[i] != null)
+                    {
+                        cartasImagen[i].sprite = null;
+                        cartasImagen[i].color = new Color(0, 0, 0, 0.5f);
+                    }
+                }
             }
         }
+    }
+
+    // [MODIFICADO POR JULIAN] Busca un sprite por nombre exacto.
+    // Los sprites se llaman igual que las cartas (ej: "Filo Eterno").
+    private Sprite BuscarSprite(string nombreCarta)
+    {
+        if (spritesCartas == null) return null;
+        for (int i = 0; i < spritesCartas.Length; i++)
+        {
+            if (spritesCartas[i] != null && spritesCartas[i].name == nombreCarta)
+                return spritesCartas[i];
+        }
+        return null;
     }
 
     private void Mensaje(string txt)
