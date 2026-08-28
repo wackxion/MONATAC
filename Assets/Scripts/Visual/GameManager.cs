@@ -57,21 +57,24 @@ public class GameManager : MonoBehaviour
     private int cantidadJugadores;       // lo define el menú (Config.cantidadJugadores)
 
     // --- Datos de la partida ---
-    private List<Jugador> jugadores = new List<Jugador>();
-    private int indiceActual = 0;     // quién juega ahora
-    private int indiceObjetivo = 0;   // a quién apunta el ataque
+    private Partida partida;          // REGLAS: jugadores, orden de turno y victoria (capa Rules)
     private Dado dado;
     private Mazo mazo;                // el mazo de cartas
     private PilaDescarte descarte;    // la pila de descarte
+    private GestorCartas gestorCartas; // REGLAS: resuelve el efecto de las cartas elegidas
     private List<Carta> cartasSeleccionadas = new List<Carta>();  // cartas que el jugador eligió usar este turno
+
+    // Accesos de solo lectura que delegan en la Partida (así el resto del código no cambia).
+    private List<Jugador> jugadores => partida.Jugadores;
+    private int indiceActual        => partida.IndiceActual;
+    private int indiceObjetivo      => partida.IndiceObjetivo;
 
     // --- Estado del turno ---
     private TipoAccion accionElegida;
     private bool haElegido = false;
     private bool yaTiro = false;
     private bool puedeComprar = false;    // ¿puede comprar cartas este turno? (solo si Recolectó)
-    private int turnosLeyMarcial = 0;     // turnos que quedan de Ley Marcial (todos deben Atacar)
-    private bool juegoTerminado = false;
+    private bool juegoTerminado => partida.Terminada;
 
     // [AGREGADO POR JULIAN] Variables para la animación de dados
     private int totalDados;               // resultado final de los dados (sin bonus/mult)
@@ -102,20 +105,16 @@ public class GameManager : MonoBehaviour
         // La cantidad la eligió el menú. Si se juega esta escena directo,
         // usa el valor por defecto de Config. Clamp la mantiene entre 2 y 4.
         cantidadJugadores = Mathf.Clamp(Config.cantidadJugadores, 2, 4);
-
-        for (int i = 0; i < cantidadJugadores; i++)
-        {
-            jugadores.Add(new Jugador("Jugador " + (i + 1), hpInicial));
-        }
+        partida = new Partida(cantidadJugadores, hpInicial);   // crea la partida (capa Reglas)
 
         OcultarBarrasSobrantes();   // esconde las barras de los jugadores que no juegan
 
         dado = new Dado();
         descarte = new PilaDescarte();
+        gestorCartas = new GestorCartas(descarte);
         mazo = FabricaDeCartas.CrearMazo();   // la Fábrica arma el mazo
         mazo.Mezclar();
 
-        indiceActual = 0;
         IniciarTurno();
     }
 
@@ -146,7 +145,7 @@ public class GameManager : MonoBehaviour
     {
         if (juegoTerminado || yaTiro) return;
         // Ley Marcial: mientras esté activa, solo se puede Atacar.
-        if (turnosLeyMarcial > 0 && accion != TipoAccion.Atacar)
+        if (partida.LeyMarcialActiva() && accion != TipoAccion.Atacar)
         {
             Mensaje("Ley Marcial activa: este round solo se puede Atacar.");
             return;
@@ -160,7 +159,7 @@ public class GameManager : MonoBehaviour
     public void OnCambiarObjetivo()
     {
         if (juegoTerminado) return;
-        indiceObjetivo = SiguienteRivalVivo(indiceObjetivo);
+        partida.CambiarObjetivo();
         ActualizarUI();
         Mensaje("Objetivo: " + Objetivo().nombre);
     }
@@ -179,9 +178,10 @@ public class GameManager : MonoBehaviour
 
         // Orden fijo de las cartas elegidas: (1) dados extra, (2) multiplicador, (3) bonus fijo.
         int dadosBase = (accionElegida == TipoAccion.Curarse) ? 2 : 3;   // curarse: 2d4; el resto: 3d4
-        dadosExtra = DadosExtraSeleccionados(accionElegida);   // comodín +1d4
-        multiplicador = MultiplicadorSeleccionado(accionElegida); // comodín x2
-        bonusCartas = BonusSeleccionadas(jugador, accionElegida); // pasiva / un uso / vencimiento (paga por uso)
+        dadosExtra = gestorCartas.DadosExtra(cartasSeleccionadas, accionElegida);   // comodín +1d4
+        multiplicador = gestorCartas.Multiplicador(cartasSeleccionadas, accionElegida); // comodín x2
+        bonusCartas = gestorCartas.Bonus(cartasSeleccionadas, jugador, accionElegida); // pasiva/un uso/vencimiento
+        foreach (string m in gestorCartas.Mensajes) Mensaje(m);   // avisos de pago/descarte de vencimiento
 
         // Tiramos los dados y obtenemos los valores individuales
         int cantidadTotal = dadosBase + dadosExtra;
@@ -226,15 +226,19 @@ public class GameManager : MonoBehaviour
         {
             Jugador defensor = Objetivo();
             int total = totalFinal;
-            // 1) REACCIÓN (auto): el defensor absorbe daño gastando monedas (Escudo de Monedas).
-            total = AplicarReaccion(defensor, total);
+            // 1) REACCIÓN (auto): el defensor absorbe daño (Escudo de Monedas).
+            gestorCartas.Mensajes.Clear();
+            total = gestorCartas.Absorber(defensor, total);
+            foreach (string m in gestorCartas.Mensajes) Mensaje(m);
             // 2) Se aplica el daño que queda.
             defensor.RecibirDanio(total);
             Mensaje(jugador.nombre + " ataca a " + defensor.nombre + " por " + total + " (x" + multiplicador + ", bonus +" + bonusCartas + ").");
-            // 3) REFLECTANTE (auto): el defensor devuelve daño al atacante (Espejo de Sangre).
-            AplicarReflejo(defensor, jugador);
-            // Las cartas defensivas usadas por el defensor van al descarte (son de un solo uso).
-            DescartarUsadas(defensor);
+            // 3) REFLECTANTE (auto): devuelve daño / roba monedas / cura (Espejo, Bolsillo Roto, Vampirismo).
+            gestorCartas.Mensajes.Clear();
+            gestorCartas.Reflejar(defensor, jugador);
+            foreach (string m in gestorCartas.Mensajes) Mensaje(m);
+            // Las cartas defensivas usadas van al descarte (un solo uso).
+            gestorCartas.DescartarUsadas(defensor);
         }
         else if (accionElegida == TipoAccion.Curarse)
         {
@@ -248,78 +252,11 @@ public class GameManager : MonoBehaviour
             Mensaje(jugador.nombre + " recolecta " + totalFinal + " monedas. Podés comprar cartas (6 c/u) o acumular.");
         }
 
-        DescartarUsadas(jugador);       // saca de la mano las cartas de un solo uso ya gastadas
+        gestorCartas.DescartarUsadas(jugador);   // saca de la mano las cartas de un solo uso ya gastadas
         cartasSeleccionadas.Clear();    // limpia la selección para el próximo turno
         yaTiro = true;
         ActualizarUI();
         VerificarVictoria();
-    }
-
-    // Suma los bonus que dan las cartas de la mano para una acción.
-    // Cada carta responde con su propio BonusPara() (polimorfismo).
-    // Suma el bonus SOLO de las cartas que el jugador eligió usar este turno.
-    // Aplica las cartas elegidas y devuelve el bonus total.
-    // Las de vencimiento pagan por uso: 1er uso gratis, los siguientes 2 monedas;
-    // si no puede pagar o se queda sin usos, la carta se descarta.
-    private int BonusSeleccionadas(Jugador j, TipoAccion accion)
-    {
-        int total = 0;
-        // Copia de la selección porque podemos descartar cartas mientras recorremos.
-        List<Carta> seleccion = new List<Carta>(cartasSeleccionadas);
-
-        foreach (Carta c in seleccion)
-        {
-            CartaVencimiento v = c as CartaVencimiento;
-            if (v != null)
-            {
-                if (!v.SirvePara(accion)) continue;   // no aplica a esta acción
-
-                int costo = v.CostoDelProximoUso();    // 0 el primer uso, 2 los siguientes
-                if (costo > 0 && !j.GastarMonedas(costo))
-                {
-                    Mensaje(j.nombre + ": no pudo pagar " + v.nombre + ", se descarta.");
-                    DescartarCarta(j, v);
-                    continue;
-                }
-                if (costo > 0) Mensaje(j.nombre + " paga " + costo + " por usar " + v.nombre + ".");
-
-                total += v.Usar();                     // aplica bonus y gasta un uso
-                if (v.SinUsos())
-                {
-                    Mensaje(v.nombre + " se quedó sin usos y se descarta.");
-                    DescartarCarta(j, v);
-                }
-            }
-            else
-            {
-                total += c.BonusPara(accion);          // pasiva / un uso
-            }
-        }
-        return total;
-    }
-
-    // Saca una carta de la mano (y de la selección) y la manda al descarte.
-    private void DescartarCarta(Jugador j, Carta c)
-    {
-        cartasSeleccionadas.Remove(c);
-        j.mano.Remove(c);
-        descarte.Agregar(c);
-    }
-
-    // Dados extra que suman las cartas elegidas (comodín +1d4).
-    private int DadosExtraSeleccionados(TipoAccion accion)
-    {
-        int extra = 0;
-        foreach (Carta c in cartasSeleccionadas) extra += c.DadosExtra(accion);
-        return extra;
-    }
-
-    // Multiplicador de las cartas elegidas (comodín x2). Empieza en 1 (no cambia nada).
-    private int MultiplicadorSeleccionado(TipoAccion accion)
-    {
-        int mult = 1;
-        foreach (Carta c in cartasSeleccionadas) mult *= c.Multiplicador(accion);
-        return mult;
     }
 
     // --- Botón de cada carta de la mano: elegir/deselegir para usarla este turno ---
@@ -355,66 +292,6 @@ public class GameManager : MonoBehaviour
         ActualizarUI();
     }
 
-    // REACCIÓN automática: recorre la mano del defensor buscando Escudo de Monedas.
-    // Cada escudo absorbe daño gastando monedas (2 monedas = 1 HP). Devuelve el daño restante.
-    private int AplicarReaccion(Jugador defensor, int dano)
-    {
-        foreach (Carta c in defensor.mano)
-        {
-            CartaReaccion escudo = c as CartaReaccion;   // ¿es una carta de reacción?
-            if (escudo != null)
-            {
-                int antes = dano;
-                dano = escudo.Absorber(dano, defensor);
-                if (dano < antes)
-                    Mensaje(defensor.nombre + " absorbe " + (antes - dano) + " con " + escudo.nombre + ".");
-            }
-        }
-        return dano;
-    }
-
-    // REFLECTANTE automática: si el defensor tiene Espejo de Sangre, devuelve daño al atacante.
-    private void AplicarReflejo(Jugador defensor, Jugador atacante)
-    {
-        foreach (Carta c in defensor.mano)
-        {
-            // Espejo de Sangre: devuelve daño fijo.
-            CartaReflectante espejo = c as CartaReflectante;
-            if (espejo != null)
-            {
-                int reflejo = espejo.Reflejar();
-                atacante.RecibirDanio(reflejo);
-                Mensaje(defensor.nombre + " refleja " + reflejo + " a " + atacante.nombre + " con " + espejo.nombre + ".");
-                continue;
-            }
-
-            // Bolsillo Roto: roba monedas al atacante; el faltante entra como daño directo.
-            CartaBolsilloRoto bolsillo = c as CartaBolsilloRoto;
-            if (bolsillo != null)
-            {
-                int robado = System.Math.Min(bolsillo.monedasARobar, atacante.monedas);
-                atacante.GastarMonedas(robado);
-                defensor.GanarMonedas(robado);
-                int faltante = bolsillo.monedasARobar - robado;
-                if (faltante > 0) atacante.RecibirDanio(faltante);
-                bolsillo.usada = true;
-                Mensaje(defensor.nombre + " le roba " + robado + " monedas a " + atacante.nombre +
-                        (faltante > 0 ? " (+" + faltante + " de daño)" : "") + " con " + bolsillo.nombre + ".");
-                continue;
-            }
-
-            // Vampirismo Defensivo: el defensor se cura al ser atacado.
-            CartaVampirismoDefensivo vamp = c as CartaVampirismoDefensivo;
-            if (vamp != null)
-            {
-                defensor.Curar(vamp.curacion);
-                vamp.usada = true;
-                Mensaje(defensor.nombre + " se cura " + vamp.curacion + " con " + vamp.nombre + ".");
-                continue;
-            }
-        }
-    }
-
     // --- Botón COMPRAR CARTA ---
     // Comprás si querés (una o varias veces), pero SOLO en el turno en que
     // Recolectaste. Si no comprás, las monedas quedan acumuladas para después.
@@ -434,9 +311,12 @@ public class GameManager : MonoBehaviour
         CartaGrupal grupal = comprada as CartaGrupal;
         if (grupal != null)
         {
-            // Las grupales se activan APENAS se compran y NO van a la mano.
+            // Las grupales se activan APENAS se compran (polimorfismo) y NO van a la mano.
+            ContextoGrupal ctx = new ContextoGrupal {
+                jugadores = jugadores, mazo = mazo, descarte = descarte, comprador = j, partida = partida
+            };
             Mensaje(j.nombre + " compró la carta grupal: " + grupal.nombre + ".");
-            AplicarGrupal(grupal, j);
+            Mensaje(grupal.AplicarATodos(ctx));   // cada grupal aplica su propio efecto
             descarte.Agregar(comprada);
         }
         else
@@ -448,76 +328,12 @@ public class GameManager : MonoBehaviour
     }
 
     // Aplica el efecto de una carta grupal a TODOS los jugadores.
-    private void AplicarGrupal(CartaGrupal g, Jugador comprador)
-    {
-        if (g is CartaColecta)
-        {
-            // Suma todas las monedas y las reparte parejo; el resto va al comprador.
-            int suma = 0;
-            foreach (Jugador j in jugadores) suma += j.monedas;
-            int cada = suma / jugadores.Count;
-            int resto = suma % jugadores.Count;
-            foreach (Jugador j in jugadores) j.EstablecerMonedas(cada);
-            comprador.GanarMonedas(resto);
-            Mensaje("Colecta: se repartieron " + suma + " monedas (" + cada + " a cada uno, resto " + resto + " para " + comprador.nombre + ").");
-        }
-        else if (g is CartaExceso)
-        {
-            // Cada jugador recibe 1 carta gratis (si tiene lugar).
-            foreach (Jugador j in jugadores)
-            {
-                if (j.mano.Count >= 5) continue;
-                if (mazo.EstaVacio()) mazo.Reciclar(descarte);
-                Carta nueva = mazo.Robar();
-                if (nueva == null) continue;
-                if (nueva is CartaGrupal) descarte.Agregar(nueva);   // no encadenar grupales
-                else j.mano.Add(nueva);
-            }
-            Mensaje("Exceso: cada jugador recibió una carta gratis.");
-        }
-        else if (g is CartaPenitencia)
-        {
-            // Destruye todas las cartas de vencimiento de todas las manos.
-            foreach (Jugador j in jugadores)
-                for (int i = j.mano.Count - 1; i >= 0; i--)
-                    if (j.mano[i] is CartaVencimiento) { descarte.Agregar(j.mano[i]); j.mano.RemoveAt(i); }
-            Mensaje("Penitencia: se destruyeron todas las cartas de vencimiento.");
-        }
-        else if (g is CartaDescarteGrupal)
-        {
-            // Cada jugador descarta 1 carta (la primera, por simplicidad).
-            foreach (Jugador j in jugadores)
-                if (j.mano.Count > 0) { descarte.Agregar(j.mano[0]); j.mano.RemoveAt(0); }
-            Mensaje("Descarte Grupal: cada jugador descartó una carta.");
-        }
-        else if (g is CartaLeyMarcial)
-        {
-            // El próximo round todos están obligados a Atacar.
-            turnosLeyMarcial = jugadores.Count;
-            Mensaje("Ley Marcial: este round todos están obligados a Atacar.");
-        }
-    }
-
-    // Manda al descarte las cartas de un solo uso que ya se usaron.
-    private void DescartarUsadas(Jugador j)
-    {
-        for (int i = j.mano.Count - 1; i >= 0; i--)
-        {
-            if (j.mano[i].DebeDescartarse())   // un uso o comodín ya gastado
-            {
-                descarte.Agregar(j.mano[i]);
-                j.mano.RemoveAt(i);
-            }
-        }
-    }
-
     // --- Botón PASAR TURNO ---
     public void OnPasarTurno()
     {
         if (juegoTerminado) return;
         if (!yaTiro) { Mensaje("Elegí una acción y lanzá los dados antes de pasar."); return; }
-        if (turnosLeyMarcial > 0) turnosLeyMarcial--;   // se va gastando Ley Marcial
-        indiceActual = SiguienteJugadorVivo(indiceActual);
+        partida.PasarTurno();   // (adentro descuenta Ley Marcial si está activa)
         IniciarTurno();
     }
 
@@ -527,46 +343,19 @@ public class GameManager : MonoBehaviour
         yaTiro = false;
         puedeComprar = false;   // cada turno arranca sin poder comprar (hasta que Recolectes)
         cartasSeleccionadas.Clear();   // arranca sin cartas elegidas
-        indiceObjetivo = SiguienteRivalVivo(indiceActual);
+        partida.ElegirObjetivoPorDefecto();
         ActualizarUI();
         Mensaje("Turno de " + Actual().nombre + ": elegí una acción.");
     }
 
-    private int SiguienteJugadorVivo(int desde)
-    {
-        int i = desde;
-        for (int intento = 0; intento < jugadores.Count; intento++)
-        {
-            i = (i + 1) % jugadores.Count;
-            if (jugadores[i].EstaVivo()) return i;
-        }
-        return desde;
-    }
-
-    private int SiguienteRivalVivo(int desde)
-    {
-        int i = desde;
-        for (int intento = 0; intento < jugadores.Count; intento++)
-        {
-            i = (i + 1) % jugadores.Count;
-            if (i != indiceActual && jugadores[i].EstaVivo()) return i;
-        }
-        return indiceActual;
-    }
-
+    // Delega en la Partida (capa Reglas) y muestra el resultado si terminó.
     private void VerificarVictoria()
     {
-        int vivos = 0;
-        Jugador ultimo = null;
-        foreach (Jugador j in jugadores)
+        partida.VerificarVictoria();
+        if (partida.Terminada)
         {
-            if (j.EstaVivo()) { vivos++; ultimo = j; }
-        }
-        if (vivos <= 1)
-        {
-            juegoTerminado = true;
-            Mensaje("FIN DEL JUEGO. Ganó " + ultimo.nombre + "!");
-            if (textoTurno != null) textoTurno.text = "Ganó " + ultimo.nombre;
+            Mensaje("FIN DEL JUEGO. Ganó " + partida.Ganador.nombre + "!");
+            if (textoTurno != null) textoTurno.text = "Ganó " + partida.Ganador.nombre;
         }
     }
 

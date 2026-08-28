@@ -41,12 +41,23 @@ classDiagram
     direction LR
     class GameManager {
         <<Singleton · Visual>>
-        -List~Jugador~ jugadores
+        -Partida partida
         -Mazo mazo
         -Dado dado
         +OnAtacar() OnCurarse() OnRecolectar()
         +OnLanzarDados() OnComprarCarta()
-        +VerificarVictoria() ActualizarUI()
+        +OnCambiarObjetivo() OnPasarTurno()
+        +ActualizarUI()
+    }
+    class Partida {
+        <<Rules>>
+        -List~Jugador~ jugadores
+        -int IndiceActual
+        -int IndiceObjetivo
+        -Jugador Ganador
+        +PasarTurno()
+        +CambiarObjetivo()
+        +VerificarVictoria()
     }
     class MenuManager {
         <<Visual>>
@@ -76,6 +87,15 @@ classDiagram
         <<Factory · Rules>>
         +CrearMazo() Mazo
     }
+    class GestorCartas {
+        <<Rules>>
+        +Bonus(seleccion, Jugador, TipoAccion) int
+        +DadosExtra() int
+        +Multiplicador() int
+        +Absorber(Jugador, int) int
+        +Reflejar(Jugador, Jugador)
+        +DescartarUsadas(Jugador)
+    }
     class Mazo {
         <<Data>>
         -List~Carta~ cartas
@@ -100,15 +120,21 @@ classDiagram
     class CartaVencimiento
     class CartaReflectante
     class CartaReaccion
-    class CartaGrupal
+    class CartaGrupal {
+        <<abstract>>
+        +AplicarATodos(ContextoGrupal) string
+    }
 
     MenuManager --> Config : guarda
     GameManager --> Config : lee
-    GameManager o-- "2..4" Jugador
+    GameManager *-- Partida
+    Partida o-- "2..4" Jugador
     GameManager *-- Mazo
     GameManager *-- PilaDescarte
     GameManager --> Dado
     GameManager ..> FabricaDeCartas
+    GameManager --> GestorCartas
+    GestorCartas ..> PilaDescarte
     FabricaDeCartas ..> Mazo : crea
     Jugador "1" o-- "0..5" Carta : mano
     Mazo o-- "*" Carta
@@ -121,6 +147,8 @@ classDiagram
 ```
 
 > **Extensibilidad:** agregar un nuevo tipo de carta es crear una subclase de `Carta` (comodines, Bolsillo Roto, Vampirismo Defensivo…) y sumarla en `FabricaDeCartas`, sin tocar el resto del código.
+>
+> Las **grupales** (Colecta, Exceso, Descarte Grupal, Penitencia, Ley Marcial) heredan de `CartaGrupal` y cada una implementa su propio `AplicarATodos()` (**polimorfismo**), recibiendo un `ContextoGrupal`. La resolución de las cartas elegidas vive en `GestorCartas` (capa Reglas).
 
 ---
 
@@ -185,7 +213,7 @@ Reinicia las banderas, elige un **objetivo por defecto**, refresca la UI y avisa
    - Según la acción: **Atacar** (daño al objetivo, con reacción/reflejo automáticos del defensor), **Curarse** o **Recolectar** (habilita comprar).
    - Descarta las cartas usadas y llama `VerificarVictoria()`.
 5. **(Si recolectó) Comprar carta** — `OnComprarCarta()`: con ≥6 monedas y lugar, roba una del `Mazo` (o activa una grupal). Si no compra, **acumula** monedas.
-6. **Pasar turno** — `OnPasarTurno()`: avanza al `SiguienteJugadorVivo()` y vuelve a `IniciarTurno()`.
+6. **Pasar turno** — `OnPasarTurno()`: llama a `partida.PasarTurno()` (la capa Reglas avanza al siguiente jugador vivo) y vuelve a `IniciarTurno()`.
 
 ### E. Fin del juego — `VerificarVictoria()`
 Cuando queda **un solo jugador vivo**, `juegoTerminado = true` y muestra *"Ganó Jugador X"*.
@@ -227,7 +255,7 @@ Al **Recolectar**, con ≥6 monedas y mano con menos de 5 cartas, el botón **Co
 Sobre las cartas elegidas se aplica: **(1) dados extra** (`Comodín +1d4`) → **(2) multiplicador** (`Comodín ×2`) → **(3) bonus fijo** (pasiva / un uso / vencimiento). En código: `TirarDados(base + extra) * mult + bonus`. Las de un uso y los comodines se marcan con `DebeDescartarse()` y van al **descarte**; si el mazo se agota, se **recicla** (mazo circular).
 
 ### Combate defensivo
-Al recibir un ataque, `AplicarReaccion()` busca escudos en la mano del defensor (absorben daño gastando monedas) y `AplicarReflejo()` busca reflectantes (devuelven daño / roban monedas / curan). Todas son de **un solo uso**: al dispararse se descartan.
+Al recibir un ataque, `GestorCartas.Absorber()` aplica los escudos del defensor (absorben daño gastando monedas) y `GestorCartas.Reflejar()` aplica los reflectantes (devuelven daño / roban monedas / curan). Todas son de **un solo uso**: al dispararse se descartan. Toda esta lógica vive en la capa Reglas.
 
 ### Cartas de vencimiento (pago por uso)
 Tienen **N usos** y se pueden usar **en cualquier momento** (eligiéndolas). El **primer uso es gratis**; del segundo en adelante cuesta **2 monedas** (`CostoDelProximoUso()`). Si el jugador no puede pagar, o la carta se queda **sin usos** (`SinUsos()`), se **descarta**. Todo se resuelve en `BonusSeleccionadas()` al lanzar los dados.

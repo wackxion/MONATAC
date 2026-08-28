@@ -22,7 +22,9 @@ Listado organizado de las tareas de programación del proyecto, agrupadas por á
 | `FabricaDeCartas` — patrón Factory, arma las 54 cartas | ✅ |
 | Control del flujo del turno (elegir → tirar → pasar) | ✅ |
 | Condición de victoria (último jugador vivo) | ✅ |
-| Separar la lógica de reglas del `GameManager` a una clase propia (SRP) | 🔜 |
+| Clase `Partida` — flujo de ronda, turnos y victoria (SRP) | ✅ |
+| Clase `GestorCartas` — resolución de cartas (bonus, comodines, descarte) y combate defensivo | ✅ |
+| Grupales polimórficas (`AplicarATodos` + `ContextoGrupal`) | ✅ |
 
 ## 3. Acciones principales
 | Tarea | Estado |
@@ -72,12 +74,12 @@ Listado organizado de las tareas de programación del proyecto, agrupadas por á
 | Patrón **Factory** (`FabricaDeCartas`) | ✅ |
 | Herencia + polimorfismo (cartas) | ✅ |
 | Encapsulamiento del estado (`Jugador`) | ✅ |
+| Separación de reglas y UI: `Partida` + `GestorCartas` (SRP) | ✅ |
 | Diagramas UML (clases, estados, secuencia) | ✅ |
 
 ---
 
 ## 🔜 Pendientes (backlog futuro, por prioridad)
-1. **Separar reglas de la UI** en el `GameManager` (cumplir SRP a full).
-2. **Multijugador online** (el botón ya está preparado).
-3. **Balance y pruebas**: HP inicial configurable (hoy 40 para probar, real 100), testeo de partidas de 3–4 jugadores.
-4. **Cartas grupales más fieles** (ej. aviso visual de Ley Marcial, elección de carta en Descarte Grupal).
+1. **Multijugador online** (el botón ya está preparado).
+2. **Balance y pruebas**: HP inicial configurable (hoy 40 para probar, real 100), testeo de partidas de 3–4 jugadores.
+3. **Cartas grupales más fieles** (ej. aviso visual de Ley Marcial, elección de carta en Descarte Grupal).

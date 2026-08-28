@@ -184,24 +184,90 @@ public class CartaReaccion : Carta
 }
 
 // --- 6) GRUPAL: afecta a todos los jugadores al activarse ---
-public class CartaGrupal : Carta
+public abstract class CartaGrupal : Carta
 {
     public CartaGrupal(string nombre) : base(nombre, TipoCarta.Grupal) { }
 
-    // El efecto concreto depende de cada carta grupal (Colecta, Penitencia...).
-    // Por ahora es un molde; el efecto se implementará según la carta.
-    public virtual void AplicarATodos(List<Jugador> jugadores)
+    // Cada carta grupal APLICA su propio efecto a todos y devuelve un mensaje
+    // para mostrar. Es el patrón polimórfico: mismo método, distinta respuesta.
+    public abstract string AplicarATodos(ContextoGrupal ctx);
+}
+
+// --- COLECTA: junta todas las monedas y las reparte parejo ---
+public class CartaColecta : CartaGrupal
+{
+    public CartaColecta() : base("Colecta") { }
+
+    public override string AplicarATodos(ContextoGrupal ctx)
     {
-        // (el efecto concreto se resuelve en el GameManager, que tiene el mazo/descarte)
+        int suma = 0;
+        foreach (Jugador j in ctx.jugadores) suma += j.monedas;
+        int cada = suma / ctx.jugadores.Count;
+        int resto = suma % ctx.jugadores.Count;
+        foreach (Jugador j in ctx.jugadores) j.EstablecerMonedas(cada);
+        ctx.comprador.GanarMonedas(resto);
+        return "Colecta: se repartieron " + suma + " monedas (" + cada + " a cada uno, resto " + resto + " para " + ctx.comprador.nombre + ").";
     }
 }
 
-// --- Las 5 cartas grupales concretas (su efecto se resuelve en el GameManager) ---
-public class CartaLeyMarcial     : CartaGrupal { public CartaLeyMarcial()     : base("Ley Marcial") { } }
-public class CartaColecta        : CartaGrupal { public CartaColecta()        : base("Colecta") { } }
-public class CartaDescarteGrupal : CartaGrupal { public CartaDescarteGrupal() : base("Descarte Grupal") { } }
-public class CartaExceso         : CartaGrupal { public CartaExceso()         : base("Exceso") { } }
-public class CartaPenitencia     : CartaGrupal { public CartaPenitencia()     : base("Penitencia") { } }
+// --- EXCESO: cada jugador recibe 1 carta gratis ---
+public class CartaExceso : CartaGrupal
+{
+    public CartaExceso() : base("Exceso") { }
+
+    public override string AplicarATodos(ContextoGrupal ctx)
+    {
+        foreach (Jugador j in ctx.jugadores)
+        {
+            if (j.mano.Count >= 5) continue;
+            if (ctx.mazo.EstaVacio()) ctx.mazo.Reciclar(ctx.descarte);
+            Carta nueva = ctx.mazo.Robar();
+            if (nueva == null) continue;
+            if (nueva is CartaGrupal) ctx.descarte.Agregar(nueva);   // no encadenar grupales
+            else j.mano.Add(nueva);
+        }
+        return "Exceso: cada jugador recibió una carta gratis.";
+    }
+}
+
+// --- DESCARTE GRUPAL: cada jugador descarta 1 carta ---
+public class CartaDescarteGrupal : CartaGrupal
+{
+    public CartaDescarteGrupal() : base("Descarte Grupal") { }
+
+    public override string AplicarATodos(ContextoGrupal ctx)
+    {
+        foreach (Jugador j in ctx.jugadores)
+            if (j.mano.Count > 0) { ctx.descarte.Agregar(j.mano[0]); j.mano.RemoveAt(0); }
+        return "Descarte Grupal: cada jugador descartó una carta.";
+    }
+}
+
+// --- PENITENCIA: destruye todas las cartas de vencimiento ---
+public class CartaPenitencia : CartaGrupal
+{
+    public CartaPenitencia() : base("Penitencia") { }
+
+    public override string AplicarATodos(ContextoGrupal ctx)
+    {
+        foreach (Jugador j in ctx.jugadores)
+            for (int i = j.mano.Count - 1; i >= 0; i--)
+                if (j.mano[i] is CartaVencimiento) { ctx.descarte.Agregar(j.mano[i]); j.mano.RemoveAt(i); }
+        return "Penitencia: se destruyeron todas las cartas de vencimiento.";
+    }
+}
+
+// --- LEY MARCIAL: el próximo round todos deben Atacar ---
+public class CartaLeyMarcial : CartaGrupal
+{
+    public CartaLeyMarcial() : base("Ley Marcial") { }
+
+    public override string AplicarATodos(ContextoGrupal ctx)
+    {
+        ctx.partida.ActivarLeyMarcial();
+        return "Ley Marcial: este round todos están obligados a Atacar.";
+    }
+}
 
 // --- COMODÍN ×2: multiplica el resultado de los dados. Un solo uso. ---
 public class CartaComodinMultiplicador : Carta
