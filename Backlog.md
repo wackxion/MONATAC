@@ -77,9 +77,21 @@ Listado organizado de las tareas de programación del proyecto, agrupadas por á
 | Separación de reglas y UI: `Partida` + `GestorCartas` (SRP) | ✅ |
 | Diagramas UML (clases, estados, secuencia) | ✅ |
 
+## 8. Hito 2 — Arquitectura MVP + DIP
+| Tarea | Estado |
+|---|---|
+| `/Data` y `/Rules` sin motor gráfico (usar `System.Random`, no `UnityEngine.Random`) | 🔜 |
+| Persistencia de **3 datos** del menú → juego (jugadores + HP inicial + límite de rondas) | 🔜 |
+| HP inicial elegible en el menú (**50 / 100 / 150 / 200**) | 🔜 |
+| **Limitador de rondas** elegible en el menú | 🔜 |
+| Clase `abstract Accion` (herencia + polimorfismo en las acciones) | 🔜 |
+| **DIP**: `interface` de la vista + `event` (Rules y Visual no se conocen directo) | 🔜 |
+| **MVP estricto**: Presenter en `/Rules` (Modelo en `/Data`, Vista en `/Visual`) | 🔜 |
+
 ---
 
 ## 🔜 Pendientes (backlog futuro, por prioridad)
 1. **Multijugador online** (el botón ya está preparado).
 2. **Balance y pruebas**: HP inicial configurable (hoy 40 para probar, real 100), testeo de partidas de 3–4 jugadores.
 3. **Cartas grupales más fieles** (ej. aviso visual de Ley Marcial, elección de carta en Descarte Grupal).
+4. **Acción secundaria nueva** del jugador (ej. *Defenderse*), usando la jerarquía `abstract Accion` ya creada.
