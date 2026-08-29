@@ -198,7 +198,7 @@ Paso a paso, desde que se abre el juego hasta que hay un ganador.
 
 ### B. Arranque de la partida (escena `juego`)
 1. **`GameManager.Awake()`** (Singleton): fija `Instance` como la única instancia.
-2. **`GameManager.Start()`**: lee `Config.cantidadJugadores`, crea esa cantidad de `Jugador`, oculta las barras sobrantes, crea el `Dado`, la `PilaDescarte` y el `Mazo` con **`FabricaDeCartas.CrearMazo()`** (Factory), y llama `IniciarTurno()`.
+2. **`GameManager.Start()`**: lee `Config.cantidadJugadores`, crea la **`Partida`** (con sus `Jugador`), el **`GestorCartas`**, el `Dado`, la `PilaDescarte` y el `Mazo` con **`FabricaDeCartas.CrearMazo()`** (Factory), y llama `IniciarTurno()`.
 
 ### C. Inicio de cada turno — `IniciarTurno()`
 Reinicia las banderas, elige un **objetivo por defecto**, refresca la UI y avisa *"Turno de Jugador X"*.
@@ -207,16 +207,16 @@ Reinicia las banderas, elige un **objetivo por defecto**, refresca la UI y avisa
 1. **Elegir acción** — `OnAtacar` / `OnCurarse` / `OnRecolectar` guardan `accionElegida` (todavía no resuelven).
 2. **Elegir cartas** — `OnUsarCarta(i)` marca/desmarca cartas de la mano (`[USAR]`).
 3. **(Si ataca) Cambiar objetivo** — `OnCambiarObjetivo()` rota al siguiente rival vivo.
-4. **Lanzar dados** — `OnLanzarDados()`:
-   - Calcula, en orden fijo, **dados extra** (`DadosExtraSeleccionados`) → **multiplicador** (`MultiplicadorSeleccionado`) → **bonus** (`BonusSeleccionadas`), todo solo de las cartas elegidas (**polimorfismo**).
+4. **Lanzar dados** — `OnLanzarDados()`: le pide al **`GestorCartas`** (capa Reglas) que resuelva las cartas elegidas, en orden fijo:
+   - **`gestorCartas.DadosExtra()`** → **`Multiplicador()`** → **`Bonus()`** (cada carta responde con su propio método → **polimorfismo**).
    - `total = TirarDados(base + extra) * mult + bonus`.
-   - Según la acción: **Atacar** (daño al objetivo, con reacción/reflejo automáticos del defensor), **Curarse** o **Recolectar** (habilita comprar).
-   - Descarta las cartas usadas y llama `VerificarVictoria()`.
+   - Según la acción: **Atacar** (daño al objetivo, con `gestorCartas.Absorber()` y `Reflejar()` automáticos del defensor), **Curarse** o **Recolectar** (habilita comprar).
+   - `gestorCartas.DescartarUsadas()` manda lo gastado al descarte, y se llama `VerificarVictoria()`.
 5. **(Si recolectó) Comprar carta** — `OnComprarCarta()`: con ≥6 monedas y lugar, roba una del `Mazo` (o activa una grupal). Si no compra, **acumula** monedas.
 6. **Pasar turno** — `OnPasarTurno()`: llama a `partida.PasarTurno()` (la capa Reglas avanza al siguiente jugador vivo) y vuelve a `IniciarTurno()`.
 
 ### E. Fin del juego — `VerificarVictoria()`
-Cuando queda **un solo jugador vivo**, `juegoTerminado = true` y muestra *"Ganó Jugador X"*.
+Cuando queda **un solo jugador vivo**, `partida.VerificarVictoria()` marca `Terminada` (capa Reglas) y el `GameManager` muestra *"Ganó Jugador X"*.
 
 ### Resumen del ciclo
 ```mermaid

@@ -327,7 +327,6 @@ public class GameManager : MonoBehaviour
         ActualizarUI();
     }
 
-    // Aplica el efecto de una carta grupal a TODOS los jugadores.
     // --- Botón PASAR TURNO ---
     public void OnPasarTurno()
     {
