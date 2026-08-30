@@ -31,6 +31,10 @@ public class GameManager : MonoBehaviour
     [Header("Turno")]
     public TextMeshProUGUI textoTurno;
     public TextMeshProUGUI textoEstado;
+    
+    //hecho por pilar
+    [Header("Ronda")]
+    public TextMeshProUGUI textoRonda;
 
     [Header("Dados")]
     public TextMeshProUGUI dado1Texto;
@@ -53,7 +57,7 @@ public class GameManager : MonoBehaviour
     [Header("Animación de dados")]
     public AnimacionDados animacionDados;
 
-    private int hpInicial = 40;          // 40 para probar rápido; el real es 100
+    private int hpInicial;               //hecho por pilar: se carga de Config
     private int cantidadJugadores;       // lo define el menú (Config.cantidadJugadores)
 
     // --- Datos de la partida ---
@@ -102,10 +106,14 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        //hecho por pilar
+        // Cargar HP máximo y rondas de Config
+        hpInicial = Config.hpMaximo;
+        
         // La cantidad la eligió el menú. Si se juega esta escena directo,
         // usa el valor por defecto de Config. Clamp la mantiene entre 2 y 4.
         cantidadJugadores = Mathf.Clamp(Config.cantidadJugadores, 2, 4);
-        partida = new Partida(cantidadJugadores, hpInicial);   // crea la partida (capa Reglas)
+        partida = new Partida(cantidadJugadores, hpInicial, Config.cantidadRondas);   // crea la partida (capa Reglas)
 
         OcultarBarrasSobrantes();   // esconde las barras de los jugadores que no juegan
 
@@ -404,6 +412,16 @@ public class GameManager : MonoBehaviour
         if (textoMonedas != null) textoMonedas.text = "Monedas: " + Actual().monedas;
 
         if (textoTurno != null && !juegoTerminado) textoTurno.text = "Turno de " + Actual().nombre;
+        
+        //hecho por pilar
+        // Mostrar ronda actual
+        if (textoRonda != null)
+        {
+            if (partida.TotalRondas > 0)
+                textoRonda.text = "Ronda " + partida.RondaActual + "/" + partida.TotalRondas;
+            else
+                textoRonda.text = "Ronda " + partida.RondaActual;
+        }
 
         // Mano de cartas del jugador en turno: muestra el nombre de cada carta,
         // o "-" si ese slot está vacío.

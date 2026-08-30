@@ -31,4 +31,11 @@ public class MenuManager : MonoBehaviour
         Debug.Log("Multijugador online: próximamente.");
         if (textoAviso != null) textoAviso.text = "Multijugador online: próximamente.";
     }
+
+    //hecho por pilar
+    // Botón de personalización que lleva a la escena correspondiente.
+    public void Personalizacion()
+    {
+        SceneManager.LoadScene("Personalizacion");
+    }
 }

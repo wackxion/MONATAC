@@ -16,10 +16,16 @@ public class Partida
     public bool Terminada { get; private set; } = false;  // ¿ya hay ganador?
     public Jugador Ganador { get; private set; } = null;  // el ganador (si Terminada)
     public int TurnosLeyMarcial { get; private set; } = 0; // turnos que quedan de Ley Marcial
+    
+    //hecho por pilar
+    // Variables para rondas
+    public int RondaActual { get; private set; } = 1;
+    public int TotalRondas { get; private set; } = 0; // 0 = sin límite
 
     // Crea la partida con 'cantidad' jugadores, cada uno con 'hpInicial'.
-    public Partida(int cantidad, int hpInicial)
+    public Partida(int cantidad, int hpInicial, int totalRondas = 0)
     {
+        TotalRondas = totalRondas;
         for (int i = 0; i < cantidad; i++)
             jugadores.Add(new Jugador("Jugador " + (i + 1), hpInicial));
         ElegirObjetivoPorDefecto();
@@ -36,6 +42,14 @@ public class Partida
     {
         if (TurnosLeyMarcial > 0) TurnosLeyMarcial--;   // se va gastando Ley Marcial
         IndiceActual = SiguienteVivo(IndiceActual, false);
+        
+        //hecho por pilar
+        // Si el jugador actual es el primero, avanzamos de ronda
+        if (IndiceActual == 0)
+        {
+            RondaActual++;
+            VerificarRondas();
+        }
     }
 
     // Ley Marcial: activa que el próximo round todos deban Atacar.
@@ -79,6 +93,30 @@ public class Partida
         {
             Terminada = true;
             Ganador = ultimo;
+        }
+    }
+    
+    //hecho por pilar
+    // Verifica si se alcanzó el límite de rondas
+    private void VerificarRondas()
+    {
+        if (TotalRondas > 0 && RondaActual > TotalRondas)
+        {
+            // Si se acabaron las rondas, gana el jugador con más HP
+            Terminada = true;
+            Jugador ganador = null;
+            int mayorHP = -1;
+            
+            foreach (Jugador j in jugadores)
+            {
+                if (j.hp > mayorHP)
+                {
+                    mayorHP = j.hp;
+                    ganador = j;
+                }
+            }
+            
+            Ganador = ganador;
         }
     }
 }
