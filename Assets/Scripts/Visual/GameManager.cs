@@ -17,7 +17,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interface (patrón MVP: es la VISTA)
 {
     // Las 4 barras y los 4 nombres, EN ORDEN: [0]=Jugador 1, [1]=Jugador 2, etc.
     // En el Inspector se ponen como arreglos de tamaño 4.
@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour
     private Mazo mazo;                // el mazo de cartas
     private PilaDescarte descarte;    // la pila de descarte
     private GestorCartas gestorCartas; // REGLAS: resuelve el efecto de las cartas elegidas
+    private PresentadorJuego presentador; // MVP: coordina la acción "Cambiar Objetivo" (capa Rules)
     private List<Carta> cartasSeleccionadas = new List<Carta>();  // cartas que el jugador eligió usar este turno
 
     // Accesos de solo lectura que delegan en la Partida (así el resto del código no cambia).
@@ -75,6 +76,7 @@ public class GameManager : MonoBehaviour
 
     // --- Estado del turno ---
     private TipoAccion accionElegida;
+    private Accion accionActual;   // la acción polimórfica (AccionAtacar/Curarse/Recolectar)
     private bool haElegido = false;
     private bool yaTiro = false;
     private bool puedeComprar = false;    // ¿puede comprar cartas este turno? (solo si Recolectó)
@@ -104,6 +106,13 @@ public class GameManager : MonoBehaviour
         Instance = this;   // este pasa a ser LA instancia única
     }
 
+    // --- Implementación de IVistaJuego (patrón MVP: esta clase es la VISTA) ---
+    // La Vista AVISA por este evento; el PresentadorJuego (Rules) lo escucha.
+    public event System.Action AlPedirCambiarObjetivo;
+    // El Presentador nos PIDE estas dos cosas (a través de la interface):
+    public void RefrescarPantalla()        { ActualizarUI(); }
+    public void MostrarMensaje(string txt) { Mensaje(txt); }
+
     void Start()
     {
         //hecho por pilar
@@ -122,6 +131,10 @@ public class GameManager : MonoBehaviour
         gestorCartas = new GestorCartas(descarte);
         mazo = FabricaDeCartas.CrearMazo();   // la Fábrica arma el mazo
         mazo.Mezclar();
+
+        // MVP: creamos el Presentador y le pasamos esta Vista (this) y el Modelo (partida).
+        // En su constructor, el Presentador se suscribe al evento AlPedirCambiarObjetivo.
+        presentador = new PresentadorJuego(this, partida);
 
         IniciarTurno();
     }
@@ -159,17 +172,30 @@ public class GameManager : MonoBehaviour
             return;
         }
         accionElegida = accion;
+        accionActual = CrearAccion(accion);   // crea el objeto polimórfico de esta acción
         haElegido = true;
-        Mensaje("Elegiste " + accion + ". Ahora lanzá los dados.");
+        Mensaje("Elegiste " + accionActual.Nombre + ". Ahora lanzá los dados.");
+    }
+
+    // Crea el objeto Accion que corresponde al tipo elegido.
+    // Gracias a la HERENCIA, cada uno sabe cuántos dados tira y qué efecto hace.
+    private Accion CrearAccion(TipoAccion tipo)
+    {
+        switch (tipo)
+        {
+            case TipoAccion.Atacar:  return new AccionAtacar();
+            case TipoAccion.Curarse: return new AccionCurarse();
+            default:                 return new AccionRecolectar();   // Recolectar
+        }
     }
 
     // --- Botón CAMBIAR OBJETIVO: rota entre rivales vivos ---
     public void OnCambiarObjetivo()
     {
         if (juegoTerminado) return;
-        partida.CambiarObjetivo();
-        ActualizarUI();
-        Mensaje("Objetivo: " + Objetivo().nombre);
+        // MVP: la Vista solo AVISA (dispara el evento). El Presentador cambia el
+        // objetivo en el Modelo (Partida) y nos pide refrescar la pantalla.
+        AlPedirCambiarObjetivo?.Invoke();
     }
 
     // --- Botón LANZAR DADOS: aplica la acción ---
@@ -185,7 +211,7 @@ public class GameManager : MonoBehaviour
         Jugador jugador = Actual();
 
         // Orden fijo de las cartas elegidas: (1) dados extra, (2) multiplicador, (3) bonus fijo.
-        int dadosBase = (accionElegida == TipoAccion.Curarse) ? 2 : 3;   // curarse: 2d4; el resto: 3d4
+        int dadosBase = accionActual.CantidadDados;   // POLIMORFISMO: cada acción sabe cuántos dados tira
         dadosExtra = gestorCartas.DadosExtra(cartasSeleccionadas, accionElegida);   // comodín +1d4
         multiplicador = gestorCartas.Multiplicador(cartasSeleccionadas, accionElegida); // comodín x2
         bonusCartas = gestorCartas.Bonus(cartasSeleccionadas, jugador, accionElegida); // pasiva/un uso/vencimiento
@@ -238,8 +264,8 @@ public class GameManager : MonoBehaviour
             gestorCartas.Mensajes.Clear();
             total = gestorCartas.Absorber(defensor, total);
             foreach (string m in gestorCartas.Mensajes) Mensaje(m);
-            // 2) Se aplica el daño que queda.
-            defensor.RecibirDanio(total);
+            // 2) Se aplica el daño que queda (POLIMORFISMO: AccionAtacar daña al objetivo).
+            accionActual.Aplicar(partida, total);
             Mensaje(jugador.nombre + " ataca a " + defensor.nombre + " por " + total + " (x" + multiplicador + ", bonus +" + bonusCartas + ").");
             // 3) REFLECTANTE (auto): devuelve daño / roba monedas / cura (Espejo, Bolsillo Roto, Vampirismo).
             gestorCartas.Mensajes.Clear();
@@ -250,12 +276,12 @@ public class GameManager : MonoBehaviour
         }
         else if (accionElegida == TipoAccion.Curarse)
         {
-            jugador.Curar(totalFinal);
+            accionActual.Aplicar(partida, totalFinal);   // POLIMORFISMO: AccionCurarse cura al jugador
             Mensaje(jugador.nombre + " se cura " + totalFinal + " HP.");
         }
         else // Recolectar
         {
-            jugador.GanarMonedas(totalFinal);
+            accionActual.Aplicar(partida, totalFinal);   // POLIMORFISMO: AccionRecolectar suma monedas
             puedeComprar = true;   // habilita el botón Comprar carta este turno
             Mensaje(jugador.nombre + " recolecta " + totalFinal + " monedas. Podés comprar cartas (6 c/u) o acumular.");
         }

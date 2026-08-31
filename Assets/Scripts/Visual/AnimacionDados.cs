@@ -61,6 +61,14 @@ public class AnimacionDados : MonoBehaviour
         animacionEnCurso = true;
         int cantidadDados = Mathf.Min(valoresFinales.Length, textosDados.Length);
 
+        // Limpia los dados que NO se usan en esta tirada.
+        // Ej: Curarse tira 2 dados, así que el 3ro se borra (antes quedaba
+        // mostrando el número viejo de la tirada anterior).
+        for (int i = cantidadDados; i < textosDados.Length; i++)
+        {
+            if (textosDados[i] != null) textosDados[i].text = "";
+        }
+
         // Fase 1: Todos los dados giran al mismo tiempo
         float tiempoInicio = Time.time;
         bool[] detenido = new bool[cantidadDados];

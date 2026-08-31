@@ -41,14 +41,21 @@ public class Partida
     public void PasarTurno()
     {
         if (TurnosLeyMarcial > 0) TurnosLeyMarcial--;   // se va gastando Ley Marcial
+
+        // Guardamos en qué índice estábamos ANTES de avanzar el turno.
+        int indiceAnterior = IndiceActual;
+
+        // Avanzamos al siguiente jugador vivo (SiguienteVivo saltea a los muertos).
         IndiceActual = SiguienteVivo(IndiceActual, false);
-        
-        //hecho por pilar
-        // Si el jugador actual es el primero, avanzamos de ronda
-        if (IndiceActual == 0)
+
+        // Detectamos una RONDA NUEVA cuando el turno "da la vuelta a la mesa":
+        // eso pasa cuando el nuevo índice es MENOR que el anterior (volvió del
+        // último jugador al primero vivo). Sirve aunque el Jugador 1 esté muerto,
+        // porque no dependemos de un índice fijo (0), sino de la vuelta completa.
+        if (IndiceActual < indiceAnterior)
         {
-            RondaActual++;
-            VerificarRondas();
+            RondaActual++;        // arrancó una ronda más
+            VerificarRondas();    // ¿se alcanzó el límite de rondas?
         }
     }
 

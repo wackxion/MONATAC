@@ -7,6 +7,12 @@
 
 public class Dado
 {
+    // Generador de azar de C# puro (System.Random), NO el de Unity.
+    // Así esta clase no depende del motor gráfico y podría probarse sola.
+    // Es 'static' para compartir un único generador entre todos los dados
+    // (evita que dos dados creados en el mismo instante repitan resultados).
+    private static readonly System.Random azar = new System.Random();
+
     // 'private' = solo esta clase puede tocar este dato (encapsulamiento).
     // Guarda cuántas caras tiene el dado.
     private int caras;
@@ -21,8 +27,8 @@ public class Dado
     // Tira el dado y devuelve un número al azar.
     public int Tirar()
     {
-        // Random.Range(min, max) con enteros incluye el min pero EXCLUYE el max.
+        // azar.Next(min, max) incluye el min pero EXCLUYE el max (igual que antes).
         // Por eso usamos (1, caras + 1) para que salga del 1 al 4 (no del 1 al 3).
-        return UnityEngine.Random.Range(1, caras + 1);
+        return azar.Next(1, caras + 1);
     }
 }

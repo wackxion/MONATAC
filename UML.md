@@ -10,6 +10,7 @@ La sintaxis de Unity/C# se movió a un archivo aparte: **[SintaxisUnity.md](Sint
 4. [Secuencia de un ataque](#-4-secuencia-de-un-ataque)
 5. [Flujo detallado del juego](#-5-flujo-detallado-del-juego)
 6. [Sistema de cartas](#-6-sistema-de-cartas)
+7. [Arquitectura MVP + DIP (Hito 2)](#-7-arquitectura-mvp--dip-hito-2)
 
 ---
 
@@ -42,11 +43,14 @@ classDiagram
     class GameManager {
         <<Singleton · Visual>>
         -Partida partida
+        -Accion accionActual
+        -PresentadorJuego presentador
         -Mazo mazo
         -Dado dado
         +OnAtacar() OnCurarse() OnRecolectar()
         +OnLanzarDados() OnComprarCarta()
         +OnCambiarObjetivo() OnPasarTurno()
+        +RefrescarPantalla() MostrarMensaje(string)
         +ActualizarUI()
     }
     class Partida {
@@ -54,10 +58,13 @@ classDiagram
         -List~Jugador~ jugadores
         -int IndiceActual
         -int IndiceObjetivo
+        -int RondaActual
+        -int TotalRondas
         -Jugador Ganador
         +PasarTurno()
         +CambiarObjetivo()
         +VerificarVictoria()
+        +VerificarRondas()
     }
     class MenuManager {
         <<Visual>>
@@ -67,6 +74,8 @@ classDiagram
     class Config {
         <<static · Data>>
         +int cantidadJugadores
+        +int hpMaximo
+        +int cantidadRondas
     }
     class Jugador {
         <<Data>>
@@ -124,6 +133,31 @@ classDiagram
         <<abstract>>
         +AplicarATodos(ContextoGrupal) string
     }
+    class Accion {
+        <<abstract · Rules>>
+        +Nombre string
+        +CantidadDados int
+        +Aplicar(Partida, int)
+    }
+    class AccionAtacar
+    class AccionCurarse
+    class AccionRecolectar
+    class IVistaJuego {
+        <<interface · Rules>>
+        +AlPedirCambiarObjetivo event
+        +RefrescarPantalla()
+        +MostrarMensaje(string)
+    }
+    class PresentadorJuego {
+        <<Presenter · Rules>>
+        -IVistaJuego vista
+        -Partida partida
+        +CambiarObjetivo()
+    }
+    class PersonalizacionManager {
+        <<Visual>>
+        +GuardarYVolver()
+    }
 
     MenuManager --> Config : guarda
     GameManager --> Config : lee
@@ -144,11 +178,22 @@ classDiagram
     Carta <|-- CartaReflectante
     Carta <|-- CartaReaccion
     Carta <|-- CartaGrupal
+    Accion <|-- AccionAtacar
+    Accion <|-- AccionCurarse
+    Accion <|-- AccionRecolectar
+    GameManager ..> Accion : crea y usa
+    GameManager ..|> IVistaJuego : implementa
+    GameManager *-- PresentadorJuego
+    PresentadorJuego --> IVistaJuego : usa (DIP)
+    PresentadorJuego --> Partida
+    PersonalizacionManager --> Config : guarda HP/rondas
 ```
 
 > **Extensibilidad:** agregar un nuevo tipo de carta es crear una subclase de `Carta` (comodines, Bolsillo Roto, Vampirismo Defensivo…) y sumarla en `FabricaDeCartas`, sin tocar el resto del código.
 >
 > Las **grupales** (Colecta, Exceso, Descarte Grupal, Penitencia, Ley Marcial) heredan de `CartaGrupal` y cada una implementa su propio `AplicarATodos()` (**polimorfismo**), recibiendo un `ContextoGrupal`. La resolución de las cartas elegidas vive en `GestorCartas` (capa Reglas).
+>
+> **Hito 2 (MVP + DIP):** las **acciones** son polimórficas (`Accion` abstracta + `AccionAtacar/Curarse/Recolectar`); el `GameManager` las usa para saber cuántos dados tira y qué efecto aplicar. La interacción **"Cambiar Objetivo"** sigue el patrón **MVP**: el `GameManager` (Vista) implementa `IVistaJuego` y solo dispara un **evento**; el `PresentadorJuego` (Presenter, en Rules) lo escucha, actualiza la `Partida` (Modelo) y le pide a la Vista que refresque — dependiendo de la **interface**, no de la clase concreta (**DIP**). Ver la [sección 7](#-7-arquitectura-mvp--dip-hito-2).
 
 ---
 
@@ -198,25 +243,25 @@ Paso a paso, desde que se abre el juego hasta que hay un ganador.
 
 ### B. Arranque de la partida (escena `juego`)
 1. **`GameManager.Awake()`** (Singleton): fija `Instance` como la única instancia.
-2. **`GameManager.Start()`**: lee `Config.cantidadJugadores`, crea la **`Partida`** (con sus `Jugador`), el **`GestorCartas`**, el `Dado`, la `PilaDescarte` y el `Mazo` con **`FabricaDeCartas.CrearMazo()`** (Factory), y llama `IniciarTurno()`.
+2. **`GameManager.Start()`**: lee de `Config` la **cantidad de jugadores**, el **HP** y las **rondas**; crea la **`Partida`** (con sus `Jugador`), el **`GestorCartas`**, el `Dado`, la `PilaDescarte`, el `Mazo` con **`FabricaDeCartas.CrearMazo()`** (Factory) y el **`PresentadorJuego`** (MVP); por último llama `IniciarTurno()`.
 
 ### C. Inicio de cada turno — `IniciarTurno()`
 Reinicia las banderas, elige un **objetivo por defecto**, refresca la UI y avisa *"Turno de Jugador X"*.
 
 ### D. El jugador juega su turno
-1. **Elegir acción** — `OnAtacar` / `OnCurarse` / `OnRecolectar` guardan `accionElegida` (todavía no resuelven).
+1. **Elegir acción** — `OnAtacar` / `OnCurarse` / `OnRecolectar` crean la **`Accion`** correspondiente (`AccionAtacar/Curarse/Recolectar`, **polimorfismo**) y la guardan (todavía no resuelven).
 2. **Elegir cartas** — `OnUsarCarta(i)` marca/desmarca cartas de la mano (`[USAR]`).
-3. **(Si ataca) Cambiar objetivo** — `OnCambiarObjetivo()` rota al siguiente rival vivo.
-4. **Lanzar dados** — `OnLanzarDados()`: le pide al **`GestorCartas`** (capa Reglas) que resuelva las cartas elegidas, en orden fijo:
+3. **(Si ataca) Cambiar objetivo** — `OnCambiarObjetivo()` dispara el **evento** `AlPedirCambiarObjetivo`; el **`PresentadorJuego`** (MVP) lo escucha, le pide a la `Partida` rotar al siguiente rival vivo y le pide a la Vista refrescar (**MVP + DIP**).
+4. **Lanzar dados** — `OnLanzarDados()`: la cantidad de dados la decide **`accionActual.CantidadDados`** (polimorfismo). Le pide al **`GestorCartas`** (capa Reglas) que resuelva las cartas elegidas, en orden fijo:
    - **`gestorCartas.DadosExtra()`** → **`Multiplicador()`** → **`Bonus()`** (cada carta responde con su propio método → **polimorfismo**).
-   - `total = TirarDados(base + extra) * mult + bonus`.
-   - Según la acción: **Atacar** (daño al objetivo, con `gestorCartas.Absorber()` y `Reflejar()` automáticos del defensor), **Curarse** o **Recolectar** (habilita comprar).
+   - `total = dados(base + extra) * mult + bonus`.
+   - El efecto lo aplica la propia acción: **`accionActual.Aplicar(partida, total)`** → **Atacar** (daño al objetivo, con `gestorCartas.Absorber()` y `Reflejar()` automáticos del defensor), **Curarse** o **Recolectar** (habilita comprar).
    - `gestorCartas.DescartarUsadas()` manda lo gastado al descarte, y se llama `VerificarVictoria()`.
 5. **(Si recolectó) Comprar carta** — `OnComprarCarta()`: con ≥6 monedas y lugar, roba una del `Mazo` (o activa una grupal). Si no compra, **acumula** monedas.
 6. **Pasar turno** — `OnPasarTurno()`: llama a `partida.PasarTurno()` (la capa Reglas avanza al siguiente jugador vivo) y vuelve a `IniciarTurno()`.
 
-### E. Fin del juego — `VerificarVictoria()`
-Cuando queda **un solo jugador vivo**, `partida.VerificarVictoria()` marca `Terminada` (capa Reglas) y el `GameManager` muestra *"Ganó Jugador X"*.
+### E. Fin del juego
+El juego termina de dos formas (capa Reglas, marca `Terminada`): cuando queda **un solo jugador vivo** (`partida.VerificarVictoria()`), o cuando se alcanza el **límite de rondas** elegido en el menú (`VerificarRondas()` → gana el de **más HP**). El `GameManager` muestra *"Ganó Jugador X"*.
 
 ### Resumen del ciclo
 ```mermaid
@@ -258,10 +303,10 @@ Sobre las cartas elegidas se aplica: **(1) dados extra** (`Comodín +1d4`) → *
 Al recibir un ataque, `GestorCartas.Absorber()` aplica los escudos del defensor (absorben daño gastando monedas) y `GestorCartas.Reflejar()` aplica los reflectantes (devuelven daño / roban monedas / curan). Todas son de **un solo uso**: al dispararse se descartan. Toda esta lógica vive en la capa Reglas.
 
 ### Cartas de vencimiento (pago por uso)
-Tienen **N usos** y se pueden usar **en cualquier momento** (eligiéndolas). El **primer uso es gratis**; del segundo en adelante cuesta **2 monedas** (`CostoDelProximoUso()`). Si el jugador no puede pagar, o la carta se queda **sin usos** (`SinUsos()`), se **descarta**. Todo se resuelve en `BonusSeleccionadas()` al lanzar los dados.
+Tienen **N usos** y se pueden usar **en cualquier momento** (eligiéndolas). El **primer uso es gratis**; del segundo en adelante cuesta **2 monedas** (`CostoDelProximoUso()`). Si el jugador no puede pagar, o la carta se queda **sin usos** (`SinUsos()`), se **descarta**. Todo se resuelve en `gestorCartas.Bonus()` al lanzar los dados.
 
 ### Cartas grupales (se activan al comprarse)
-Al comprar una grupal, su efecto se aplica a **todos** los jugadores y la carta va al **descarte** (no a la mano). Se resuelve en `AplicarGrupal()`:
+Al comprar una grupal, su efecto se aplica a **todos** los jugadores y la carta va al **descarte** (no a la mano). Cada una se resuelve en su propio `AplicarATodos(ContextoGrupal)` (**polimorfismo**):
 
 | Carta | Efecto |
 |---|---|
@@ -270,3 +315,37 @@ Al comprar una grupal, su efecto se aplica a **todos** los jugadores y la carta 
 | Descarte Grupal | Cada jugador descarta 1 carta |
 | Penitencia | Destruye todas las cartas de vencimiento de todas las manos |
 | Ley Marcial | El próximo round todos están obligados a Atacar |
+
+---
+
+## 🏛️ 7. Arquitectura MVP + DIP (Hito 2)
+
+El proyecto separa la lógica del motor gráfico en **3 capas** (`/Data`, `/Rules`, `/Visual`) y aplica el patrón **MVP** con **inversión de dependencias (DIP)** en la interacción *"Cambiar Objetivo"*.
+
+| Rol (MVP) | Clase | Capa |
+|---|---|---|
+| **Modelo** | `Partida`, `Jugador` | Data / Rules |
+| **Vista** | `GameManager` (implementa `IVistaJuego`) | Visual |
+| **Presentador** | `PresentadorJuego` | Rules |
+
+La Vista **no** conoce al Modelo, y el Presentador **no** conoce a la Vista concreta: depende de la **interface `IVistaJuego`** (DIP). La comunicación Vista → Presentador es por **evento**.
+
+```mermaid
+sequenceDiagram
+    actor U as Usuario
+    participant V as GameManager (Vista)
+    participant P as PresentadorJuego
+    participant M as Partida (Modelo)
+    U->>V: clic "Cambiar Objetivo"
+    V-->>P: dispara evento AlPedirCambiarObjetivo
+    P->>M: CambiarObjetivo()
+    P->>V: RefrescarPantalla() (por IVistaJuego)
+    P->>V: MostrarMensaje("Objetivo: ...")
+    Note over V,P: la Vista y el Modelo nunca se hablan directo
+```
+
+### Otros puntos del hito
+- **Herencia + Polimorfismo en acciones:** `Accion` (abstracta) con `AccionAtacar/Curarse/Recolectar`; cada una define cuántos dados tira (`CantidadDados`) y su efecto (`Aplicar`). El `GameManager` no decide con `if`: le pide a la acción que se aplique.
+- **SRP:** las reglas se extrajeron del `GameManager` a `Partida` (turnos, rondas, victoria) y `GestorCartas` (cartas).
+- **Sin dependencia del motor:** `/Data` y `/Rules` usan `System.Random` (C# puro), así son **testeables** sin abrir Unity.
+- **Persistencia:** `Config` (static) lleva **3 datos** del menú a la escena de juego (jugadores, HP, rondas), elegidos en la escena `Personalizacion`.

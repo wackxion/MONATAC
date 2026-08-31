@@ -8,6 +8,10 @@ using System.Collections.Generic;
 
 public class Mazo
 {
+    // Generador de azar de C# puro (System.Random), NO el de Unity.
+    // Mantiene al Mazo independiente del motor gráfico.
+    private static readonly System.Random azar = new System.Random();
+
     private List<Carta> cartas;
 
     // Recibe la lista de cartas ya armada (por la Fábrica).
@@ -33,7 +37,7 @@ public class Mazo
     {
         for (int i = cartas.Count - 1; i > 0; i--)
         {
-            int j = UnityEngine.Random.Range(0, i + 1);
+            int j = azar.Next(0, i + 1);
             Carta tmp = cartas[i];
             cartas[i] = cartas[j];
             cartas[j] = tmp;
