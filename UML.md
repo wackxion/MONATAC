@@ -218,13 +218,16 @@ stateDiagram-v2
 sequenceDiagram
     actor J as Atacante
     participant T as GameManager
+    participant A as accionActual (Accion)
     participant D as Dado
     participant O as Objetivo
-    J->>T: OnAtacar() (elige)
+    J->>T: OnAtacar() → crea AccionAtacar
     J->>T: OnLanzarDados()
+    T->>A: CantidadDados (= 3, polimorfismo)
     T->>D: Tirar() x3
     D-->>T: resultado
-    T->>O: RecibirDanio(total)
+    T->>A: Aplicar(partida, total)
+    A->>O: RecibirDanio(total)
     Note over T,O: si el objetivo llega a 0 HP, es eliminado
 ```
 
