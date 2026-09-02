@@ -25,6 +25,10 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     public Image[] barras;
     public TextMeshProUGUI[] nombres;
 
+    // [AGREGADO POR JULIAN] Imágenes de los jugadores (avatares/retratos)
+    [Header("Imágenes de los jugadores (en orden J1, J2, J3, J4)")]
+    public Image[] imagenesJugadores;
+
     [Header("Del jugador en turno")]
     public TextMeshProUGUI textoMonedas;
 
@@ -57,8 +61,14 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     [Header("Animación de dados")]
     public AnimacionDados animacionDados;
 
-    private int hpInicial;               //hecho por pilar: se carga de Config
+    //hecho/modificado por Julian
+    private int hpInicial;               // se carga de Config
     private int cantidadJugadores;       // lo define el menú (Config.cantidadJugadores)
+
+    // [AGREGADO POR JULIAN] Configuración visual del turno
+    private float opacidadRival = 0.5f;
+    public Color colorBarra = Color.green;
+    public Color colorObjetivo = new Color(1f, 0.3f, 0.3f);
 
     // --- Datos de la partida ---
     private Partida partida;          // REGLAS: jugadores, orden de turno y victoria (capa Rules)
@@ -445,7 +455,19 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
 
             // La barra: llena según su HP (0 a 1).
             if (barras != null && i < barras.Length && barras[i] != null)
+            {
                 barras[i].fillAmount = (float)j.hp / j.hpMaximo;
+
+                // [MODIFICADO POR JULIAN] Color de barra: turno = colorBarra, objetivo = colorObjetivo, rivales = gris
+                Color cTurno = colorBarra;
+                float gris = cTurno.r * 0.3f + cTurno.g * 0.59f + cTurno.b * 0.11f;
+                Color cRival = new Color(gris, gris, gris, 1f);
+                Color cBarra;
+                if (i == indiceActual) cBarra = cTurno;
+                else if (i == indiceObjetivo) cBarra = colorObjetivo;
+                else cBarra = cRival;
+                barras[i].color = cBarra;
+            }
 
             // El nombre con su HP y la marca de turno/objetivo.
             if (nombres != null && i < nombres.Length && nombres[i] != null)
@@ -455,6 +477,19 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
                 else if (i == indiceActual)   marca = " (turno)";
                 else if (i == indiceObjetivo) marca = " (objetivo)";
                 nombres[i].text = j.nombre + ": " + j.hp + " HP" + marca;
+
+                // [MODIFICADO POR JULIAN] Color de nombre: turno = blanco, objetivo = colorObjetivo, rivales = gris
+                if (i == indiceActual) nombres[i].color = Color.white;
+                else if (i == indiceObjetivo) nombres[i].color = colorObjetivo;
+                else nombres[i].color = new Color(opacidadRival, opacidadRival, opacidadRival, 1f);
+            }
+
+            // [MODIFICADO POR JULIAN] Color de imagen: turno = blanco, objetivo = colorObjetivo, rivales = gris
+            if (imagenesJugadores != null && i < imagenesJugadores.Length && imagenesJugadores[i] != null)
+            {
+                if (i == indiceActual) imagenesJugadores[i].color = Color.white;
+                else if (i == indiceObjetivo) imagenesJugadores[i].color = colorObjetivo;
+                else imagenesJugadores[i].color = new Color(opacidadRival, opacidadRival, opacidadRival, 1f);
             }
         }
 

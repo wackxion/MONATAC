@@ -9,15 +9,20 @@ using UnityEngine.UI;
 
 public class BotonValor : MonoBehaviour
 {
-    //hecho por pilar
+    //hecho/modificado por Julian
     // Valor que representa este botón
     public int valor;
     
-    //hecho por pilar
+    //hecho/modificado por Julian
     // Tipo de valor (HP o Rondas)
     public TipoValor tipo;
     
-    //hecho por pilar
+    //hecho/modificado por Julian
+    // Colores para el estado seleccionado/no seleccionado
+    public Color colorNormal = Color.white;
+    public Color colorSeleccionado = new Color(0.4f, 0.8f, 0.4f);
+    
+    //hecho/modificado por Julian
     // Referencia al PersonalizacionManager
     private PersonalizacionManager manager;
 
@@ -29,11 +34,11 @@ public class BotonValor : MonoBehaviour
 
     void Start()
     {
-        //hecho por pilar
+        //hecho/modificado por Julian
         // Buscar el PersonalizacionManager en la escena
         manager = FindObjectOfType<PersonalizacionManager>();
         
-        //hecho por pilar
+        //hecho/modificado por Julian
         // Configurar el botón
         Button boton = GetComponent<Button>();
         if (boton != null)
@@ -42,7 +47,7 @@ public class BotonValor : MonoBehaviour
         }
     }
 
-    //hecho por pilar
+    //hecho/modificado por Julian
     // Acción al hacer clic
     private void OnClick()
     {
@@ -56,5 +61,14 @@ public class BotonValor : MonoBehaviour
         {
             manager.SetRondas(valor);
         }
+    }
+
+    //hecho/modificado por Julian
+    // Marcar este botón como seleccionado o no
+    public void SetSeleccionado(bool seleccionado)
+    {
+        Image img = GetComponent<Image>();
+        if (img != null)
+            img.color = seleccionado ? colorSeleccionado : colorNormal;
     }
 }

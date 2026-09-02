@@ -10,26 +10,44 @@ using TMPro;
 
 public class PersonalizacionManager : MonoBehaviour
 {
-    //hecho por pilar
+    //hecho/modificado por Julian
     // Textos que muestran los valores seleccionados
     public TextMeshProUGUI textoHP;
     public TextMeshProUGUI textoRondas;
     
-    //hecho por pilar
+    //hecho/modificado por Julian
+    // Botones de la interfaz (se buscan automáticamente)
+    private BotonValor[] botonesHP;
+    private BotonValor[] botonesRondas;
+    
+    //hecho/modificado por Julian
     // Valores actuales seleccionados
     private int hpSeleccionado = 40;
     private int rondasSeleccionadas = 0;
     
-    //hecho por pilar
+    //hecho/modificado por Julian
     // Límites para las opciones
     private int hpMinimo = 20;
     private int hpMaximo = 200;
     private int rondasMinimas = 0;
-    private int rondasMaximas = 20;
+    private int rondasMaximas = 30;
 
     void Start()
     {
-        //hecho por pilar
+        //hecho/modificado por Julian
+        // Buscar todos los botones de valor en la escena
+        BotonValor[] todos = FindObjectsOfType<BotonValor>();
+        System.Collections.Generic.List<BotonValor> listaHP = new System.Collections.Generic.List<BotonValor>();
+        System.Collections.Generic.List<BotonValor> listaRondas = new System.Collections.Generic.List<BotonValor>();
+        foreach (BotonValor b in todos)
+        {
+            if (b.tipo == BotonValor.TipoValor.HP) listaHP.Add(b);
+            else listaRondas.Add(b);
+        }
+        botonesHP = listaHP.ToArray();
+        botonesRondas = listaRondas.ToArray();
+        
+        //hecho/modificado por Julian
         // Cargar valores actuales de Config
         hpSeleccionado = Config.hpMaximo;
         rondasSeleccionadas = Config.cantidadRondas;
@@ -37,7 +55,7 @@ public class PersonalizacionManager : MonoBehaviour
         ActualizarUI();
     }
 
-    //hecho por pilar
+    //hecho/modificado por Julian
     // Métodos para HP máximo
     public void AumentarHP()
     {
@@ -53,7 +71,7 @@ public class PersonalizacionManager : MonoBehaviour
         ActualizarUI();
     }
 
-    //hecho por pilar
+    //hecho/modificado por Julian
     // Métodos para cantidad de rondas
     public void AumentarRondas()
     {
@@ -69,7 +87,7 @@ public class PersonalizacionManager : MonoBehaviour
         ActualizarUI();
     }
 
-    //hecho por pilar
+    //hecho/modificado por Julian
     // Métodos para establecer valores directamente (para cuadraditos clickeables)
     public void SetHP(int valor)
     {
@@ -83,8 +101,8 @@ public class PersonalizacionManager : MonoBehaviour
         ActualizarUI();
     }
 
-    //hecho por pilar
-    // Actualizar textos de la interfaz
+    //hecho/modificado por Julian
+    // Actualizar textos de la interfaz y botones
     private void ActualizarUI()
     {
         if (textoHP != null)
@@ -97,9 +115,16 @@ public class PersonalizacionManager : MonoBehaviour
             else
                 textoRondas.text = rondasSeleccionadas.ToString();
         }
+
+        //hecho/modificado por Julian
+        // Actualizar color de los botones según selección
+        foreach (BotonValor b in botonesHP)
+            b.SetSeleccionado(b.valor == hpSeleccionado);
+        foreach (BotonValor b in botonesRondas)
+            b.SetSeleccionado(b.valor == rondasSeleccionadas);
     }
 
-    //hecho por pilar
+    //hecho/modificado por Julian
     // Guardar configuración y volver al menú
     public void GuardarYVolver()
     {
@@ -108,7 +133,7 @@ public class PersonalizacionManager : MonoBehaviour
         SceneManager.LoadScene("MENU");
     }
 
-    //hecho por pilar
+    //hecho/modificado por Julian
     // Volver al menú sin guardar
     public void VolverAlMenu()
     {
