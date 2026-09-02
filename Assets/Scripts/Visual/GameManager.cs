@@ -162,6 +162,14 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     public void OnCurarse()    { ElegirAccion(TipoAccion.Curarse); }
     public void OnRecolectar() { ElegirAccion(TipoAccion.Recolectar); }
 
+    // Acción DESCARTAR: solo se puede si tenés al menos una carta en la mano.
+    public void OnDescartar()
+    {
+        if (juegoTerminado || yaTiro) return;
+        if (Actual().mano.Count == 0) { Mensaje("No tenés cartas para descartar."); return; }
+        ElegirAccion(TipoAccion.Descartar);
+    }
+
     private void ElegirAccion(TipoAccion accion)
     {
         if (juegoTerminado || yaTiro) return;
@@ -174,7 +182,10 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         accionElegida = accion;
         accionActual = CrearAccion(accion);   // crea el objeto polimórfico de esta acción
         haElegido = true;
-        Mensaje("Elegiste " + accionActual.Nombre + ". Ahora lanzá los dados.");
+        if (accion == TipoAccion.Descartar)
+            Mensaje("Descartar: tocá la carta que querés tirar (perdés el turno).");
+        else
+            Mensaje("Elegiste " + accionActual.Nombre + ". Ahora lanzá los dados.");
     }
 
     // Crea el objeto Accion que corresponde al tipo elegido.
@@ -183,9 +194,10 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     {
         switch (tipo)
         {
-            case TipoAccion.Atacar:  return new AccionAtacar();
-            case TipoAccion.Curarse: return new AccionCurarse();
-            default:                 return new AccionRecolectar();   // Recolectar
+            case TipoAccion.Atacar:    return new AccionAtacar();
+            case TipoAccion.Curarse:   return new AccionCurarse();
+            case TipoAccion.Descartar: return new AccionDescartar();
+            default:                   return new AccionRecolectar();   // Recolectar
         }
     }
 
@@ -204,6 +216,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         if (juegoTerminado) return;
         if (!haElegido) { Mensaje("Primero elegí una acción."); return; }
         if (yaTiro)     { Mensaje("Ya tiraste. Pasá el turno."); return; }
+        if (accionElegida == TipoAccion.Descartar) { Mensaje("Para descartar, tocá la carta que querés tirar."); return; }
 
         // [AGREGADO POR JULIAN] Bloquear si la animación de dados está corriendo
         if (animacionDados != null && animacionDados.EstaAnimando()) return;
@@ -304,6 +317,17 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         if (indice < 0 || indice >= j.mano.Count) { Mensaje("Ahí no tenés carta."); return; }
 
         Carta carta = j.mano[indice];
+
+        // Acción DESCARTAR: al tocar una carta, se descarta al instante y se pierde el turno.
+        if (accionElegida == TipoAccion.Descartar)
+        {
+            j.mano.RemoveAt(indice);    // la carta sale de la mano
+            descarte.Agregar(carta);    // va a la pila de descarte (para reciclar)
+            Mensaje(j.nombre + " descartó " + carta.nombre + ". Pasá el turno.");
+            yaTiro = true;              // descartar consume el turno
+            ActualizarUI();
+            return;
+        }
 
         // Las defensivas y grupales NO se eligen: se activan solas.
         if (carta is CartaReflectante || carta is CartaReaccion || carta is CartaGrupal)

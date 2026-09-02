@@ -11,7 +11,8 @@ public enum TipoAccion
 {
     Atacar,      // hace daño a un rival
     Curarse,     // recupera HP propio
-    Recolectar   // gana monedas
+    Recolectar,  // gana monedas
+    Descartar    // tira una carta de la mano (pierde el turno)
 }
 
 // Los seis tipos de carta del juego (según cuándo actúa cada una).

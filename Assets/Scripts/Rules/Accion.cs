@@ -57,3 +57,18 @@ public class AccionRecolectar : Accion
         partida.Actual().GanarMonedas(total);
     }
 }
+
+// --- Acción DESCARTAR: NO tira dados. El jugador tira una carta de su mano
+// y pierde el turno. El descarte en sí lo maneja el GameManager, porque
+// necesita la mano del jugador y la pila de descarte (que no están en Partida).
+public class AccionDescartar : Accion
+{
+    public override string Nombre => "Descartar";
+    public override int CantidadDados => 0;   // no tira dados
+
+    public override void Aplicar(Partida partida, int total)
+    {
+        // No hace nada acá: el descarte se resuelve en el GameManager
+        // (necesita la carta elegida y la PilaDescarte).
+    }
+}

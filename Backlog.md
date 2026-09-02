@@ -34,6 +34,7 @@ Listado organizado de las tareas de programación del proyecto, agrupadas por á
 | Acción **Recolectar** (3d4 + comprar) | ✅ |
 | Anunciar la acción antes de tirar los dados | ✅ |
 | Elegir objetivo del ataque (rota rivales vivos) | ✅ |
+| Acción **Descartar** (tira 1 carta, sin dados, pierde el turno) | ✅ |
 
 ## 4. Sistema de cartas
 | Tarea | Estado |
@@ -87,6 +88,7 @@ Listado organizado de las tareas de programación del proyecto, agrupadas por á
 | Clase `abstract Accion` (herencia + polimorfismo) — creada y **usada** en `GameManager` (dados + efecto) | ✅ |
 | **DIP**: `interface IVistaJuego` + `event` (el Presentador no conoce al GameManager) | ✅ |
 | **MVP estricto**: `PresentadorJuego` en `/Rules` (Modelo `Partida`, Vista `GameManager`) — aplicado a "Cambiar Objetivo" | ✅ |
+| **Acción secundaria nueva** `AccionDescartar` (herencia + polimorfismo): tira 1 carta, sin dados, pierde el turno | ✅ |
 
 ---
 
@@ -94,5 +96,4 @@ Listado organizado de las tareas de programación del proyecto, agrupadas por á
 1. **Multijugador online** (el botón ya está preparado).
 2. **Balance y pruebas**: HP inicial configurable (hoy 40 para probar, real 100), testeo de partidas de 3–4 jugadores.
 3. **Cartas grupales más fieles** (ej. aviso visual de Ley Marcial, elección de carta en Descarte Grupal).
-4. **Acción secundaria nueva** del jugador (ej. *Defenderse*), usando la jerarquía `abstract Accion` ya creada.
-5. **Tests automáticos** de la lógica (`/Data` y `/Rules`) para probar sin abrir Unity — ahora es posible porque esas capas son C# puro. Ej.: probar `Dado`, `Partida` (turnos, rondas, victoria), `Accion` (dados y efecto), `Jugador` (daño/cura/monedas).
+4. **Tests automáticos** de la lógica (`/Data` y `/Rules`) para probar sin abrir Unity — ahora es posible porque esas capas son C# puro. Ej.: probar `Dado`, `Partida` (turnos, rondas, victoria), `Accion` (dados y efecto), `Jugador` (daño/cura/monedas).

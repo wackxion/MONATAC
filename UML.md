@@ -142,6 +142,7 @@ classDiagram
     class AccionAtacar
     class AccionCurarse
     class AccionRecolectar
+    class AccionDescartar
     class IVistaJuego {
         <<interface · Rules>>
         +AlPedirCambiarObjetivo event
@@ -181,6 +182,7 @@ classDiagram
     Accion <|-- AccionAtacar
     Accion <|-- AccionCurarse
     Accion <|-- AccionRecolectar
+    Accion <|-- AccionDescartar
     GameManager ..> Accion : crea y usa
     GameManager ..|> IVistaJuego : implementa
     GameManager *-- PresentadorJuego
@@ -348,7 +350,7 @@ sequenceDiagram
 ```
 
 ### Otros puntos del hito
-- **Herencia + Polimorfismo en acciones:** `Accion` (abstracta) con `AccionAtacar/Curarse/Recolectar`; cada una define cuántos dados tira (`CantidadDados`) y su efecto (`Aplicar`). El `GameManager` no decide con `if`: le pide a la acción que se aplique.
+- **Herencia + Polimorfismo en acciones:** `Accion` (abstracta) con `AccionAtacar/Curarse/Recolectar` y la acción secundaria **`AccionDescartar`** (tira 1 carta, sin dados, pierde el turno); cada una define cuántos dados tira (`CantidadDados`) y su efecto (`Aplicar`). El `GameManager` no decide con `if`: le pide a la acción que se aplique.
 - **SRP:** las reglas se extrajeron del `GameManager` a `Partida` (turnos, rondas, victoria) y `GestorCartas` (cartas).
 - **Sin dependencia del motor:** `/Data` y `/Rules` usan `System.Random` (C# puro), así son **testeables** sin abrir Unity.
 - **Persistencia:** `Config` (static) lleva **3 datos** del menú a la escena de juego (jugadores, HP, rondas), elegidos en la escena `Personalizacion`.
