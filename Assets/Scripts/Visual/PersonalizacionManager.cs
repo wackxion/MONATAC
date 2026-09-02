@@ -23,7 +23,7 @@ public class PersonalizacionManager : MonoBehaviour
     //hecho por pilar
     // Límites para las opciones
     private int hpMinimo = 20;
-    private int hpMaximo = 100;
+    private int hpMaximo = 200;
     private int rondasMinimas = 0;
     private int rondasMaximas = 20;
 

@@ -1026,6 +1026,7 @@ GameObject:
   - component: {fileID: 413669781}
   - component: {fileID: 413669780}
   - component: {fileID: 413669779}
+  - component: {fileID: 413669782}
   m_Layer: 5
   m_Name: BtnHP_50
   m_TagString: Untagged
@@ -1135,6 +1136,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 413669777}
   m_CullTransparentMesh: 1
+--- !u!114 &413669782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413669777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c12d83b9fb076da46bad249b8888c1c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BotonValor
+  valor: 50
+  tipo: 0
 --- !u!1 &421168640
 GameObject:
   m_ObjectHideFlags: 0
@@ -1967,6 +1982,7 @@ GameObject:
   - component: {fileID: 799790122}
   - component: {fileID: 799790121}
   - component: {fileID: 799790120}
+  - component: {fileID: 799790123}
   m_Layer: 5
   m_Name: BtnHP_100
   m_TagString: Untagged
@@ -2076,6 +2092,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 799790118}
   m_CullTransparentMesh: 1
+--- !u!114 &799790123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799790118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c12d83b9fb076da46bad249b8888c1c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BotonValor
+  valor: 100
+  tipo: 0
 --- !u!1 &859989691
 GameObject:
   m_ObjectHideFlags: 0
@@ -2181,6 +2211,7 @@ GameObject:
   - component: {fileID: 873187724}
   - component: {fileID: 873187723}
   - component: {fileID: 873187722}
+  - component: {fileID: 873187725}
   m_Layer: 5
   m_Name: BtnHP_200
   m_TagString: Untagged
@@ -2290,6 +2321,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 873187720}
   m_CullTransparentMesh: 1
+--- !u!114 &873187725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 873187720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c12d83b9fb076da46bad249b8888c1c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BotonValor
+  valor: 200
+  tipo: 0
 --- !u!1 &893603189
 GameObject:
   m_ObjectHideFlags: 0
