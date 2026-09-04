@@ -25,7 +25,7 @@ public class PersonalizacionManager : MonoBehaviour
     private int hpMinimo = 20;
     private int hpMaximo = 200;
     private int rondasMinimas = 0;
-    private int rondasMaximas = 20;
+    private int rondasMaximas = 200;
 
     void Start()
     {
@@ -37,19 +37,24 @@ public class PersonalizacionManager : MonoBehaviour
         ActualizarUI();
     }
 
+
+
+
     //hecho por pilar
     // Métodos para HP máximo
     public void AumentarHP()
     {
         hpSeleccionado += 10;
-        if (hpSeleccionado > hpMaximo) hpSeleccionado = hpMaximo;
+        if (hpSeleccionado > hpMaximo) 
+            hpSeleccionado = hpMaximo;
         ActualizarUI();
     }
 
     public void DisminuirHP()
     {
         hpSeleccionado -= 10;
-        if (hpSeleccionado < hpMinimo) hpSeleccionado = hpMinimo;
+        if (hpSeleccionado < hpMinimo) 
+            hpSeleccionado = hpMinimo;
         ActualizarUI();
     }
 
@@ -58,16 +63,20 @@ public class PersonalizacionManager : MonoBehaviour
     public void AumentarRondas()
     {
         rondasSeleccionadas += 1;
-        if (rondasSeleccionadas > rondasMaximas) rondasSeleccionadas = rondasMaximas;
+        if (rondasSeleccionadas > rondasMaximas) 
+            rondasSeleccionadas = rondasMaximas;
         ActualizarUI();
     }
 
     public void DisminuirRondas()
     {
         rondasSeleccionadas -= 1;
-        if (rondasSeleccionadas < rondasMinimas) rondasSeleccionadas = rondasMinimas;
+        if (rondasSeleccionadas < rondasMinimas) 
+            rondasSeleccionadas = rondasMinimas;
         ActualizarUI();
     }
+
+
 
     //hecho por pilar
     // Métodos para establecer valores directamente (para cuadraditos clickeables)
