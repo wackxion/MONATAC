@@ -16,6 +16,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;   // para reiniciar la partida / volver al menú
 
 public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interface (patrón MVP: es la VISTA)
 {
@@ -35,7 +36,12 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     [Header("Turno")]
     public TextMeshProUGUI textoTurno;
     public TextMeshProUGUI textoEstado;
-    
+
+    // Pantalla de fin de partida: un panel (oculto al empezar) con el ganador y 2 botones.
+    [Header("Fin de partida")]
+    public GameObject panelFin;            // se ACTIVA cuando hay ganador
+    public TextMeshProUGUI textoGanador;   // muestra "¡Ganó Jugador X!"
+
     //hecho por pilar
     [Header("Ronda")]
     public TextMeshProUGUI textoRonda;
@@ -423,8 +429,17 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         {
             Mensaje("FIN DEL JUEGO. Ganó " + partida.Ganador.nombre + "!");
             if (textoTurno != null) textoTurno.text = "Ganó " + partida.Ganador.nombre;
+
+            // Muestra la pantalla de fin (con los botones Reiniciar / Volver al Menú).
+            if (textoGanador != null) textoGanador.text = "¡Ganó " + partida.Ganador.nombre + "!";
+            if (panelFin != null) panelFin.SetActive(true);
         }
     }
+
+    // --- Botones de la pantalla de FIN de partida ---
+    // Cierran el ciclo del juego (game loop): jugar de nuevo o volver al inicio.
+    public void OnReiniciar()  { SceneManager.LoadScene("juego"); }   // nueva partida (misma config de Config)
+    public void OnVolverMenu() { SceneManager.LoadScene("MENU"); }    // vuelve al menú principal
 
     private int TirarDados(int cantidad)
     {
