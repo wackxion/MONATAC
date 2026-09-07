@@ -406,7 +406,12 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     {
         if (juegoTerminado) return;
         if (!yaTiro) { Mensaje("Elegí una acción y lanzá los dados antes de pasar."); return; }
-        partida.PasarTurno();   // (adentro descuenta Ley Marcial si está activa)
+        partida.PasarTurno();   // (adentro descuenta Ley Marcial y puede terminar por LÍMITE DE RONDAS)
+
+        // Si se alcanzó el límite de rondas, la partida ya terminó dentro de PasarTurno.
+        // Mostramos la pantalla de fin en vez de arrancar otro turno (antes se "colgaba").
+        if (juegoTerminado) { MostrarPantallaFin(); return; }
+
         IniciarTurno();
     }
 
@@ -425,15 +430,17 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     private void VerificarVictoria()
     {
         partida.VerificarVictoria();
-        if (partida.Terminada)
-        {
-            Mensaje("FIN DEL JUEGO. Ganó " + partida.Ganador.nombre + "!");
-            if (textoTurno != null) textoTurno.text = "Ganó " + partida.Ganador.nombre;
+        if (partida.Terminada) MostrarPantallaFin();
+    }
 
-            // Muestra la pantalla de fin (con los botones Reiniciar / Volver al Menú).
-            if (textoGanador != null) textoGanador.text = "¡Ganó " + partida.Ganador.nombre + "!";
-            if (panelFin != null) panelFin.SetActive(true);
-        }
+    // Muestra la pantalla de fin con el ganador y activa los botones Reiniciar / Volver al Menú.
+    // Se usa tanto al ganar por eliminación como al terminar por límite de rondas.
+    private void MostrarPantallaFin()
+    {
+        Mensaje("FIN DEL JUEGO. Ganó " + partida.Ganador.nombre + "!");
+        if (textoTurno != null) textoTurno.text = "Ganó " + partida.Ganador.nombre;
+        if (textoGanador != null) textoGanador.text = "¡Ganó " + partida.Ganador.nombre + "!";
+        if (panelFin != null) panelFin.SetActive(true);
     }
 
     // --- Botones de la pantalla de FIN de partida ---
