@@ -85,8 +85,8 @@ Listado organizado de las tareas de programación del proyecto, agrupadas por á
 | 2 mecánicas principales (cartas + acciones con dados) | ✅ |
 | Mecánica adicional (descarte de mano) | ✅ |
 | README con **MDA**, patrón justificado, arquitectura al día y guía rápida | ✅ |
-| Ejecutable (build Windows) + `GrupoX_H3.zip` a Drive | 🔜 |
-| Repo público verificado | 🔜 |
+| Ejecutable (build Windows) + `GrupoB_H3.zip` a Drive | ✅ |
+| Repo público verificado | ✅ |
 
 ## 8. Hito 2 — Arquitectura MVP + DIP
 | Tarea | Estado |

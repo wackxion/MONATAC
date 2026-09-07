@@ -158,8 +158,9 @@ Packages/          # Dependencias
 
 ## 📋 Backlog de tareas
 
-El backlog de programación (tareas hechas / en progreso / pendientes) está en
-**[`Backlog.md`](Backlog.md)**, organizado por área e hito.
+Backlog de programación (tareas hechas / en progreso / pendientes):
+- **Trello:** https://trello.com/invite/b/6a9ec9aebfc402696fe71d44/ATTIdf3bf5328ba3949bab7a2a2d03c60532751D1977/grupo-b
+- **Backlog local:** [`Backlog.md`](Backlog.md), organizado por área e hito.
 
 ---
 
