@@ -78,6 +78,16 @@ Listado organizado de las tareas de programación del proyecto, agrupadas por á
 | Separación de reglas y UI: `Partida` + `GestorCartas` (SRP) | ✅ |
 | Diagramas UML (clases, estados, secuencia) | ✅ |
 
+## 8b. Hito 3 — Juego integrado y flujo completo
+| Tarea | Estado |
+|---|---|
+| Game loop completo: Menú → Config → Partida → Victoria → **Fin con Reiniciar / Volver al Menú** | ✅ |
+| 2 mecánicas principales (cartas + acciones con dados) | ✅ |
+| Mecánica adicional (descarte de mano) | ✅ |
+| README con **MDA**, patrón justificado, arquitectura al día y guía rápida | ✅ |
+| Ejecutable (build Windows) + `GrupoX_H3.zip` a Drive | 🔜 |
+| Repo público verificado | 🔜 |
+
 ## 8. Hito 2 — Arquitectura MVP + DIP
 | Tarea | Estado |
 |---|---|
