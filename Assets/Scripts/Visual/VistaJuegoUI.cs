@@ -20,8 +20,8 @@ public class VistaJuegoUI : MonoBehaviour
     public Image[] barras;
     public TextMeshProUGUI[] nombres;
 
-    [Header("Imágenes de los jugadores (en orden J1, J2, J3, J4)")]
-    public Image[] imagenesJugadores;
+    [Header("Imágenes de los jugadores (SpriteRenderer, en orden J1, J2, J3, J4)")]
+    public SpriteRenderer[] imagenesJugadores;
 
     [Header("Del jugador en turno")]
     public TextMeshProUGUI textoMonedas;

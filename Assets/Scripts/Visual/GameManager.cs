@@ -1,80 +1,33 @@
 // ============================================================
-//  GameManager.cs  —  Capa: VISUAL (presentación / Unity)
-//  Coordina la partida y conecta la lógica (Jugador, Dado) con
-//  la interfaz de Unity. Ahora muestra las 4 barras a la vez:
-//  cada jugador tiene su barra fija, y se MARCA quién está en
-//  turno "(turno)" y a quién apunta el ataque "(objetivo)".
+//  GameManager.cs  —  Capa: VISUAL (orquestación / Unity)
+//  ORQUESTA la partida: recibe los clics de los botones, coordina
+//  las reglas (Partida, GestorCartas, Dado, Mazo) y le pide a la
+//  VistaJuegoUI que DIBUJE. Ya NO dibuja él mismo (eso es la Vista).
 //
 //  FLUJO DE UN TURNO:
-//    1) Elegir acción            -> OnAtacar / OnCurarse / OnRecolectar
+//    1) Elegir acción -> OnAtacar / OnCurarse / OnRecolectar / OnDescartar
 //    2) (si atacás) elegir a quién -> OnCambiarObjetivo
-//    3) Lanzar los dados          -> OnLanzarDados
-//    4) Pasar el turno            -> OnPasarTurno
+//    3) Lanzar los dados -> OnLanzarDados
+//    4) Pasar el turno -> OnPasarTurno
 // ============================================================
 
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;   // para reiniciar la partida / volver al menú
 
 public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interface (patrón MVP: es la VISTA)
 {
-    // Las 4 barras y los 4 nombres, EN ORDEN: [0]=Jugador 1, [1]=Jugador 2, etc.
-    // En el Inspector se ponen como arreglos de tamaño 4.
-    [Header("Barras de HP (en orden J1, J2, J3, J4)")]
-    public Image[] barras;
-    public TextMeshProUGUI[] nombres;
+    // La VISTA que dibuja la pantalla (se asigna en el Inspector).
+    [Header("Vista (dibujado)")]
+    public VistaJuegoUI vista;
 
-    // [AGREGADO POR JULIAN] Imágenes de los jugadores (avatares/retratos)
-    [Header("Imágenes de los jugadores (en orden J1, J2, J3, J4)")]
-    public Image[] imagenesJugadores;
-
-    [Header("Del jugador en turno")]
-    public TextMeshProUGUI textoMonedas;
-
-    [Header("Turno")]
-    public TextMeshProUGUI textoTurno;
-    public TextMeshProUGUI textoEstado;
-
-    // Pantalla de fin de partida: un panel (oculto al empezar) con el ganador y 2 botones.
-    [Header("Fin de partida")]
-    public GameObject panelFin;            // se ACTIVA cuando hay ganador
-    public TextMeshProUGUI textoGanador;   // muestra "¡Ganó Jugador X!"
-
-    //hecho por pilar
-    [Header("Ronda")]
-    public TextMeshProUGUI textoRonda;
-
-    [Header("Dados")]
-    public TextMeshProUGUI dado1Texto;
-    public TextMeshProUGUI dado2Texto;
-    public TextMeshProUGUI dado3Texto;
-
-    [Header("Mano de cartas (textos de las cartas de abajo)")]
-    public TextMeshProUGUI[] cartasTexto;
-
-    // [MODIFICADO POR JULIAN] Imágenes de las cartas en los slots de la mano
-    [Header("Imágenes de cartas (slots de la mano)")]
-    public Image[] cartasImagen;
-    public Sprite[] spritesCartas;
-
-    // [AGREGADO POR JULIAN] Reversos de las cartas
-    [Header("Reversos de cartas (slots de la mano)")]
-    public Image[] cartasReverso;
-
-    // [AGREGADO POR JULIAN] Referencia al componente de animación de dados
+    // [AGREGADO POR JULIAN] Componente de animación de dados (lo dispara la orquestación).
     [Header("Animación de dados")]
     public AnimacionDados animacionDados;
 
     //hecho/modificado por Julian
     private int hpInicial;               // se carga de Config
     private int cantidadJugadores;       // lo define el menú (Config.cantidadJugadores)
-
-    // [AGREGADO POR JULIAN] Configuración visual del turno
-    private float opacidadRival = 0.5f;
-    public Color colorBarra = Color.green;
-    public Color colorObjetivo = new Color(1f, 0.3f, 0.3f);
 
     // --- Datos de la partida ---
     private Partida partida;          // REGLAS: jugadores, orden de turno y victoria (capa Rules)
@@ -113,7 +66,6 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     // Awake() lo llama Unity ANTES que Start(). Acá aseguramos la única instancia.
     void Awake()
     {
-        // Si ya existía otro GameManager, este sobra y se destruye.
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -122,7 +74,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         Instance = this;   // este pasa a ser LA instancia única
     }
 
-    // --- Implementación de IVistaJuego (patrón MVP: esta clase es la VISTA) ---
+    // --- Implementación de IVistaJuego (patrón MVP): delega en la Vista ---
     // La Vista AVISA por este evento; el PresentadorJuego (Rules) lo escucha.
     public event System.Action AlPedirCambiarObjetivo;
     // El Presentador nos PIDE estas dos cosas (a través de la interface):
@@ -134,13 +86,12 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         //hecho por pilar
         // Cargar HP máximo y rondas de Config
         hpInicial = Config.hpMaximo;
-        
-        // La cantidad la eligió el menú. Si se juega esta escena directo,
-        // usa el valor por defecto de Config. Clamp la mantiene entre 2 y 4.
+
+        // La cantidad la eligió el menú. Clamp la mantiene entre 2 y 4.
         cantidadJugadores = Mathf.Clamp(Config.cantidadJugadores, 2, 4);
         partida = new Partida(cantidadJugadores, hpInicial, Config.cantidadRondas);   // crea la partida (capa Reglas)
 
-        OcultarBarrasSobrantes();   // esconde las barras de los jugadores que no juegan
+        if (vista != null) vista.OcultarBarrasSobrantes(cantidadJugadores);   // esconde barras de los que no juegan
 
         dado = new Dado();
         descarte = new PilaDescarte();
@@ -149,25 +100,9 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         mazo.Mezclar();
 
         // MVP: creamos el Presentador y le pasamos esta Vista (this) y el Modelo (partida).
-        // En su constructor, el Presentador se suscribe al evento AlPedirCambiarObjetivo.
         presentador = new PresentadorJuego(this, partida);
 
         IniciarTurno();
-    }
-
-    // Muestra solo las barras/nombres de los jugadores que hay en la partida
-    // y oculta las que sobran (ej: si son 2, esconde las de J3 y J4).
-    private void OcultarBarrasSobrantes()
-    {
-        if (barras == null) return;
-        for (int i = 0; i < barras.Length; i++)
-        {
-            bool existe = i < cantidadJugadores;
-            // La barra vive dentro de BarraHP_Fondo (su "padre"): ocultamos todo el conjunto.
-            if (barras[i] != null) barras[i].transform.parent.gameObject.SetActive(existe);
-            if (nombres != null && i < nombres.Length && nombres[i] != null)
-                nombres[i].gameObject.SetActive(existe);
-        }
     }
 
     private Jugador Actual()   { return jugadores[indiceActual]; }
@@ -204,8 +139,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
             Mensaje("Elegiste " + accionActual.Nombre + ". Ahora lanzá los dados.");
     }
 
-    // Crea el objeto Accion que corresponde al tipo elegido.
-    // Gracias a la HERENCIA, cada uno sabe cuántos dados tira y qué efecto hace.
+    // Crea el objeto Accion que corresponde al tipo elegido (herencia + polimorfismo).
     private Accion CrearAccion(TipoAccion tipo)
     {
         switch (tipo)
@@ -217,12 +151,10 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         }
     }
 
-    // --- Botón CAMBIAR OBJETIVO: rota entre rivales vivos ---
+    // --- Botón CAMBIAR OBJETIVO: rota entre rivales vivos (MVP: dispara el evento) ---
     public void OnCambiarObjetivo()
     {
         if (juegoTerminado) return;
-        // MVP: la Vista solo AVISA (dispara el evento). El Presentador cambia el
-        // objetivo en el Modelo (Partida) y nos pide refrescar la pantalla.
         AlPedirCambiarObjetivo?.Invoke();
     }
 
@@ -241,9 +173,9 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
 
         // Orden fijo de las cartas elegidas: (1) dados extra, (2) multiplicador, (3) bonus fijo.
         int dadosBase = accionActual.CantidadDados;   // POLIMORFISMO: cada acción sabe cuántos dados tira
-        dadosExtra = gestorCartas.DadosExtra(cartasSeleccionadas, accionElegida);   // comodín +1d4
-        multiplicador = gestorCartas.Multiplicador(cartasSeleccionadas, accionElegida); // comodín x2
-        bonusCartas = gestorCartas.Bonus(cartasSeleccionadas, jugador, accionElegida); // pasiva/un uso/vencimiento
+        dadosExtra = gestorCartas.DadosExtra(cartasSeleccionadas, accionElegida);
+        multiplicador = gestorCartas.Multiplicador(cartasSeleccionadas, accionElegida);
+        bonusCartas = gestorCartas.Bonus(cartasSeleccionadas, jugador, accionElegida);
         foreach (string m in gestorCartas.Mensajes) Mensaje(m);   // avisos de pago/descarte de vencimiento
 
         // Tiramos los dados y obtenemos los valores individuales
@@ -265,22 +197,14 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         }
         else
         {
-            // Sin animación: aplicar directo (fallback por si no se asignó)
-            MostrarDadosFinales(valoresDados);
+            // Sin animación: mostrar directo (la Vista dibuja) y aplicar.
+            if (vista != null) vista.MostrarDados(valoresDados);
             AplicarAccionPostAnimacion();
         }
     }
 
-    // [AGREGADO POR JULIAN] Muestra los valores finales en los textos de los dados
-    private void MostrarDadosFinales(int[] valores)
-    {
-        if (valores.Length > 0 && dado1Texto != null) dado1Texto.text = valores[0].ToString();
-        if (valores.Length > 1 && dado2Texto != null) dado2Texto.text = valores[1].ToString();
-        if (valores.Length > 2 && dado3Texto != null) dado3Texto.text = valores[2].ToString();
-    }
-
     // [AGREGADO POR JULIAN] Se llama cuando la animación de dados termina.
-    // Aplica la acción (ataque/curarse/recolectar) con el resultado ya calculado.
+    // Aplica la acción con el resultado ya calculado.
     private void AplicarAccionPostAnimacion()
     {
         Jugador jugador = Actual();
@@ -296,11 +220,10 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
             // 2) Se aplica el daño que queda (POLIMORFISMO: AccionAtacar daña al objetivo).
             accionActual.Aplicar(partida, total);
             Mensaje(jugador.nombre + " ataca a " + defensor.nombre + " por " + total + " (x" + multiplicador + ", bonus +" + bonusCartas + ").");
-            // 3) REFLECTANTE (auto): devuelve daño / roba monedas / cura (Espejo, Bolsillo Roto, Vampirismo).
+            // 3) REFLECTANTE (auto): devuelve daño / roba monedas / cura.
             gestorCartas.Mensajes.Clear();
             gestorCartas.Reflejar(defensor, jugador);
             foreach (string m in gestorCartas.Mensajes) Mensaje(m);
-            // Las cartas defensivas usadas van al descarte (un solo uso).
             gestorCartas.DescartarUsadas(defensor);
         }
         else if (accionElegida == TipoAccion.Curarse)
@@ -366,9 +289,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         ActualizarUI();
     }
 
-    // --- Botón COMPRAR CARTA ---
-    // Comprás si querés (una o varias veces), pero SOLO en el turno en que
-    // Recolectaste. Si no comprás, las monedas quedan acumuladas para después.
+    // --- Botón COMPRAR CARTA (solo el turno que Recolectás; si no, acumulás monedas) ---
     public void OnComprarCarta()
     {
         if (juegoTerminado) return;
@@ -409,7 +330,6 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         partida.PasarTurno();   // (adentro descuenta Ley Marcial y puede terminar por LÍMITE DE RONDAS)
 
         // Si se alcanzó el límite de rondas, la partida ya terminó dentro de PasarTurno.
-        // Mostramos la pantalla de fin en vez de arrancar otro turno (antes se "colgaba").
         if (juegoTerminado) { MostrarPantallaFin(); return; }
 
         IniciarTurno();
@@ -433,195 +353,29 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         if (partida.Terminada) MostrarPantallaFin();
     }
 
-    // Muestra la pantalla de fin con el ganador y activa los botones Reiniciar / Volver al Menú.
-    // Se usa tanto al ganar por eliminación como al terminar por límite de rondas.
+    // Muestra la pantalla de fin (se usa tanto al ganar por eliminación como por límite de rondas).
     private void MostrarPantallaFin()
     {
         Mensaje("FIN DEL JUEGO. Ganó " + partida.Ganador.nombre + "!");
-        if (textoTurno != null) textoTurno.text = "Ganó " + partida.Ganador.nombre;
-        if (textoGanador != null) textoGanador.text = "¡Ganó " + partida.Ganador.nombre + "!";
-        if (panelFin != null) panelFin.SetActive(true);
+        if (vista != null) vista.MostrarFin(partida.Ganador.nombre);
     }
 
-    // --- Botones de la pantalla de FIN de partida ---
-    // Cierran el ciclo del juego (game loop): jugar de nuevo o volver al inicio.
+    // --- Botones de la pantalla de FIN de partida (cierran el game loop) ---
     public void OnReiniciar()  { SceneManager.LoadScene("juego"); }   // nueva partida (misma config de Config)
     public void OnVolverMenu() { SceneManager.LoadScene("MENU"); }    // vuelve al menú principal
 
-    private int TirarDados(int cantidad)
-    {
-        int total = 0;
-        string d1 = "", d2 = "", d3 = "";
-        for (int i = 0; i < cantidad; i++)
-        {
-            int valor = dado.Tirar();
-            total += valor;
-            if (i == 0) d1 = valor.ToString();
-            else if (i == 1) d2 = valor.ToString();
-            else if (i == 2) d3 = valor.ToString();
-            // los dados más allá del 3ro (por el comodín +1d4) suman al total pero no se muestran
-        }
-        if (dado1Texto != null) dado1Texto.text = d1;
-        if (dado2Texto != null) dado2Texto.text = d2;
-        if (dado3Texto != null) dado3Texto.text = d3;
-        return total;
-    }
+    // ===== "Puentes" a la VISTA: el GameManager ya no dibuja, le pide a VistaJuegoUI que lo haga =====
 
-    // Refresca las 4 barras. Cada barra muestra SIEMPRE a su jugador,
-    // y el nombre lleva la marca "(turno)" o "(objetivo)" según corresponda.
+    // Refresca toda la pantalla.
     void ActualizarUI()
     {
-        for (int i = 0; i < jugadores.Count; i++)
-        {
-            Jugador j = jugadores[i];
-
-            // La barra: llena según su HP (0 a 1).
-            if (barras != null && i < barras.Length && barras[i] != null)
-            {
-                barras[i].fillAmount = (float)j.hp / j.hpMaximo;
-
-                // [MODIFICADO POR JULIAN] Color de barra: turno = colorBarra, objetivo = colorObjetivo, rivales = gris
-                Color cTurno = colorBarra;
-                float gris = cTurno.r * 0.3f + cTurno.g * 0.59f + cTurno.b * 0.11f;
-                Color cRival = new Color(gris, gris, gris, 1f);
-                Color cBarra;
-                if (i == indiceActual) cBarra = cTurno;
-                else if (i == indiceObjetivo) cBarra = colorObjetivo;
-                else cBarra = cRival;
-                barras[i].color = cBarra;
-            }
-
-            // El nombre con su HP y la marca de turno/objetivo.
-            if (nombres != null && i < nombres.Length && nombres[i] != null)
-            {
-                string marca = "";
-                if (!j.EstaVivo())            marca = " (eliminado)";
-                else if (i == indiceActual)   marca = " (turno)";
-                else if (i == indiceObjetivo) marca = " (objetivo)";
-                nombres[i].text = j.nombre + ": " + j.hp + " HP" + marca;
-
-                // [MODIFICADO POR JULIAN] Color de nombre: turno = blanco, objetivo = colorObjetivo, rivales = gris
-                if (i == indiceActual) nombres[i].color = Color.white;
-                else if (i == indiceObjetivo) nombres[i].color = colorObjetivo;
-                else nombres[i].color = new Color(opacidadRival, opacidadRival, opacidadRival, 1f);
-            }
-
-            // [MODIFICADO POR JULIAN] Color de imagen: turno = blanco, objetivo = colorObjetivo, rivales = gris
-            if (imagenesJugadores != null && i < imagenesJugadores.Length && imagenesJugadores[i] != null)
-            {
-                if (i == indiceActual) imagenesJugadores[i].color = Color.white;
-                else if (i == indiceObjetivo) imagenesJugadores[i].color = colorObjetivo;
-                else imagenesJugadores[i].color = new Color(opacidadRival, opacidadRival, opacidadRival, 1f);
-            }
-        }
-
-        // Monedas del jugador en turno.
-        if (textoMonedas != null) textoMonedas.text = "Monedas: " + Actual().monedas;
-
-        if (textoTurno != null && !juegoTerminado) textoTurno.text = "Turno de " + Actual().nombre;
-        
-        //hecho por pilar
-        // Mostrar ronda actual
-        if (textoRonda != null)
-        {
-            if (partida.TotalRondas > 0)
-                textoRonda.text = "Ronda " + partida.RondaActual + "/" + partida.TotalRondas;
-            else
-                textoRonda.text = "Ronda " + partida.RondaActual;
-        }
-
-        // Mano de cartas del jugador en turno: muestra el nombre de cada carta,
-        // o "-" si ese slot está vacío.
-        if (cartasTexto != null)
-        {
-            Jugador enTurno = Actual();
-            for (int i = 0; i < cartasTexto.Length; i++)
-            {
-                if (cartasTexto[i] == null) continue;
-
-                if (i < enTurno.mano.Count)
-                {
-                    Carta carta = enTurno.mano[i];
-                    string usar = cartasSeleccionadas.Contains(carta) ? " [USAR]" : "";
-
-                    // [MODIFICADO POR JULIAN] Asignar imagen de la carta si hay sprite disponible
-                    Sprite spriteEncontrado = BuscarSprite(carta.nombre);
-                    if (cartasImagen != null && i < cartasImagen.Length && cartasImagen[i] != null)
-                    {
-                        cartasImagen[i].sprite = spriteEncontrado;
-                        cartasImagen[i].color = Color.white;
-                    }
-
-                    // [AGREGADO POR JULIAN] Asignar sprite de reverso
-                    Sprite reversoEncontrado = BuscarSprite(carta.nombre + " Reverso");
-                    if (cartasReverso != null && i < cartasReverso.Length && cartasReverso[i] != null)
-                    {
-                        cartasReverso[i].sprite = reversoEncontrado;
-                        cartasReverso[i].color = Color.white;
-                    }
-
-                    // [AGREGADO POR JULIAN] Activar hover si hay carta
-                    ActivarHoverSlot(i, true);
-
-                    // Si hay imagen, no mostramos el texto. Si no hay, mostramos el nombre.
-                    if (spriteEncontrado != null)
-                        cartasTexto[i].text = "";
-                    else
-                        cartasTexto[i].text = carta.nombre + usar;
-                }
-                else
-                {
-                    cartasTexto[i].text = "";
-
-                    // [MODIFICADO POR JULIAN] Sin carta: mostrar slot vacío semitransparente
-                    if (cartasImagen != null && i < cartasImagen.Length && cartasImagen[i] != null)
-                    {
-                        cartasImagen[i].sprite = null;
-                        cartasImagen[i].color = new Color(0, 0, 0, 0.5f);
-                    }
-
-                    // [AGREGADO POR JULIAN] Sin carta: ocultar reverso
-                    if (cartasReverso != null && i < cartasReverso.Length && cartasReverso[i] != null)
-                    {
-                        cartasReverso[i].sprite = null;
-                        cartasReverso[i].color = new Color(0, 0, 0, 0);
-                    }
-
-                    // [AGREGADO POR JULIAN] Desactivar hover si no hay carta
-                    ActivarHoverSlot(i, false);
-                }
-            }
-        }
+        if (vista != null) vista.Actualizar(partida, cartasSeleccionadas);
     }
 
-    // [AGREGADO POR JULIAN] Activa o desactiva el hover de un slot de carta
-    private void ActivarHoverSlot(int indice, bool activo)
-    {
-        if (cartasImagen == null || indice >= cartasImagen.Length || cartasImagen[indice] == null) return;
-        EfectoHoverCarta hover = cartasImagen[indice].GetComponentInParent<EfectoHoverCarta>();
-        if (hover != null) hover.SetHoverActivo(activo);
-    }
-
-    // [MODIFICADO POR JULIAN] Busca un sprite por nombre, ignorando mayúsculas/minúsculas y sufijos "_0".
-    private Sprite BuscarSprite(string nombreCarta)
-    {
-        if (spritesCartas == null) return null;
-        string nombreBuscado = nombreCarta.ToLower();
-        for (int i = 0; i < spritesCartas.Length; i++)
-        {
-            if (spritesCartas[i] != null)
-            {
-                string nombreSprite = spritesCartas[i].name.ToLower();
-                if (nombreSprite == nombreBuscado || nombreSprite == nombreBuscado + "_0")
-                    return spritesCartas[i];
-            }
-        }
-        return null;
-    }
-
+    // Muestra un mensaje de estado (y en consola como respaldo).
     private void Mensaje(string txt)
     {
-        Debug.Log(txt);
-        if (textoEstado != null) textoEstado.text = txt;
+        if (vista != null) vista.MostrarMensaje(txt);
+        else Debug.Log(txt);
     }
 }
