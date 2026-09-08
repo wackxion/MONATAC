@@ -30,11 +30,11 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     private int cantidadJugadores;       // lo define el menú (Config.cantidadJugadores)
 
     // --- Datos de la partida ---
-    private Partida partida;          // REGLAS: jugadores, orden de turno y victoria (capa Rules)
+    private IPartida partida;         // REGLAS (abstracción · DIP): jugadores, turnos y victoria
     private Dado dado;
     private Mazo mazo;                // el mazo de cartas
     private PilaDescarte descarte;    // la pila de descarte
-    private GestorCartas gestorCartas; // REGLAS: resuelve el efecto de las cartas elegidas
+    private IGestorCartas gestorCartas; // REGLAS (abstracción · DIP): resuelve el efecto de las cartas
     private PresentadorJuego presentador; // MVP: coordina la acción "Cambiar Objetivo" (capa Rules)
     private List<Carta> cartasSeleccionadas = new List<Carta>();  // cartas que el jugador eligió usar este turno
 

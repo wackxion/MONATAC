@@ -19,7 +19,7 @@ public abstract class Accion
 
     // Aplica el efecto de la acción usando el 'total' ya calculado
     // (dados + bonus de cartas). Cada subclase lo hace a su modo.
-    public abstract void Aplicar(Partida partida, int total);
+    public abstract void Aplicar(IPartida partida, int total);
 }
 
 public class AccionAtacar : Accion
@@ -27,7 +27,7 @@ public class AccionAtacar : Accion
     public override string Nombre => "Atacar";
     public override int CantidadDados => 3;
 
-    public override void Aplicar(Partida partida, int total)
+    public override void Aplicar(IPartida partida, int total)
     {
         partida.Objetivo().RecibirDanio(total);
     }
@@ -38,7 +38,7 @@ public class AccionCurarse : Accion
     public override string Nombre => "Curarse";
     public override int CantidadDados => 2;
 
-    public override void Aplicar(Partida partida, int total)
+    public override void Aplicar(IPartida partida, int total)
     {
         // La curación es para uno mismo (el jugador actual).
         partida.Actual().Curar(total);
@@ -51,7 +51,7 @@ public class AccionRecolectar : Accion
     public override string Nombre => "Recolectar";
     public override int CantidadDados => 3;
 
-    public override void Aplicar(Partida partida, int total)
+    public override void Aplicar(IPartida partida, int total)
     {
         // Las monedas son para uno mismo (el jugador actual).
         partida.Actual().GanarMonedas(total);
@@ -66,7 +66,7 @@ public class AccionDescartar : Accion
     public override string Nombre => "Descartar";
     public override int CantidadDados => 0;   // no tira dados
 
-    public override void Aplicar(Partida partida, int total)
+    public override void Aplicar(IPartida partida, int total)
     {
         // No hace nada acá: el descarte se resuelve en el GameManager
         // (necesita la carta elegida y la PilaDescarte).

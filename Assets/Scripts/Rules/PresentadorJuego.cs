@@ -10,10 +10,10 @@
 public class PresentadorJuego
 {
     private readonly IVistaJuego vista;   // la Vista, vista como ABSTRACCIÓN (DIP)
-    private readonly Partida partida;     // el Modelo (datos + reglas)
+    private readonly IPartida partida;    // el Modelo, visto como ABSTRACCIÓN (DIP)
 
     // Recibe la vista y la partida "desde afuera" (inyección de dependencias).
-    public PresentadorJuego(IVistaJuego vista, Partida partida)
+    public PresentadorJuego(IVistaJuego vista, IPartida partida)
     {
         this.vista = vista;
         this.partida = partida;

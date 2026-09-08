@@ -72,7 +72,7 @@ public class VistaJuegoUI : MonoBehaviour
     }
 
     // Refresca toda la pantalla a partir del estado de la Partida y las cartas elegidas.
-    public void Actualizar(Partida partida, List<Carta> cartasSeleccionadas)
+    public void Actualizar(IPartida partida, List<Carta> cartasSeleccionadas)
     {
         List<Jugador> jugadores = partida.Jugadores;
         int indiceActual = partida.IndiceActual;

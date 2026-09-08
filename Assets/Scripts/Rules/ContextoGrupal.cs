@@ -15,6 +15,6 @@ public class ContextoGrupal
     public Mazo mazo;
     public PilaDescarte descarte;
     public Jugador comprador;   // el jugador que compró la carta grupal
-    public Partida partida;     // para efectos que tocan las reglas (Ley Marcial)
+    public IPartida partida;    // para efectos que tocan las reglas (Ley Marcial)
 }
 
