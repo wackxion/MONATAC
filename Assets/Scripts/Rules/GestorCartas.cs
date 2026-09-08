@@ -9,7 +9,7 @@
 
 using System.Collections.Generic;
 
-public class GestorCartas
+public class GestorCartas : IGestorCartas
 {
     private PilaDescarte descarte;
     public List<string> Mensajes { get; private set; } = new List<string>();

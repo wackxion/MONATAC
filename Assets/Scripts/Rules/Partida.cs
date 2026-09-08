@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 
-public class Partida
+public class Partida : IPartida
 {
     private List<Jugador> jugadores = new List<Jugador>();
 

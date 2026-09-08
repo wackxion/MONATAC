@@ -159,6 +159,19 @@ classDiagram
         <<Visual>>
         +GuardarYVolver()
     }
+    class VistaJuegoUI {
+        <<Visual>>
+        +Actualizar(Partida, seleccionadas)
+        +MostrarDados(int[])
+        +MostrarFin(string)
+        +MostrarMensaje(string)
+    }
+    class IPartida {
+        <<interface · Rules>>
+    }
+    class IGestorCartas {
+        <<interface · Rules>>
+    }
 
     MenuManager --> Config : guarda
     GameManager --> Config : lee
@@ -189,6 +202,11 @@ classDiagram
     PresentadorJuego --> IVistaJuego : usa (DIP)
     PresentadorJuego --> Partida
     PersonalizacionManager --> Config : guarda HP/rondas
+    GameManager --> VistaJuegoUI : dibuja con
+    GameManager ..> IPartida : usa (DIP)
+    GameManager ..> IGestorCartas : usa (DIP)
+    Partida ..|> IPartida
+    GestorCartas ..|> IGestorCartas
 ```
 
 > **Extensibilidad:** agregar un nuevo tipo de carta es crear una subclase de `Carta` (comodines, Bolsillo Roto, Vampirismo Defensivo…) y sumarla en `FabricaDeCartas`, sin tocar el resto del código.
@@ -351,6 +369,7 @@ sequenceDiagram
 
 ### Otros puntos del hito
 - **Herencia + Polimorfismo en acciones:** `Accion` (abstracta) con `AccionAtacar/Curarse/Recolectar` y la acción secundaria **`AccionDescartar`** (tira 1 carta, sin dados, pierde el turno); cada una define cuántos dados tira (`CantidadDados`) y su efecto (`Aplicar`). El `GameManager` no decide con `if`: le pide a la acción que se aplique.
-- **SRP:** las reglas se extrajeron del `GameManager` a `Partida` (turnos, rondas, victoria) y `GestorCartas` (cartas).
+- **SRP:** las reglas se extrajeron del `GameManager` a `Partida` (turnos, rondas, victoria) y `GestorCartas` (cartas); y el **dibujado** a `VistaJuegoUI` (el `GameManager` solo orquesta).
+- **DIP (ampliado):** el `GameManager` depende de las interfaces `IPartida` / `IGestorCartas` (abstracciones), no de las clases concretas.
 - **Sin dependencia del motor:** `/Data` y `/Rules` usan `System.Random` (C# puro), así son **testeables** sin abrir Unity.
 - **Persistencia:** `Config` (static) lleva **3 datos** del menú a la escena de juego (jugadores, HP, rondas), elegidos en la escena `Personalizacion`.

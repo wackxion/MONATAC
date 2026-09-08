@@ -77,10 +77,12 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
   `Mazo`, `PilaDescarte`, `Config`, `Enums`.
 - **`/Rules`** — la **lógica y las reglas**: `Partida` (turnos, objetivo, rondas, victoria),
   `GestorCartas` (resolución de cartas y combate defensivo), `Accion` (+ subtipos),
-  `FabricaDeCartas`, `Dado`, `ContextoGrupal`, e **`IVistaJuego` + `PresentadorJuego`** (MVP).
-- **`/Visual`** — la **presentación e input** (MonoBehaviours): `GameManager`, `MenuManager`,
-  `PersonalizacionManager`, `BotonValor`, `AnimacionDados`, `EfectoHoverCarta`. Solo **muestra**
-  información y **captura** clics; no conoce las reglas ni altera los datos directamente.
+  `FabricaDeCartas`, `Dado`, `ContextoGrupal`, las interfaces **`IPartida` / `IGestorCartas`** (DIP)
+  e **`IVistaJuego` + `PresentadorJuego`** (MVP).
+- **`/Visual`** — la **presentación e input** (MonoBehaviours): `GameManager` (orquesta),
+  **`VistaJuegoUI`** (dibuja la pantalla), `MenuManager`, `PersonalizacionManager`, `BotonValor`,
+  `AnimacionDados`, `EfectoHoverCarta`. Solo **muestra** información y **captura** clics; no conoce
+  las reglas ni altera los datos directamente.
 
 **Escenas:** `MENU` (elegir jugadores) · `Personalizacion` (HP y rondas) · `juego` (partida).
 
@@ -109,8 +111,10 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
   pasó algo sin saber quién la escucha.
 
 ### SOLID aplicado
-- **SRP** — las reglas se extrajeron del `GameManager` a `Partida` y `GestorCartas`.
-- **DIP** — el `PresentadorJuego` depende de la interface `IVistaJuego`, no de la clase concreta.
+- **SRP** — las reglas se extrajeron del `GameManager` a `Partida` y `GestorCartas`; el **dibujado**
+  se separó en **`VistaJuegoUI`** (el `GameManager` solo orquesta).
+- **DIP** — el `PresentadorJuego` depende de `IVistaJuego`, y el `GameManager` depende de
+  **`IPartida` / `IGestorCartas`** (abstracciones), no de las clases concretas.
 
 ---
 
@@ -122,8 +126,9 @@ Assets/
  ├─ Scripts/
  │   ├─ Data/      # Enums, Jugador, Cartas, Mazo, Config
  │   ├─ Rules/     # Partida, GestorCartas, Accion, FabricaDeCartas, Dado,
- │   │             #   ContextoGrupal, IVistaJuego, PresentadorJuego
- │   └─ Visual/    # GameManager, MenuManager, PersonalizacionManager,
+ │   │             #   ContextoGrupal, IPartida, IGestorCartas,
+ │   │             #   IVistaJuego, PresentadorJuego
+ │   └─ Visual/    # GameManager, VistaJuegoUI, MenuManager, PersonalizacionManager,
  │                 #   BotonValor, AnimacionDados, EfectoHoverCarta
  ├─ Sprites/       # Arte de las cartas
  └─ Settings/      # Configuración de render (URP)
