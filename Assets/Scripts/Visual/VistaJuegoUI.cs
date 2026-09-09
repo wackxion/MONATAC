@@ -224,7 +224,7 @@ public class VistaJuegoUI : MonoBehaviour
     }
 
     // Busca un sprite por nombre, ignorando mayúsculas/minúsculas y sufijos "_0".
-    private Sprite BuscarSprite(string nombreCarta)
+    public Sprite BuscarSprite(string nombreCarta)
     {
         if (spritesCartas == null) return null;
         string nombreBuscado = nombreCarta.ToLower();

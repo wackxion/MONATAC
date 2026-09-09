@@ -25,6 +25,10 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     [Header("Animación de dados")]
     public AnimacionDados animacionDados;
 
+    // [AGREGADO POR JULIAN] Componente de animación de carta grupal.
+    [Header("Animación de carta grupal")]
+    public AnimacionCartaGrupal animacionCartaGrupal;
+
     //hecho/modificado por Julian
     private int hpInicial;               // se carga de Config
     private int cantidadJugadores;       // lo define el menú (Config.cantidadJugadores)
@@ -311,8 +315,24 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
                 jugadores = jugadores, mazo = mazo, descarte = descarte, comprador = j, partida = partida
             };
             Mensaje(j.nombre + " compró la carta grupal: " + grupal.nombre + ".");
-            Mensaje(grupal.AplicarATodos(ctx));   // cada grupal aplica su propio efecto
-            descarte.Agregar(comprada);
+
+            Sprite reverso = vista != null ? vista.BuscarSprite(grupal.nombre + " Reverso") : null;
+
+            if (animacionCartaGrupal != null && reverso != null)
+            {
+                animacionCartaGrupal.IniciarAnimacion(reverso, () =>
+                {
+                    Mensaje(grupal.AplicarATodos(ctx));
+                    descarte.Agregar(comprada);
+                    ActualizarUI();
+                });
+            }
+            else
+            {
+                // Fallback sin animación
+                Mensaje(grupal.AplicarATodos(ctx));
+                descarte.Agregar(comprada);
+            }
         }
         else
         {
