@@ -2082,6 +2082,7 @@ GameObject:
   - component: {fileID: 542031658}
   - component: {fileID: 542031660}
   - component: {fileID: 542031659}
+  - component: {fileID: 542031661}
   m_Layer: 5
   m_Name: Relleno
   m_TagString: Untagged
@@ -2146,6 +2147,43 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 542031657}
   m_CullTransparentMesh: 1
+--- !u!114 &542031661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 542031657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39c427dbab663d4f8dc84b80a75e742, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimacionBarraHP
+  duracion: 0.5
+  curva:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &543558890
 GameObject:
   m_ObjectHideFlags: 0
@@ -2385,6 +2423,7 @@ GameObject:
   - component: {fileID: 618126933}
   - component: {fileID: 618126935}
   - component: {fileID: 618126934}
+  - component: {fileID: 618126936}
   m_Layer: 5
   m_Name: Relleno
   m_TagString: Untagged
@@ -2449,6 +2488,43 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 618126932}
   m_CullTransparentMesh: 1
+--- !u!114 &618126936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 618126932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39c427dbab663d4f8dc84b80a75e742, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimacionBarraHP
+  duracion: 0.5
+  curva:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &628290454
 GameObject:
   m_ObjectHideFlags: 0
@@ -5360,7 +5436,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnimacionCartaGrupal
   cartaReverso: {fileID: 221615477}
   panelOscuro: {fileID: 1946662656}
-  duracionEspera: 3
+  duracionEspera: 4
   duracionFadeReverso: 0.3
   duracionFadePanel: 0.3
   opacidadPanel: 0.7
@@ -5763,7 +5839,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VistaJuegoUI
   barras:
-  - {fileID: 1680788636}
+  - {fileID: 2001175845}
   - {fileID: 2001175845}
   - {fileID: 542031659}
   - {fileID: 618126934}
@@ -5772,6 +5848,12 @@ MonoBehaviour:
   - {fileID: 1129778490}
   - {fileID: 1359954337}
   - {fileID: 80063514}
+  animacionesBarras:
+  - {fileID: 1680788638}
+  - {fileID: 2001175847}
+  - {fileID: 542031661}
+  - {fileID: 618126936}
+  spawnerNumeros: {fileID: 2128264648}
   imagenesJugadores:
   - {fileID: 0}
   - {fileID: 1217158191}
@@ -7194,6 +7276,7 @@ GameObject:
   - component: {fileID: 1680788635}
   - component: {fileID: 1680788637}
   - component: {fileID: 1680788636}
+  - component: {fileID: 1680788638}
   m_Layer: 5
   m_Name: Relleno
   m_TagString: Untagged
@@ -7258,6 +7341,43 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1680788634}
   m_CullTransparentMesh: 1
+--- !u!114 &1680788638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1680788634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39c427dbab663d4f8dc84b80a75e742, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimacionBarraHP
+  duracion: 0.5
+  curva:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1723682344
 GameObject:
   m_ObjectHideFlags: 0
@@ -8784,6 +8904,7 @@ GameObject:
   - component: {fileID: 2001175844}
   - component: {fileID: 2001175846}
   - component: {fileID: 2001175845}
+  - component: {fileID: 2001175847}
   m_Layer: 5
   m_Name: Relleno
   m_TagString: Untagged
@@ -8848,6 +8969,43 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2001175843}
   m_CullTransparentMesh: 1
+--- !u!114 &2001175847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2001175843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39c427dbab663d4f8dc84b80a75e742, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimacionBarraHP
+  duracion: 0.5
+  curva:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2013911925
 GameObject:
   m_ObjectHideFlags: 0
@@ -9396,6 +9554,59 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &2128264647
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2128264649}
+  - component: {fileID: 2128264648}
+  m_Layer: 0
+  m_Name: SpawnerNumerosFlotantes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2128264648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128264647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21dc3d71ba3c9c74aadc5c9135829e92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnerNumerosFlotantes
+  prefabNumeroFlotante: {fileID: 3091139437628401219, guid: 4bba40e24337fcf48a337962fea26191, type: 3}
+  canvas: {fileID: 1867816690}
+  avatares:
+  - {fileID: 0}
+  - {fileID: 1217158190}
+  - {fileID: 604402301}
+  - {fileID: 1439934054}
+  colorDanio: {r: 1, g: 0.3, b: 0.3, a: 1}
+  colorCuracion: {r: 0.3, g: 1, b: 0.3, a: 1}
+--- !u!4 &2128264649
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128264647}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.83377, y: 1.25712, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2141179692
 GameObject:
   m_ObjectHideFlags: 0
@@ -9483,3 +9694,4 @@ SceneRoots:
   - {fileID: 1723682347}
   - {fileID: 1313484832}
   - {fileID: 1077278928}
+  - {fileID: 2128264649}

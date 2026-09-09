@@ -20,6 +20,12 @@ public class VistaJuegoUI : MonoBehaviour
     public Image[] barras;
     public TextMeshProUGUI[] nombres;
 
+    [Header("Animación de barras de HP (mismos indices que barras)")]
+    public AnimacionBarraHP[] animacionesBarras;
+
+    [Header("Números flotantes de daño/cura")]
+    public SpawnerNumerosFlotantes spawnerNumeros;
+
     [Header("Imágenes de los jugadores (SpriteRenderer, en orden J1, J2, J3, J4)")]
     public SpriteRenderer[] imagenesJugadores;
 
@@ -56,6 +62,8 @@ public class VistaJuegoUI : MonoBehaviour
     public Color colorBarra = Color.green;
     public Color colorObjetivo = new Color(1f, 0.3f, 0.3f);
     private float opacidadRival = 0.5f;
+    private int[] hpAnterior = new int[4];
+    private bool primeraActualizacion = true;
 
     // Oculta las barras/nombres de los jugadores que no juegan (ej: si son 2, esconde J3 y J4).
     public void OcultarBarrasSobrantes(int cantidadJugadores)
@@ -87,7 +95,19 @@ public class VistaJuegoUI : MonoBehaviour
             // La barra: llena según su HP (0 a 1) y coloreada según turno/objetivo/rival.
             if (barras != null && i < barras.Length && barras[i] != null)
             {
-                barras[i].fillAmount = (float)j.hp / j.hpMaximo;
+                // Animación suave de la barra de HP
+                if (animacionesBarras != null && i < animacionesBarras.Length && animacionesBarras[i] != null)
+                    animacionesBarras[i].SetHP(j.hp, j.hpMaximo);
+                else
+                    barras[i].fillAmount = (float)j.hp / j.hpMaximo;
+
+                // Número flotante si cambió el HP (no en la primera actualización)
+                if (spawnerNumeros != null && !primeraActualizacion && j.hp != hpAnterior[i])
+                {
+                    int diferencia = hpAnterior[i] - j.hp;
+                    spawnerNumeros.Spawn(i, diferencia);
+                }
+                hpAnterior[i] = j.hp;
 
                 Color cTurno = colorBarra;
                 float gris = cTurno.r * 0.3f + cTurno.g * 0.59f + cTurno.b * 0.11f;
@@ -190,6 +210,8 @@ public class VistaJuegoUI : MonoBehaviour
                 }
             }
         }
+
+        primeraActualizacion = false;
     }
 
     // Muestra los valores finales en los textos de los dados (versión sin animación).

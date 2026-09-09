@@ -58,6 +58,9 @@ Listado organizado de las tareas de programación del proyecto, agrupadas por á
 | Imágenes/sprites de cartas | ✅ |
 | Animación hover de cartas | ✅ |
 | 5º slot de mano (la mano máxima es 5) | ✅ |
+| Animación de carta grupal (fade in/out, reverso, panel oscuro) | ✅ |
+| Animación de barra de HP (transición suave al recibir daño/cura) | ✅ |
+| Números flotantes de daño/cura sobre avatares (NumeroFlotante + SpawnerNumerosFlotantes) | ✅ |
 | Animaciones de dados / daño / feedback | 🔜 |
 
 ## 6. Menú y escenas
