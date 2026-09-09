@@ -69,6 +69,7 @@ Listado organizado de las tareas de programación del proyecto, agrupadas por á
 | Escena `MENU` con botones 2 / 3 / 4 jugadores | ✅ |
 | Cargar la escena `juego` con la cantidad elegida | ✅ |
 | Botón Multijugador Online (placeholder "Próximamente") | ✅ |
+| Pantalla de carga con barra de progreso ( LoadingScreen.cs ) | ✅ |
 
 ## 7. Arquitectura y patrones
 | Tarea | Estado |

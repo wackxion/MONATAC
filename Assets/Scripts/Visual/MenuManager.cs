@@ -18,11 +18,11 @@ public class MenuManager : MonoBehaviour
     public void Jugar3() { Jugar(3); }
     public void Jugar4() { Jugar(4); }
 
-    // Guarda la elección y carga la escena del juego.
+    // Guarda la elección y carga la escena de carga.
     private void Jugar(int cantidad)
     {
         Config.cantidadJugadores = cantidad;   // se recuerda entre escenas
-        SceneManager.LoadScene("juego");        // nombre EXACTO de tu escena de juego
+        SceneManager.LoadScene("Loading");     // pantalla de carga → luego carga "juego"
     }
 
     // El botón de multijugador online, por ahora, solo avisa.
