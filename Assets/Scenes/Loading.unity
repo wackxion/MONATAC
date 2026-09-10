@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoadingScreen
   barraProgreso: {fileID: 2070149966}
   textoCargando: {fileID: 353424033}
-  nombreEscena: juego
+  nombreEscena: SeleccionPersonajes
   duracionMinima: 3
 --- !u!4 &123716680
 Transform:

@@ -23,11 +23,16 @@ public class Partida : IPartida
     public int TotalRondas { get; private set; } = 0; // 0 = sin límite
 
     // Crea la partida con 'cantidad' jugadores, cada uno con 'hpInicial'.
-    public Partida(int cantidad, int hpInicial, int totalRondas = 0)
+    public Partida(int cantidad, int hpInicial, int totalRondas = 0, string[] nombres = null)
     {
         TotalRondas = totalRondas;
         for (int i = 0; i < cantidad; i++)
-            jugadores.Add(new Jugador("Jugador " + (i + 1), hpInicial));
+        {
+            string nombre = (nombres != null && i < nombres.Length && nombres[i].Length > 0)
+                ? nombres[i]
+                : "Jugador " + (i + 1);
+            jugadores.Add(new Jugador(nombre, hpInicial));
+        }
         ElegirObjetivoPorDefecto();
     }
 

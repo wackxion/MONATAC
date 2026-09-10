@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
 
         // La cantidad la eligió el menú. Clamp la mantiene entre 2 y 4.
         cantidadJugadores = Mathf.Clamp(Config.cantidadJugadores, 2, 4);
-        partida = new Partida(cantidadJugadores, hpInicial, Config.cantidadRondas);   // crea la partida (capa Reglas)
+        partida = new Partida(cantidadJugadores, hpInicial, Config.cantidadRondas, Config.nombresJugadores);   // crea la partida (capa Reglas)
 
         if (vista != null) vista.OcultarBarrasSobrantes(cantidadJugadores);   // esconde barras de los que no juegan
 

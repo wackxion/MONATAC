@@ -17,7 +17,7 @@ public class LoadingScreen : MonoBehaviour
     public TextMeshProUGUI textoCargando;
 
     [Header("Configuración")]
-    public string nombreEscena = "juego";
+    public string nombreEscena = "SeleccionPersonajes";
     public float duracionMinima = 1.0f;
 
     private void Start()

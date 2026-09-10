@@ -70,6 +70,7 @@ Listado organizado de las tareas de programación del proyecto, agrupadas por á
 | Cargar la escena `juego` con la cantidad elegida | ✅ |
 | Botón Multijugador Online (placeholder "Próximamente") | ✅ |
 | Pantalla de carga con barra de progreso ( LoadingScreen.cs ) | ✅ |
+| Pantalla de selección de personajes y nombres ( SeleccionPersonajesManager.cs ) | ✅ |
 
 ## 7. Arquitectura y patrones
 | Tarea | Estado |

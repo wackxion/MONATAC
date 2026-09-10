@@ -18,4 +18,10 @@ public static class Config
     //hecho por pilar
     // Cantidad de rondas de la partida. Por defecto 0 = sin límite.
     public static int cantidadRondas = 0;
+
+    // Nombres de los jugadores (se asignan en la pantalla de selección).
+    public static string[] nombresJugadores = { "Jugador 1", "Jugador 2", "Jugador 3", "Jugador 4" };
+
+    // Índice del sprite elegido por cada jugador (0=Enano, 1=Mago, 2=Arquero, 3=Elfo).
+    public static int[] personajesElegidos = { 0, 1, 2, 3 };
 }
