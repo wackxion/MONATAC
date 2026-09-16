@@ -143,6 +143,9 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
 5. **Pantalla de carga** con barra de progreso (`LoadingScreen`).
 
 > Todos los sistemas **superan el mínimo de 3** que pide el hito.
+>
+> **Detalle técnico completo** (componentes, código y eventos de cada sistema):
+> **[`Reporte_Sistemas_UI_Audio_VFX.md`](Reporte_Sistemas_UI_Audio_VFX.md)**.
 
 ---
 
