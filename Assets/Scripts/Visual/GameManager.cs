@@ -193,6 +193,9 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         }
         totalFinal = totalDados * multiplicador + bonusCartas;
 
+        // SFX: sonido de tirar los dados.
+        if (GestorAudio.Instance != null) GestorAudio.Instance.SonidoDados();
+
         // [AGREGADO POR JULIAN] Si hay animación, arrancamos la animación
         if (animacionDados != null)
         {
@@ -223,6 +226,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
             foreach (string m in gestorCartas.Mensajes) Mensaje(m);
             // 2) Se aplica el daño que queda (POLIMORFISMO: AccionAtacar daña al objetivo).
             accionActual.Aplicar(partida, total);
+            if (GestorAudio.Instance != null) GestorAudio.Instance.SonidoDanio();   // SFX: daño
             Mensaje(jugador.nombre + " ataca a " + defensor.nombre + " por " + total + " (x" + multiplicador + ", bonus +" + bonusCartas + ").");
             // 3) REFLECTANTE (auto): devuelve daño / roba monedas / cura.
             gestorCartas.Mensajes.Clear();
@@ -233,6 +237,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         else if (accionElegida == TipoAccion.Curarse)
         {
             accionActual.Aplicar(partida, totalFinal);   // POLIMORFISMO: AccionCurarse cura al jugador
+            if (GestorAudio.Instance != null) GestorAudio.Instance.SonidoCuracion();   // SFX: curación
             Mensaje(jugador.nombre + " se cura " + totalFinal + " HP.");
         }
         else // Recolectar

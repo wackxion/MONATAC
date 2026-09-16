@@ -80,11 +80,14 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
   `FabricaDeCartas`, `Dado`, `ContextoGrupal`, las interfaces **`IPartida` / `IGestorCartas`** (DIP)
   e **`IVistaJuego` + `PresentadorJuego`** (MVP).
 - **`/Visual`** — la **presentación e input** (MonoBehaviours): `GameManager` (orquesta),
-  **`VistaJuegoUI`** (dibuja la pantalla), `MenuManager`, `PersonalizacionManager`, `BotonValor`,
-  `AnimacionDados`, `EfectoHoverCarta`. Solo **muestra** información y **captura** clics; no conoce
-  las reglas ni altera los datos directamente.
+  **`VistaJuegoUI`** (dibuja la pantalla), `MenuManager`, `PersonalizacionManager`,
+  `SeleccionPersonajesManager`, `LoadingScreen`, `GestorAudio` (sonido), `BotonValor`,
+  `AnimacionDados`, `AnimacionBarraHP`, `AnimacionCartaGrupal`, `NumeroFlotante`,
+  `SpawnerNumerosFlotantes`, `EfectoHoverCarta`. Solo **muestra** información y **captura** clics;
+  no conoce las reglas ni altera los datos directamente.
 
-**Escenas:** `MENU` (elegir jugadores) · `Personalizacion` (HP y rondas) · `juego` (partida).
+**Escenas:** `MENU` (elegir jugadores) · `Loading` (pantalla de carga) · `SeleccionPersonajes`
+(personaje y nombre) · `Personalizacion` (HP y rondas) · `juego` (partida).
 
 ---
 
@@ -118,18 +121,68 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
 
 ---
 
+## 🎛️ Sistemas de juego — Game Feel (UI · Audio · VFX)
+
+### 🖥️ Interfaz de Usuario (UI) — estado en tiempo real
+1. **Barras de HP** — la vida de cada jugador (`Image.fillAmount`), coloreadas según turno/objetivo.
+2. **Indicador de turno** — "Turno de Jugador X" + marcas (turno)/(objetivo)/(eliminado).
+3. **Contador de ronda** — "Ronda 2/10".
+4. **Contador de monedas** — recursos del jugador en turno.
+5. **Mano de cartas** — muestra las cartas con su dibujo y la marca `[USAR]`.
+
+### 🔊 Audio (`GestorAudio`, patrón Singleton) — 3+ fuentes
+1. **Música de fondo (BGM)** — en loop, continua entre escenas (`DontDestroyOnLoad`).
+2. **SFX de UI** — clic en todos los botones (se enganchan automáticamente al cargar cada escena).
+3. **SFX de gameplay** — **daño** al atacar, **curación** al curarse y **dados** al tirar.
+
+### 🎬 Animaciones / VFX — feedback visual
+1. **Dados girando** (`AnimacionDados`).
+2. **Barra de HP suave** (`AnimacionBarraHP`, con `Mathf.Lerp`).
+3. **Números flotantes** de daño/cura (`NumeroFlotante` + `SpawnerNumerosFlotantes`).
+4. **Carta grupal** con fade al comprarse (`AnimacionCartaGrupal`).
+5. **Pantalla de carga** con barra de progreso (`LoadingScreen`).
+
+> Todos los sistemas **superan el mínimo de 3** que pide el hito.
+
+---
+
+## 🧪 Testing & 🐛 Bugfix
+
+- **Pruebas unitarias:** 7 tests **EditMode / NUnit** (13 casos) sobre la lógica de dominio
+  (`Jugador` y `Partida`), todos en verde. Se corren con `Window → General → Test Runner → EditMode
+  → Run All`.
+- **Reporte completo** (lista de tests + detalle de correcciones): **[`Reporte_Testing_y_Bugfix.md`](Reporte_Testing_y_Bugfix.md)**.
+
+### Correcciones realizadas (Bugfixes)
+1. **Contador de rondas roto si moría el Jugador 1** → se detecta la ronda nueva con
+   `IndiceActual < indiceAnterior` (no depende de un índice fijo). *(Partida)*
+2. **El juego se congelaba al agotarse las rondas** → se chequea el fin en `OnPasarTurno`
+   (`if (juegoTerminado) { MostrarPantallaFin(); return; }`). *(GameManager)*
+3. **El 3er dado quedaba con un valor viejo** al usar acciones de 2 dados → se limpian los dados no
+   usados. *(AnimacionDados)*
+4. **No se podía asignar el avatar del jugador** → el campo era `Image[]` y los avatares son
+   `SpriteRenderer`; se cambió a `SpriteRenderer[]`. *(VistaJuegoUI)*
+5. **Errores de compilación al armar los tests** (dependencia circular Data↔Rules) → se unificó el
+   código en un solo assembly `MONATAC.asmdef`. *(setup de tests)*
+
+---
+
 ## 📁 Estructura del proyecto
 
 ```
 Assets/
- ├─ Scenes/        # MENU, Personalizacion, juego
- ├─ Scripts/
+ ├─ Scenes/        # MENU, Loading, SeleccionPersonajes, Personalizacion, juego
+ ├─ Scripts/       # MONATAC.asmdef (un solo assembly con todo el código del juego)
  │   ├─ Data/      # Enums, Jugador, Cartas, Mazo, Config
  │   ├─ Rules/     # Partida, GestorCartas, Accion, FabricaDeCartas, Dado,
  │   │             #   ContextoGrupal, IPartida, IGestorCartas,
  │   │             #   IVistaJuego, PresentadorJuego
- │   └─ Visual/    # GameManager, VistaJuegoUI, MenuManager, PersonalizacionManager,
- │                 #   BotonValor, AnimacionDados, EfectoHoverCarta
+ │   └─ Visual/    # GameManager, VistaJuegoUI, GestorAudio, MenuManager,
+ │                 #   PersonalizacionManager, SeleccionPersonajesManager, LoadingScreen,
+ │                 #   BotonValor, AnimacionDados, AnimacionBarraHP, AnimacionCartaGrupal,
+ │                 #   NumeroFlotante, SpawnerNumerosFlotantes, EfectoHoverCarta
+ ├─ Tests/         # EditMode: MONATAC.Tests.asmdef, JugadorTests, PartidaTests
+ ├─ Audio/         # Música y efectos de sonido
  ├─ Sprites/       # Arte de las cartas
  └─ Settings/      # Configuración de render (URP)
 ProjectSettings/   # Configuración del proyecto Unity
@@ -188,7 +241,11 @@ Backlog de programación (tareas hechas / en progreso / pendientes):
 
 ## 📌 Estado del proyecto
 
-🎮 **Jugable de principio a fin** — menú, configuración inicial, partida de 2 a 4 jugadores
-por turnos, sistema completo de cartas (54), condición de victoria y **pantalla de fin con
-reinicio / volver al menú**. Arquitectura por capas con MVP + DIP. Materia Programación en
-Videojuegos II.
+🎮 **Jugable de principio a fin** — menú, configuración inicial, selección de personaje, partida de
+2 a 4 jugadores por turnos, sistema completo de cartas (54), condición de victoria y **pantalla de fin
+con reinicio / volver al menú**. Arquitectura por capas con MVP + DIP.
+
+**Hito 4 (Juice & Polish):** sistemas de **UI**, **audio** (`GestorAudio`) y **animaciones/VFX**
+integrados (Game Feel), flujo completo de usuario y **pruebas unitarias** (EditMode/NUnit). Ver el
+apartado *Testing & Bugfix* y **[`Reporte_Testing_y_Bugfix.md`](Reporte_Testing_y_Bugfix.md)**.
+Materia Programación en Videojuegos II.
