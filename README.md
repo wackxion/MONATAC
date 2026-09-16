@@ -79,12 +79,14 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
   `GestorCartas` (resolución de cartas y combate defensivo), `Accion` (+ subtipos),
   `FabricaDeCartas`, `Dado`, `ContextoGrupal`, las interfaces **`IPartida` / `IGestorCartas`** (DIP)
   e **`IVistaJuego` + `PresentadorJuego`** (MVP).
-- **`/Visual`** — la **presentación e input** (MonoBehaviours): `GameManager` (orquesta),
-  **`VistaJuegoUI`** (dibuja la pantalla), `MenuManager`, `PersonalizacionManager`,
-  `SeleccionPersonajesManager`, `LoadingScreen`, `GestorAudio` (sonido), `BotonValor`,
-  `AnimacionDados`, `AnimacionBarraHP`, `AnimacionCartaGrupal`, `NumeroFlotante`,
-  `SpawnerNumerosFlotantes`, `EfectoHoverCarta`. Solo **muestra** información y **captura** clics;
-  no conoce las reglas ni altera los datos directamente.
+- **`/Visual`** — la **presentación e input** (MonoBehaviours), organizada en subcarpetas:
+  - **`Managers/`** — `GameManager` (orquesta), `GestorAudio` (sonido), `MenuManager`,
+    `PersonalizacionManager`, `SeleccionPersonajesManager`.
+  - **`UI/`** — `VistaJuegoUI` (dibuja la pantalla), `BotonValor`, `EfectoHoverCarta`, `LoadingScreen`.
+  - **`Animacion/`** — `AnimacionDados`, `AnimacionBarraHP`, `AnimacionCartaGrupal`, `NumeroFlotante`,
+    `SpawnerNumerosFlotantes`.
+
+  Solo **muestra** información y **captura** clics; no conoce las reglas ni altera los datos directamente.
 
 **Escenas:** `MENU` (elegir jugadores) · `Loading` (pantalla de carga) · `SeleccionPersonajes`
 (personaje y nombre) · `Personalizacion` (HP y rondas) · `juego` (partida).
@@ -180,10 +182,12 @@ Assets/
  │   ├─ Rules/     # Partida, GestorCartas, Accion, FabricaDeCartas, Dado,
  │   │             #   ContextoGrupal, IPartida, IGestorCartas,
  │   │             #   IVistaJuego, PresentadorJuego
- │   └─ Visual/    # GameManager, VistaJuegoUI, GestorAudio, MenuManager,
- │                 #   PersonalizacionManager, SeleccionPersonajesManager, LoadingScreen,
- │                 #   BotonValor, AnimacionDados, AnimacionBarraHP, AnimacionCartaGrupal,
- │                 #   NumeroFlotante, SpawnerNumerosFlotantes, EfectoHoverCarta
+ │   └─ Visual/    # presentación e input, organizado en subcarpetas:
+ │       ├─ Animacion/  # AnimacionDados, AnimacionBarraHP, AnimacionCartaGrupal,
+ │       │              #   NumeroFlotante, SpawnerNumerosFlotantes
+ │       ├─ Managers/   # GameManager, GestorAudio, MenuManager,
+ │       │              #   PersonalizacionManager, SeleccionPersonajesManager
+ │       └─ UI/         # VistaJuegoUI, BotonValor, EfectoHoverCarta, LoadingScreen
  ├─ Tests/         # EditMode: MONATAC.Tests.asmdef, JugadorTests, PartidaTests
  ├─ Audio/         # Música y efectos de sonido
  ├─ Sprites/       # Arte de las cartas
