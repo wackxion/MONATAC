@@ -141,6 +141,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
             Mensaje("Descartar: tocá la carta que querés tirar (perdés el turno).");
         else
             Mensaje("Elegiste " + accionActual.Nombre + ". Ahora lanzá los dados.");
+        ActualizarUI();   // refresca botones (habilita Lanzar) y resalta las cartas usables
     }
 
     // Crea el objeto Accion que corresponde al tipo elegido (herencia + polimorfismo).
@@ -391,10 +392,12 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
 
     // ===== "Puentes" a la VISTA: el GameManager ya no dibuja, le pide a VistaJuegoUI que lo haga =====
 
-    // Refresca toda la pantalla.
+    // Refresca toda la pantalla. Le pasa a la Vista el estado del turno para que
+    // pueda iluminar/apagar los botones y resaltar las cartas usables.
     void ActualizarUI()
     {
-        if (vista != null) vista.Actualizar(partida, cartasSeleccionadas);
+        if (vista != null)
+            vista.Actualizar(partida, cartasSeleccionadas, accionElegida, haElegido, yaTiro, puedeComprar);
     }
 
     // Muestra un mensaje de estado (y en consola como respaldo).

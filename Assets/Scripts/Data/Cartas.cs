@@ -37,6 +37,11 @@ public abstract class Carta
 
     // Texto para mostrar en pantalla.
     public virtual string Descripcion() { return nombre; }
+
+    // ¿Esta carta se puede usar con esta acción? SOLO LECTURA (sin efectos secundarios):
+    // sirve para RESALTAR en la UI las cartas usables. Por defecto no (las defensivas y
+    // grupales se activan solas, no se eligen a mano).
+    public virtual bool AplicaA(TipoAccion accion) { return false; }
 }
 
 // --- 1) PASIVA: bonus fijo cada vez que elegís su acción ---
@@ -57,6 +62,9 @@ public class CartaPasiva : Carta
     {
         return (accion == accionAsociada) ? bonus : 0;
     }
+
+    // Se puede usar si la acción elegida es la suya.
+    public override bool AplicaA(TipoAccion accion) { return accion == accionAsociada; }
 
     public override string Descripcion()
     {
@@ -88,6 +96,9 @@ public class CartaUnUso : Carta
         return 0;
     }
 
+    // Se puede usar si es su acción y todavía no se gastó.
+    public override bool AplicaA(TipoAccion accion) { return accion == accionAsociada && !usada; }
+
     public override bool DebeDescartarse() { return usada; }
 }
 
@@ -113,6 +124,9 @@ public class CartaVencimiento : Carta
     {
         return accion == accionAsociada && usosRestantes > 0;
     }
+
+    // Se puede usar si sirve para esa acción y le quedan usos.
+    public override bool AplicaA(TipoAccion accion) { return SirvePara(accion); }
 
     // Costo del PRÓXIMO uso: el primero es gratis (0); los siguientes cuestan 2.
     public int CostoDelProximoUso()
@@ -292,6 +306,12 @@ public class CartaComodinMultiplicador : Carta
         return factor;
     }
 
+    // Se puede usar si no se gastó y (no tiene acción fija o coincide con la elegida).
+    public override bool AplicaA(TipoAccion accion)
+    {
+        return !usada && (accionAsociada == null || accion == accionAsociada);
+    }
+
     public override bool DebeDescartarse() { return usada; }
     public override string Descripcion() { return nombre + " (x" + factor + ")"; }
 }
@@ -314,6 +334,9 @@ public class CartaComodinDado : Carta
         if (!usada) { usada = true; return dadosExtra; }
         return 0;
     }
+
+    // Se puede usar con cualquier acción mientras no se haya gastado.
+    public override bool AplicaA(TipoAccion accion) { return !usada; }
 
     public override bool DebeDescartarse() { return usada; }
     public override string Descripcion() { return nombre + " (+" + dadosExtra + "d4)"; }

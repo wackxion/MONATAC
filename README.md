@@ -243,6 +243,7 @@ Backlog de programación (tareas hechas / en progreso / pendientes):
 
 - **Repositorio:** https://github.com/wackxion/MONATAC
 - **Carpeta del proyecto (Drive):** https://drive.google.com/drive/folders/137EptYPsfEYhwZU-GM0MS9eKm2sp86rI?usp=sharing
+- **Diagrama de flujo del código (FigJam):** https://www.figma.com/board/d5MkaaMNGyEBPYqk24bqyR/MONATAC-flujo
 
 ---
 

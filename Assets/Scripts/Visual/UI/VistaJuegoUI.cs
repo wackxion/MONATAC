@@ -65,6 +65,19 @@ public class VistaJuegoUI : MonoBehaviour
     private int[] hpAnterior = new int[4];
     private bool primeraActualizacion = true;
 
+    [Header("Botones de acción (para iluminar/apagar según el turno)")]
+    public Button botonAtacar;
+    public Button botonCurarse;
+    public Button botonRecolectar;
+    public Button botonDescartar;
+    public Button botonCambiarObjetivo;
+    public Button botonLanzarDados;
+    public Button botonComprar;
+    public Button botonPasarTurno;
+
+    [Header("Resaltado de cartas usables")]
+    public Color colorCartaApagada = new Color(0.4f, 0.4f, 0.4f, 1f);   // gris para las que no aplican
+
     // Oculta las barras/nombres de los jugadores que no juegan (ej: si son 2, esconde J3 y J4).
     public void OcultarBarrasSobrantes(int cantidadJugadores)
     {
@@ -80,7 +93,9 @@ public class VistaJuegoUI : MonoBehaviour
     }
 
     // Refresca toda la pantalla a partir del estado de la Partida y las cartas elegidas.
-    public void Actualizar(IPartida partida, List<Carta> cartasSeleccionadas)
+    // Recibe también el estado del turno para iluminar/apagar botones y cartas.
+    public void Actualizar(IPartida partida, List<Carta> cartasSeleccionadas,
+                           TipoAccion accionElegida, bool haElegido, bool yaTiro, bool puedeComprar)
     {
         List<Jugador> jugadores = partida.Jugadores;
         int indiceActual = partida.IndiceActual;
@@ -168,18 +183,25 @@ public class VistaJuegoUI : MonoBehaviour
                     Carta carta = enTurno.mano[i];
                     string usar = cartasSeleccionadas.Contains(carta) ? " [USAR]" : "";
 
+                    // ¿Se ilumina esta carta? Sin acción elegida, todas normales.
+                    // Con acción elegida: se iluminan las usables (Descartar ilumina todas).
+                    bool resaltar = !haElegido
+                        || accionElegida == TipoAccion.Descartar
+                        || carta.AplicaA(accionElegida);
+                    Color colorCarta = resaltar ? Color.white : colorCartaApagada;
+
                     Sprite spriteEncontrado = BuscarSprite(carta.nombre);
                     if (cartasImagen != null && i < cartasImagen.Length && cartasImagen[i] != null)
                     {
                         cartasImagen[i].sprite = spriteEncontrado;
-                        cartasImagen[i].color = Color.white;
+                        cartasImagen[i].color = colorCarta;
                     }
 
                     Sprite reversoEncontrado = BuscarSprite(carta.nombre + " Reverso");
                     if (cartasReverso != null && i < cartasReverso.Length && cartasReverso[i] != null)
                     {
                         cartasReverso[i].sprite = reversoEncontrado;
-                        cartasReverso[i].color = Color.white;
+                        cartasReverso[i].color = colorCarta;
                     }
 
                     ActivarHoverSlot(i, true);
@@ -211,7 +233,44 @@ public class VistaJuegoUI : MonoBehaviour
             }
         }
 
+        // Iluminar/apagar los botones según lo que se puede hacer en este momento.
+        ActualizarBotones(partida, accionElegida, haElegido, yaTiro, puedeComprar);
+
         primeraActualizacion = false;
+    }
+
+    // Enciende/apaga (interactable) cada botón según el estado del turno.
+    // interactable = false en Unity oscurece el botón (Disabled Color) y bloquea el clic.
+    private void ActualizarBotones(IPartida partida, TipoAccion accionElegida,
+                                   bool haElegido, bool yaTiro, bool puedeComprar)
+    {
+        bool terminado = partida.Terminada;
+        bool leyMarcial = partida.LeyMarcialActiva();
+        bool hayCartas = partida.Actual().mano.Count > 0;
+
+        // Antes de tirar podés elegir (o re-elegir) una acción.
+        bool puedeElegir = !terminado && !yaTiro;
+
+        // Acciones: con Ley Marcial activa, solo Atacar.
+        SetInteractable(botonAtacar,     puedeElegir);
+        SetInteractable(botonCurarse,    puedeElegir && !leyMarcial);
+        SetInteractable(botonRecolectar, puedeElegir && !leyMarcial);
+        SetInteractable(botonDescartar,  puedeElegir && !leyMarcial && hayCartas);
+
+        // Cambiar objetivo: solo tiene sentido si vas a atacar y todavía no tiraste.
+        SetInteractable(botonCambiarObjetivo, !terminado && haElegido && !yaTiro && accionElegida == TipoAccion.Atacar);
+        // Lanzar: elegiste una acción (que no sea Descartar) y todavía no tiraste.
+        SetInteractable(botonLanzarDados,     !terminado && haElegido && !yaTiro && accionElegida != TipoAccion.Descartar);
+        // Comprar: solo el turno que recolectaste (puedeComprar ya implica que tiraste).
+        SetInteractable(botonComprar,         !terminado && puedeComprar);
+        // Pasar turno: recién cuando ya tiraste.
+        SetInteractable(botonPasarTurno,      !terminado && yaTiro);
+    }
+
+    // Ayuda: setea interactable si el botón está conectado (guarda null).
+    private void SetInteractable(Button boton, bool valor)
+    {
+        if (boton != null) boton.interactable = valor;
     }
 
     // Muestra los valores finales en los textos de los dados (versión sin animación).
