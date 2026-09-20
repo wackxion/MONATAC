@@ -65,4 +65,61 @@ public class PartidaTests
         // ASSERT: debería saltear el índice 1 (muerto) e ir al índice 2
         Assert.AreEqual(2, partida.IndiceActual, "Debe saltear al muerto y darle el turno al siguiente vivo.");
     }
+
+    // ------------------------------------------------------------
+    //  REGLA (fin por rondas): al agotarse las rondas, gana el
+    //  jugador con más HP.
+    // ------------------------------------------------------------
+    [Test]
+    public void FinPorRondas_GanaElDeMasHP()
+    {
+        // ARRANGE: 2 jugadores, límite de 1 ronda. Bajamos el HP del Jugador 1.
+        Partida partida = new Partida(2, 40, 1);
+        partida.Jugadores[0].RecibirDanio(10);   // Jugador 1 queda con 30; Jugador 2 con 40
+
+        // ACT: pasamos turnos hasta cerrar la ronda (da la vuelta a la mesa).
+        partida.PasarTurno();   // J1 -> J2 (sigue ronda 1)
+        partida.PasarTurno();   // J2 -> J1 (arranca ronda 2 > límite -> termina)
+
+        // ASSERT: terminó y ganó el de más HP (Jugador 2).
+        Assert.IsTrue(partida.Terminada, "Al superar el límite de rondas la partida debe terminar.");
+        Assert.AreEqual(partida.Jugadores[1], partida.Ganador, "Debe ganar el jugador con más HP.");
+    }
+
+    // ------------------------------------------------------------
+    //  REGLA (Ley Marcial): se activa y se va gastando con los turnos.
+    // ------------------------------------------------------------
+    [Test]
+    public void LeyMarcial_SeActivaYSeGasta()
+    {
+        // ARRANGE: 2 jugadores (dura tantos turnos como jugadores).
+        Partida partida = new Partida(2, 40);
+
+        // ACT + ASSERT: al activarla está activa...
+        partida.ActivarLeyMarcial();
+        Assert.IsTrue(partida.LeyMarcialActiva(), "Recién activada, debe estar activa.");
+
+        // ...y después de 2 turnos (2 jugadores) se agota.
+        partida.PasarTurno();
+        partida.PasarTurno();
+        Assert.IsFalse(partida.LeyMarcialActiva(), "Tras gastarse los turnos, ya no debe estar activa.");
+    }
+
+    // ------------------------------------------------------------
+    //  REGLA (objetivo): CambiarObjetivo nunca apunta al jugador actual.
+    // ------------------------------------------------------------
+    [Test]
+    public void CambiarObjetivo_NuncaApuntaAlActual()
+    {
+        // ARRANGE: 3 jugadores.
+        Partida partida = new Partida(3, 40);
+
+        // ACT: rotamos el objetivo varias veces.
+        for (int i = 0; i < 3; i++)
+        {
+            partida.CambiarObjetivo();
+            // ASSERT: el objetivo siempre es un rival vivo distinto del actual.
+            Assert.AreNotEqual(partida.IndiceActual, partida.IndiceObjetivo, "El objetivo no puede ser el jugador en turno.");
+        }
+    }
 }

@@ -8,6 +8,7 @@
 // ============================================================
 
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 [TestFixture]
 public class JugadorTests
@@ -88,5 +89,37 @@ public class JugadorTests
 
         // ASSERT
         Assert.IsFalse(jugador.EstaVivo(), "Con 0 HP el jugador debe estar muerto.");
+    }
+
+    // ------------------------------------------------------------
+    //  REGLA: EstablecerMonedas nunca deja las monedas en negativo.
+    //  Parámetros: (valorAEstablecer, monedasEsperadas)
+    // ------------------------------------------------------------
+    [TestCase(10,  10, Description = "Valor positivo se establece tal cual")]
+    [TestCase( 0,   0, Description = "Cero queda en cero")]
+    [TestCase(-5,   0, Description = "Valor negativo se corrige a 0")]
+    public void EstablecerMonedas_NuncaNegativo(int valor, int esperado)
+    {
+        // ARRANGE
+        Jugador jugador = new Jugador("Test", 40);
+
+        // ACT
+        jugador.EstablecerMonedas(valor);
+
+        // ASSERT
+        Assert.AreEqual(esperado, jugador.monedas, "Las monedas no pueden ser negativas.");
+    }
+
+    [Test]
+    public void GanarMonedas_SumaLasMonedas()
+    {
+        // ARRANGE: creá un jugador nuevo
+        Jugador jugador = new Jugador("Test", 40);
+
+        // ACT: hacé que gane 6 monedas
+        jugador.GanarMonedas(6);
+
+        // ASSERT: verificá que tenga 6 monedas
+        Assert.AreEqual(6, jugador.monedas , "Las monedas no coinciden.");
     }
 }
