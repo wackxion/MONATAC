@@ -9,7 +9,7 @@ Documento del **Hito 4** con (1) las pruebas unitarias implementadas y cómo eje
 
 **Framework:** Unity Test Framework (NUnit) · **Tipo:** EditMode (lógica pura, sin abrir el juego).
 **Ubicación:** `Assets/Tests/EditMode/`.
-**Resultado:** 7 métodos de test → **13 casos**, todos en **verde** ✅.
+**Resultado:** 18 métodos de test (4 archivos) → **~26 casos**, todos en **verde** ✅.
 
 ### Cómo ejecutar los tests
 1. En Unity: `Window → General → Test Runner`.
@@ -17,8 +17,9 @@ Documento del **Hito 4** con (1) las pruebas unitarias implementadas y cómo eje
 3. Botón **Run All**.
 4. Todos los casos deben quedar en verde.
 
-> Se testean en EditMode porque `Jugador` (capa Data) y `Partida` (capa Rules) son **clases C# puras**
-> (no `MonoBehaviour`): se instancian con `new` y se prueban sin ejecutar el juego, en milisegundos.
+> Se testean en EditMode porque las clases de `/Data` (`Jugador`, `Cartas`, `Mazo`) y `/Rules`
+> (`Partida`) son **clases C# puras** (no `MonoBehaviour`): se instancian con `new` y se prueban sin
+> ejecutar el juego, en milisegundos.
 
 ### Lista de tests
 
@@ -29,6 +30,8 @@ Documento del **Hito 4** con (1) las pruebas unitarias implementadas y cómo eje
 | `Curar_NoSuperaElMaximo` | Al curarse, el HP nunca supera el `hpMaximo` | 3 |
 | `GastarMonedas_SoloSiAlcanza` | Solo gasta monedas si le alcanza (si no, devuelve `false`) | 3 |
 | `EstaVivo_EsFalsoConCeroHP` | Con 0 HP el jugador está muerto | 1 |
+| `EstablecerMonedas_NuncaNegativo` | Las monedas nunca quedan en negativo | 3 |
+| `GanarMonedas_SumaLasMonedas` | Ganar monedas las suma al total | 1 |
 
 #### `PartidaTests.cs` — capa Rules (`Partida`)
 | Test | Caso de prueba que cubre |
@@ -36,6 +39,23 @@ Documento del **Hito 4** con (1) las pruebas unitarias implementadas y cómo eje
 | `VerificarVictoria_UltimoVivoGana` | Si queda un solo jugador vivo → la partida termina y ese es el ganador |
 | `VerificarVictoria_ConVariosVivosNoTermina` | Con varios vivos → no termina y no hay ganador |
 | `PasarTurno_SalteaAlJugadorMuerto` | El turno saltea a los jugadores muertos |
+| `FinPorRondas_GanaElDeMasHP` | Al agotarse las rondas, gana el jugador con más HP |
+| `LeyMarcial_SeActivaYSeGasta` | La Ley Marcial se activa y se consume con los turnos |
+| `CambiarObjetivo_NuncaApuntaAlActual` | El objetivo nunca es el jugador en turno |
+
+#### `CartasTests.cs` — capa Data (`Cartas`)
+| Test | Caso de prueba que cubre |
+|---|---|
+| `AplicaA_PasivaSoloSuAccion` | Una carta pasiva solo aplica a su propia acción |
+| `AplicaA_ComodinDadoSirveParaCualquierAccion` | El comodín de dado aplica a cualquier acción |
+| `AplicaA_DefensivasNuncaAplican` | Las cartas defensivas no se eligen a mano |
+| `CartaReaccion_AbsorbeSegunLasMonedas` | El escudo absorbe 1 de daño por cada 2 monedas |
+
+#### `MazoTests.cs` — capa Data (`Mazo`)
+| Test | Caso de prueba que cubre |
+|---|---|
+| `Robar_SacaCartaYVaciaElMazo` | Robar saca la carta; de un mazo vacío devuelve `null` |
+| `Reciclar_RecuperaLasCartasDelDescarte` | El mazo circular recupera el descarte y lo deja vacío |
 
 ### Ejemplo de un test (patrón Arrange–Act–Assert, data-driven)
 ```csharp
