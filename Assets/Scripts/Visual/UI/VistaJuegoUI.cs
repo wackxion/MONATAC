@@ -58,6 +58,9 @@ public class VistaJuegoUI : MonoBehaviour
     [Header("Reversos de cartas (slots de la mano)")]
     public Image[] cartasReverso;
 
+    [Header("Marcos 'en uso' (uno por slot, arrancan apagados)")]
+    public GameObject[] cartasMarcoUso;   // se prende el del slot cuando esa carta está seleccionada
+
     [Header("Colores del turno")]
     public Color colorBarra = Color.green;
     public Color colorObjetivo = new Color(1f, 0.3f, 0.3f);
@@ -158,7 +161,7 @@ public class VistaJuegoUI : MonoBehaviour
         }
 
         // Monedas del jugador en turno.
-        if (textoMonedas != null) textoMonedas.text = "Monedas: " + enTurno.monedas;
+        if (textoMonedas != null) textoMonedas.text = "" + enTurno.monedas;
 
         if (textoTurno != null && !juegoTerminado) textoTurno.text = "Turno de " + enTurno.nombre;
 
@@ -181,7 +184,8 @@ public class VistaJuegoUI : MonoBehaviour
                 if (i < enTurno.mano.Count)
                 {
                     Carta carta = enTurno.mano[i];
-                    string usar = cartasSeleccionadas.Contains(carta) ? " [USAR]" : "";
+                    bool seleccionada = cartasSeleccionadas.Contains(carta);
+                    string usar = seleccionada ? " [USAR]" : "";
 
                     // ¿Se ilumina esta carta? Sin acción elegida, todas normales.
                     // Con acción elegida: se iluminan las usables (Descartar ilumina todas).
@@ -205,6 +209,7 @@ public class VistaJuegoUI : MonoBehaviour
                     }
 
                     ActivarHoverSlot(i, true);
+                    MostrarMarcoUso(i, seleccionada);   // marco de "en uso" si está seleccionada
 
                     // Si hay imagen, no mostramos el texto. Si no hay, mostramos el nombre.
                     if (spriteEncontrado != null)
@@ -229,6 +234,7 @@ public class VistaJuegoUI : MonoBehaviour
                     }
 
                     ActivarHoverSlot(i, false);
+                    MostrarMarcoUso(i, false);   // slot vacío: marco apagado
                 }
             }
         }
@@ -302,6 +308,13 @@ public class VistaJuegoUI : MonoBehaviour
         if (cartasImagen == null || indice >= cartasImagen.Length || cartasImagen[indice] == null) return;
         EfectoHoverCarta hover = cartasImagen[indice].GetComponentInParent<EfectoHoverCarta>();
         if (hover != null) hover.SetHoverActivo(activo);
+    }
+
+    // Muestra u oculta el marco de "en uso" de un slot de carta (guarda null por si no está conectado).
+    private void MostrarMarcoUso(int indice, bool activo)
+    {
+        if (cartasMarcoUso == null || indice >= cartasMarcoUso.Length || cartasMarcoUso[indice] == null) return;
+        cartasMarcoUso[indice].SetActive(activo);
     }
 
     // Busca un sprite por nombre, ignorando mayúsculas/minúsculas y sufijos "_0".
