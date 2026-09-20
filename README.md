@@ -209,6 +209,19 @@ Packages/          # Dependencias
 
 ---
 
+## 🤖 Uso de Inteligencia Artificial
+
+En este proyecto usé herramientas de IA como **apoyo**, no como reemplazo del trabajo propio:
+- **Diseño (ChatGPT):** generación de ideas, conceptos y arte.
+- **Asesoría técnica y código (Claude Code, OpenCode):** consultas sobre arquitectura (capas, SOLID,
+  patrones), asistencia para escribir y refactorizar código, resolución de errores y documentación.
+
+Todas las decisiones de diseño, la arquitectura y la comprensión del código son propias: revisé,
+entendí y validé cada cambio. La IA funcionó como tutor y asistente para acelerar el desarrollo y
+reforzar el aprendizaje de conceptos (POO, MVP, DIP, testing).
+
+---
+
 ## 🚀 Cómo abrir el proyecto
 
 1. Clonar el repositorio:
