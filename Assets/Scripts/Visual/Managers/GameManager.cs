@@ -78,6 +78,13 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         Instance = this;   // este pasa a ser LA instancia única
     }
 
+    // Unity lo llama cuando el objeto se destruye (cambio/reinicio de escena).
+    // Ciclo de vida limpio: desconectamos el Presentador para no dejar el evento colgado.
+    void OnDestroy()
+    {
+        if (presentador != null) presentador.Desconectar();
+    }
+
     // --- Implementación de IVistaJuego (patrón MVP): delega en la Vista ---
     // La Vista AVISA por este evento; el PresentadorJuego (Rules) lo escucha.
     public event System.Action AlPedirCambiarObjetivo;
@@ -96,6 +103,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         partida = new Partida(cantidadJugadores, hpInicial, Config.cantidadRondas, Config.nombresJugadores);   // crea la partida (capa Reglas)
 
         if (vista != null) vista.OcultarBarrasSobrantes(cantidadJugadores);   // esconde barras de los que no juegan
+        if (vista != null) vista.AplicarPersonajes(cantidadJugadores);        // pone el personaje elegido a cada avatar
 
         dado = new Dado();
         descarte = new PilaDescarte();
@@ -306,12 +314,12 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         if (!puedeComprar) { Mensaje("Solo podés comprar cartas el turno que Recolectás."); return; }
 
         Jugador j = Actual();
-        if (j.monedas < 6)     { Mensaje("Te faltan monedas (cada carta cuesta 6)."); return; }
-        if (j.mano.Count >= 5) { Mensaje("Tu mano está llena (máximo 5 cartas)."); return; }
+        if (j.monedas < Reglas.CostoCarta)     { Mensaje("Te faltan monedas (cada carta cuesta " + Reglas.CostoCarta + ")."); return; }
+        if (j.mano.Count >= Reglas.ManoMaxima) { Mensaje("Tu mano está llena (máximo " + Reglas.ManoMaxima + " cartas)."); return; }
 
         if (mazo.EstaVacio()) mazo.Reciclar(descarte);   // mazo circular
         Carta comprada = mazo.Robar();
-        j.GastarMonedas(6);
+        j.GastarMonedas(Reglas.CostoCarta);
 
         CartaGrupal grupal = comprada as CartaGrupal;
         if (grupal != null)

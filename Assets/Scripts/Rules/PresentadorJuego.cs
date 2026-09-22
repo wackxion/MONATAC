@@ -23,6 +23,13 @@ public class PresentadorJuego
         vista.AlPedirCambiarObjetivo += CambiarObjetivo;
     }
 
+    // Se DESUSCRIBE del evento de la vista. Lo llama el GameManager al destruirse o
+    // reiniciar la escena, para no dejar suscripciones colgadas (ciclo de vida limpio).
+    public void Desconectar()
+    {
+        vista.AlPedirCambiarObjetivo -= CambiarObjetivo;
+    }
+
     // El Presentador COORDINA: le pide al Modelo y le avisa a la Vista.
     private void CambiarObjetivo()
     {

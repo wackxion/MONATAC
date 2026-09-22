@@ -116,10 +116,13 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
   pasó algo sin saber quién la escucha.
 
 ### SOLID aplicado
-- **SRP** — las reglas se extrajeron del `GameManager` a `Partida` y `GestorCartas`; el **dibujado**
-  se separó en **`VistaJuegoUI`** (el `GameManager` solo orquesta).
-- **DIP** — el `PresentadorJuego` depende de `IVistaJuego`, y el `GameManager` depende de
-  **`IPartida` / `IGestorCartas`** (abstracciones), no de las clases concretas.
+- **SRP** (Responsabilidad Única) — las reglas se extrajeron del `GameManager` a `Partida` y
+  `GestorCartas`; el **dibujado** se separó en **`VistaJuegoUI`** (el `GameManager` solo orquesta).
+- **OCP** (Abierto/Cerrado) — las jerarquías `Carta` y `Accion` están **abiertas a extensión** pero
+  **cerradas a modificación**: para agregar una carta o acción nueva se **crea una clase** (que hereda
+  y hace `override`), **sin tocar** `GestorCartas` ni `GameManager`, que las tratan por polimorfismo.
+- **DIP** (Inversión de Dependencias) — el `PresentadorJuego` depende de `IVistaJuego`, y el
+  `GameManager` depende de **`IPartida` / `IGestorCartas`** (abstracciones), no de las clases concretas.
 
 ---
 

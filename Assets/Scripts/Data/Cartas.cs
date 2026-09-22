@@ -186,7 +186,7 @@ public class CartaReaccion : Carta
     {
         int inicial = danio;
         // Mientras haya daño y le alcancen 2 monedas, absorbe 1 de HP.
-        while (danio > 0 && jugador.GastarMonedas(2))
+        while (danio > 0 && jugador.GastarMonedas(Reglas.MonedasPorAbsorcion))
         {
             danio -= 1;
         }
@@ -233,7 +233,7 @@ public class CartaExceso : CartaGrupal
     {
         foreach (Jugador j in ctx.jugadores)
         {
-            if (j.mano.Count >= 5) continue;
+            if (j.mano.Count >= Reglas.ManoMaxima) continue;
             if (ctx.mazo.EstaVacio()) ctx.mazo.Reciclar(ctx.descarte);
             Carta nueva = ctx.mazo.Robar();
             if (nueva == null) continue;

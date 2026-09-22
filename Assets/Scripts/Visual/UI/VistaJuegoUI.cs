@@ -29,6 +29,9 @@ public class VistaJuegoUI : MonoBehaviour
     [Header("Imágenes de los jugadores (SpriteRenderer, en orden J1, J2, J3, J4)")]
     public SpriteRenderer[] imagenesJugadores;
 
+    [Header("Sprites de personajes (MISMO orden que en la pantalla de selección)")]
+    public Sprite[] spritesPersonajes;   // para aplicar el personaje que eligió cada jugador
+
     [Header("Del jugador en turno")]
     public TextMeshProUGUI textoMonedas;
 
@@ -80,6 +83,19 @@ public class VistaJuegoUI : MonoBehaviour
 
     [Header("Resaltado de cartas usables")]
     public Color colorCartaApagada = new Color(0.4f, 0.4f, 0.4f, 1f);   // gris para las que no aplican
+
+    // Aplica a cada avatar el personaje que el jugador eligió en la pantalla de selección
+    // (lee Config.personajesElegidos y le pone el sprite correspondiente).
+    public void AplicarPersonajes(int cantidadJugadores)
+    {
+        if (imagenesJugadores == null || spritesPersonajes == null) return;
+        for (int i = 0; i < cantidadJugadores && i < imagenesJugadores.Length; i++)
+        {
+            int elegido = Config.personajesElegidos[i];   // índice del personaje que eligió el jugador i
+            if (imagenesJugadores[i] != null && elegido >= 0 && elegido < spritesPersonajes.Length)
+                imagenesJugadores[i].sprite = spritesPersonajes[elegido];
+        }
+    }
 
     // Oculta las barras/nombres de los jugadores que no juegan (ej: si son 2, esconde J3 y J4).
     public void OcultarBarrasSobrantes(int cantidadJugadores)
