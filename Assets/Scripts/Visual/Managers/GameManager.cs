@@ -391,7 +391,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     private void MostrarPantallaFin()
     {
         Mensaje("FIN DEL JUEGO. Ganó " + partida.Ganador.nombre + "!");
-        if (vista != null) vista.MostrarFin(partida.Ganador.nombre);
+        if (vista != null) vista.MostrarFin(partida);   // pasa la partida para mostrar las estadísticas
     }
 
     // --- Botones de la pantalla de FIN de partida (cierran el game loop) ---

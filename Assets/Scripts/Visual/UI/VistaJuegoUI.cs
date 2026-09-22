@@ -40,8 +40,9 @@ public class VistaJuegoUI : MonoBehaviour
     public TextMeshProUGUI textoEstado;
 
     [Header("Fin de partida")]
-    public GameObject panelFin;            // se ACTIVA cuando hay ganador
-    public TextMeshProUGUI textoGanador;   // muestra "¡Ganó Jugador X!"
+    public GameObject panelFin;              // se ACTIVA cuando hay ganador
+    public TextMeshProUGUI textoGanador;     // muestra "¡Ganó Jugador X!"
+    public TextMeshProUGUI textoEstadisticas; // tabla con los datos de todos los jugadores
 
     [Header("Ronda")]
     public TextMeshProUGUI textoRonda;
@@ -303,11 +304,28 @@ public class VistaJuegoUI : MonoBehaviour
         if (valores.Length > 2 && dado3Texto != null) dado3Texto.text = valores[2].ToString();
     }
 
-    // Muestra la pantalla de fin con el ganador y activa el panel (con los botones Reiniciar/Menú).
-    public void MostrarFin(string nombreGanador)
+    // Muestra la pantalla de fin: el ganador + las estadísticas de TODOS los jugadores,
+    // y activa el panel (con los botones Reiniciar/Menú).
+    public void MostrarFin(IPartida partida)
     {
+        string nombreGanador = (partida.Ganador != null) ? partida.Ganador.nombre : "nadie";
         if (textoTurno != null) textoTurno.text = "Ganó " + nombreGanador;
         if (textoGanador != null) textoGanador.text = "¡Ganó " + nombreGanador + "!";
+
+        // Arma una línea por jugador con su estado final.
+        if (textoEstadisticas != null)
+        {
+            string stats = "";
+            foreach (Jugador j in partida.Jugadores)
+            {
+                string estado = j.EstaVivo() ? (j.hp + "/" + j.hpMaximo + " HP") : "eliminado";
+                string marca = (j == partida.Ganador) ? "   (ganador)" : "";
+                stats += j.nombre + " · " + estado + " · " + j.monedas + " monedas · "
+                       + j.mano.Count + " cartas" + marca + "\n";
+            }
+            textoEstadisticas.text = stats;
+        }
+
         if (panelFin != null) panelFin.SetActive(true);
     }
 
