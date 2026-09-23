@@ -66,6 +66,25 @@ una acción (**atacar, curarse, recolectar o descartar**) y potencia sus jugadas
 3. **Fin:** cuando queda un solo jugador vivo (o se acaban las rondas), aparece la pantalla
    de fin con **Reiniciar** (nueva partida) o **Volver al Menú**.
 
+### 🎛️ Mapa de controles
+
+El juego es **100% con el mouse** (HotSeat), con un atajo de teclado para la pausa:
+
+| Control | Acción |
+|---|---|
+| **Clic izquierdo** | Todo: elegir acción, marcar cartas `[USAR]`, botones de menú |
+| **Botón Atacar / Curarse / Recolectar / Descartar** | Elegir la acción del turno |
+| **Botón Cambiar Objetivo** | Rotar el rival apuntado (solo al atacar) |
+| **Botón Lanzar Dados** | Resolver la jugada |
+| **Botón Comprar** | Comprar una carta (6 monedas, tras Recolectar) |
+| **Botón Pasar Turno** | Terminar el turno |
+| **Tecla `Esc`** *(o botón ⏸)* | Pausar / Reanudar (en gameplay) |
+| **Botón ❓ Instrucciones** | Abrir el panel de cómo se juega (en el menú) |
+| **Botón Salir** | Cerrar el juego (en el menú) |
+
+> Los botones se **iluminan/apagan** según lo que se puede hacer en cada momento del turno, y las
+> cartas usables se **resaltan** al elegir una acción.
+
 ---
 
 ## 🏛️ Arquitectura de capas
@@ -74,22 +93,38 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
 `/Rules` son **C# puro** (no dependen de Unity), por lo que se pueden probar por separado.
 
 - **`/Data`** — el **estado y las entidades** del juego: `Jugador`, `Carta` (+ subtipos),
-  `Mazo`, `PilaDescarte`, `Config`, `Enums`.
+  `Mazo`, `PilaDescarte`, `Config`, `Reglas` (constantes), `Enums`.
 - **`/Rules`** — la **lógica y las reglas**: `Partida` (turnos, objetivo, rondas, victoria),
   `GestorCartas` (resolución de cartas y combate defensivo), `Accion` (+ subtipos),
   `FabricaDeCartas`, `Dado`, `ContextoGrupal`, las interfaces **`IPartida` / `IGestorCartas`** (DIP)
   e **`IVistaJuego` + `PresentadorJuego`** (MVP).
 - **`/Visual`** — la **presentación e input** (MonoBehaviours), organizada en subcarpetas:
-  - **`Managers/`** — `GameManager` (orquesta), `GestorAudio` (sonido), `MenuManager`,
-    `PersonalizacionManager`, `SeleccionPersonajesManager`.
-  - **`UI/`** — `VistaJuegoUI` (dibuja la pantalla), `BotonValor`, `EfectoHoverCarta`, `LoadingScreen`.
+  - **`Managers/`** — `GameManager` (orquesta), `GestorAudio` (sonido), `MenuManager`, `MenuPausa`,
+    `Splash`, `PersonalizacionManager`, `SeleccionPersonajesManager`.
+  - **`UI/`** — `VistaJuegoUI` (dibuja la pantalla), `PanelSimple`, `BotonValor`, `EfectoHoverCarta`,
+    `LoadingScreen`.
   - **`Animacion/`** — `AnimacionDados`, `AnimacionBarraHP`, `AnimacionCartaGrupal`, `NumeroFlotante`,
     `SpawnerNumerosFlotantes`.
 
   Solo **muestra** información y **captura** clics; no conoce las reglas ni altera los datos directamente.
 
-**Escenas:** `MENU` (elegir jugadores) · `Loading` (pantalla de carga) · `SeleccionPersonajes`
-(personaje y nombre) · `Personalizacion` (HP y rondas) · `juego` (partida).
+**Escenas:** `Splash` (video de intro) · `MENU` (elegir jugadores) · `Loading` (pantalla de carga) ·
+`SeleccionPersonajes` (personaje y nombre) · `Personalizacion` (HP y rondas) · `juego` (partida).
+
+---
+
+## 📐 Diagrama UML
+
+El diagrama de clases del proyecto (las 3 capas, las clases de cada una y sus relaciones de herencia,
+composición e interfaces) está en **[`UML.md`](UML.md)**.
+
+- **`/Data`** — entidades y estado (`Jugador`, `Carta` + subtipos, `Mazo`, `Config`, `Reglas`, enums).
+- **`/Rules`** — reglas puras + interfaces (`Partida`, `GestorCartas`, `Accion` + subtipos, `Dado`,
+  `FabricaDeCartas`, `IPartida`, `IGestorCartas`, `IVistaJuego`, `PresentadorJuego`).
+- **`/Visual`** — MonoBehaviours (Managers / UI / Animación).
+
+Relaciones destacadas: `Carta` y `Accion` **abstractas** con sus subtipos (herencia/polimorfismo);
+`Partida`→`IPartida`, `GameManager`→`IVistaJuego`, `PresentadorJuego`→`IPartida`/`IVistaJuego` (DIP/MVP).
 
 ---
 
@@ -134,11 +169,15 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
 3. **Contador de ronda** — "Ronda 2/10".
 4. **Contador de monedas** — recursos del jugador en turno.
 5. **Mano de cartas** — muestra las cartas con su dibujo y la marca `[USAR]`.
+6. **Feedback de estado** — los botones se **iluminan/apagan** según lo que se puede hacer en el turno,
+   las cartas **usables se resaltan** al elegir una acción y las en uso muestran un **marco**.
+7. **Selección de personaje** — cada avatar usa el personaje elegido en la pantalla de selección.
 
 ### 🔊 Audio (`GestorAudio`, patrón Singleton) — 3+ fuentes
 1. **Música de fondo (BGM)** — en loop, continua entre escenas (`DontDestroyOnLoad`).
 2. **SFX de UI** — clic en todos los botones (se enganchan automáticamente al cargar cada escena).
-3. **SFX de gameplay** — **daño** al atacar, **curación** al curarse y **dados** al tirar.
+3. **SFX de gameplay** — **daño** (atacar), **curación** (curarse), **dados** (tirar), **comprar** carta,
+   **cambiar objetivo**, **recolectar** (dos sonidos según muchas/pocas monedas) y **victoria** en el fin.
 
 ### 🎬 Animaciones / VFX — feedback visual
 1. **Dados girando** (`AnimacionDados`).
@@ -146,6 +185,14 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
 3. **Números flotantes** de daño/cura (`NumeroFlotante` + `SpawnerNumerosFlotantes`).
 4. **Carta grupal** con fade al comprarse (`AnimacionCartaGrupal`).
 5. **Pantalla de carga** con barra de progreso (`LoadingScreen`).
+
+### 🧭 Flujo y menús (Hito 5)
+1. **Splash** — video de intro en loop; al terminar la 1ª vuelta aparece **Jugar** (`Splash`).
+2. **Menú de pausa** — panel con Reanudar / Volver al Menú, tecla `Esc`, congela con `Time.timeScale`
+   (`MenuPausa`).
+3. **Instrucciones** — panel con las reglas por fases del turno, desde el menú (`PanelSimple`).
+4. **Pantalla de fin con estadísticas** — el ganador + HP, monedas y cartas de todos los jugadores.
+5. **Botón Salir** — cierra el juego (`Application.Quit`).
 
 > Todos los sistemas **superan el mínimo de 3** que pide el hito.
 >
@@ -156,9 +203,9 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
 
 ## 🧪 Testing & 🐛 Bugfix
 
-- **Pruebas unitarias:** 7 tests **EditMode / NUnit** (13 casos) sobre la lógica de dominio
-  (`Jugador` y `Partida`), todos en verde. Se corren con `Window → General → Test Runner → EditMode
-  → Run All`.
+- **Pruebas unitarias:** 18 tests **EditMode / NUnit** (26 casos, varios *data-driven* con `[TestCase]`)
+  sobre la lógica de dominio (`Jugador`, `Partida`, `Cartas`, `Mazo`), todos en verde. Se corren con
+  `Window → General → Test Runner → EditMode → Run All`.
 - **Reporte completo** (lista de tests + detalle de correcciones): **[`Reporte_Testing_y_Bugfix.md`](Reporte_Testing_y_Bugfix.md)**.
 
 ### Correcciones realizadas (Bugfixes)
@@ -179,20 +226,21 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
 
 ```
 Assets/
- ├─ Scenes/        # MENU, Loading, SeleccionPersonajes, Personalizacion, juego
+ ├─ Scenes/        # Splash, MENU, Loading, SeleccionPersonajes, Personalizacion, juego
  ├─ Scripts/       # MONATAC.asmdef (un solo assembly con todo el código del juego)
- │   ├─ Data/      # Enums, Jugador, Cartas, Mazo, Config
+ │   ├─ Data/      # Enums, Jugador, Cartas, Mazo, Config, Reglas
  │   ├─ Rules/     # Partida, GestorCartas, Accion, FabricaDeCartas, Dado,
  │   │             #   ContextoGrupal, IPartida, IGestorCartas,
  │   │             #   IVistaJuego, PresentadorJuego
  │   └─ Visual/    # presentación e input, organizado en subcarpetas:
  │       ├─ Animacion/  # AnimacionDados, AnimacionBarraHP, AnimacionCartaGrupal,
  │       │              #   NumeroFlotante, SpawnerNumerosFlotantes
- │       ├─ Managers/   # GameManager, GestorAudio, MenuManager,
+ │       ├─ Managers/   # GameManager, GestorAudio, MenuManager, MenuPausa, Splash,
  │       │              #   PersonalizacionManager, SeleccionPersonajesManager
- │       └─ UI/         # VistaJuegoUI, BotonValor, EfectoHoverCarta, LoadingScreen
- ├─ Tests/         # EditMode: MONATAC.Tests.asmdef, JugadorTests, PartidaTests
+ │       └─ UI/         # VistaJuegoUI, PanelSimple, BotonValor, EfectoHoverCarta, LoadingScreen
+ ├─ Tests/         # EditMode: MONATAC.Tests.asmdef, JugadorTests, PartidaTests, CartasTests, MazoTests
  ├─ Audio/         # Música y efectos de sonido
+ ├─ Video/         # Video del splash
  ├─ Sprites/       # Arte de las cartas
  └─ Settings/      # Configuración de render (URP)
 ProjectSettings/   # Configuración del proyecto Unity
@@ -203,12 +251,22 @@ Packages/          # Dependencias
 
 ## 🛠️ Pila tecnológica
 
-| Herramienta | Uso |
+| Herramienta | Versión / Uso |
 |---|---|
-| **Unity** (motor) | Desarrollo del videojuego |
+| **Unity** (motor) | **6000.3.8f1** (Unity 6) |
 | **C#** | Lenguaje de scripting |
 | **Git + GitHub** | Control de versiones |
 | **Visual Studio / Rider** | Editor de código |
+
+### 📚 Librerías / paquetes de Unity usados
+| Paquete | Versión | Para qué |
+|---|---|---|
+| **Input System** (`com.unity.inputsystem`) | 1.18.0 | Entrada (tecla Esc de pausa, saltar splash) |
+| **Universal Render Pipeline (URP)** (`com.unity.render-pipelines.universal`) | 17.3.0 | Render 2D |
+| **uGUI + TextMeshPro** (`com.unity.ugui`) | 2.0.0 | Interfaz y textos |
+| **Test Framework** (`com.unity.test-framework`) | 1.6.0 | Pruebas unitarias (NUnit, EditMode) |
+| **Video** (`com.unity.modules.video`) | 1.0.0 | Reproducción del splash |
+| **Particle System** (`com.unity.modules.particlesystem`) | 1.0.0 | VFX |
 
 ---
 
@@ -237,19 +295,41 @@ reforzar el aprendizaje de conceptos (POO, MVP, DIP, testing).
 
 ---
 
-## 📋 Backlog de tareas
+## 📋 Gestión de proyecto
+
+### Quién hizo qué
+
+| Área | Tareas principales | Responsable(s) |
+|---|---|---|
+| **Arquitectura y dominio** | Capas Data/Rules/Visual, `Partida`, `GestorCartas`, `Accion`, `Cartas`, `FabricaDeCartas` | Braian *(Pilar en parte de `Partida`)* |
+| **Patrones (MVP/DIP)** | `IPartida`, `IGestorCartas`, `IVistaJuego`, `PresentadorJuego` | Braian |
+| **UI de juego** | `VistaJuegoUI`, feedback de botones/cartas, estadísticas de fin | Braian |
+| **Animaciones / VFX** | `AnimacionDados`, `EfectoHoverCarta`, integración en `GameManager` | Julian |
+| **Personalización** | `PersonalizacionManager`, `BotonValor`, `Config` | Julian · Pilar |
+| **Menú de inicio** | `MenuManager`, navegación de escenas | Pilar |
+| **Audio** | `GestorAudio` (música + SFX) | Braian |
+| **Flujo Hito 5** | Splash, pausa, instrucciones, salir, estadísticas de fin | Braian |
+| **Testing** | 18 tests EditMode (Jugador, Partida, Cartas, Mazo) | Braian |
+| **Documentación** | README, reportes, vault de documentación | Braian |
+
+### Backlog
 
 Backlog de programación (tareas hechas / en progreso / pendientes):
-- **Trello:** https://trello.com/invite/b/6a9ec9aebfc402696fe71d44/ATTIdf3bf5328ba3949bab7a2a2d03c60532751D1977/grupo-b
 - **Backlog local:** [`Backlog.md`](Backlog.md), organizado por área e hito.
+- **Trello:** https://trello.com/invite/b/6a9ec9aebfc402696fe71d44/ATTIdf3bf5328ba3949bab7a2a2d03c60532751D1977/grupo-b
 
 ---
 
-## 👥 Integrantes
+## 👥 Integrantes y roles
 
-- **Braian Zapater**
-- **Alvarez Pilar**
-- **Julian Gabriel Blanco**
+| Integrante | Rol |
+|---|---|
+| **Braian Zapater** | Programador principal · Arquitectura (3 capas, MVP, DIP, patrones), lógica de dominio, audio, testing y flujo del Hito 5 |
+| **Julian Gabriel Blanco** | Programación de animaciones/VFX (dados, hover de cartas) y pantalla de personalización |
+| **Alvarez Pilar** | Configuración de partida, menú de inicio y parte de la lógica de `Partida` |
+
+> Para el **Parcial 1 (Hito 5)** el proyecto lo continúa **Braian Zapater en solitario**. Los roles de
+> arriba reflejan el trabajo realizado por el equipo en las etapas previas (Hitos anteriores).
 
 **Materia:** Programación en Videojuegos II — Segundo Cuatrimestre
 
@@ -272,4 +352,8 @@ con reinicio / volver al menú**. Arquitectura por capas con MVP + DIP.
 **Hito 4 (Juice & Polish):** sistemas de **UI**, **audio** (`GestorAudio`) y **animaciones/VFX**
 integrados (Game Feel), flujo completo de usuario y **pruebas unitarias** (EditMode/NUnit). Ver el
 apartado *Testing & Bugfix* y **[`Reporte_Testing_y_Bugfix.md`](Reporte_Testing_y_Bugfix.md)**.
+
+**Hito 5 (Parcial 1):** flujo de juego completo — **splash** con video, **menú de pausa**,
+**instrucciones**, **botón salir** y **pantalla de fin con estadísticas** — más pulido de código
+(constantes en `Reglas`, desuscripción de eventos, OCP explícito) y ampliación de tests (18 tests).
 Materia Programación en Videojuegos II.
