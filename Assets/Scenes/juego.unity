@@ -8287,14 +8287,14 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 763337906}
+  - {fileID: 897388334}
   - {fileID: 1159515732}
   - {fileID: 468429468}
   - {fileID: 1234233423}
   - {fileID: 965629902}
   - {fileID: 56953626}
   - {fileID: 2141179693}
-  - {fileID: 763337906}
-  - {fileID: 897388334}
   - {fileID: 517024172}
   - {fileID: 1355230883}
   m_Father: {fileID: 0}

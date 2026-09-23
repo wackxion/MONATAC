@@ -169,6 +169,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     {
         if (juegoTerminado) return;
         AlPedirCambiarObjetivo?.Invoke();
+        if (GestorAudio.Instance != null) GestorAudio.Instance.SonidoCambiarObjetivo();   // SFX
     }
 
     // --- Botón LANZAR DADOS: aplica la acción ---
@@ -253,6 +254,12 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         {
             accionActual.Aplicar(partida, totalFinal);   // POLIMORFISMO: AccionRecolectar suma monedas
             puedeComprar = true;   // habilita el botón Comprar carta este turno
+            // SFX: distinto sonido según si recolectó mucho o poco.
+            if (GestorAudio.Instance != null)
+            {
+                if (totalFinal >= Reglas.RecoleccionAlta) GestorAudio.Instance.SonidoMonedasMuchas();
+                else                                       GestorAudio.Instance.SonidoMonedasPocas();
+            }
             Mensaje(jugador.nombre + " recolecta " + totalFinal + " monedas. Podés comprar cartas (6 c/u) o acumular.");
         }
 
@@ -320,6 +327,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         if (mazo.EstaVacio()) mazo.Reciclar(descarte);   // mazo circular
         Carta comprada = mazo.Robar();
         j.GastarMonedas(Reglas.CostoCarta);
+        if (GestorAudio.Instance != null) GestorAudio.Instance.SonidoComprar();   // SFX: compra exitosa
 
         CartaGrupal grupal = comprada as CartaGrupal;
         if (grupal != null)
@@ -391,6 +399,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
     private void MostrarPantallaFin()
     {
         Mensaje("FIN DEL JUEGO. Ganó " + partida.Ganador.nombre + "!");
+        if (GestorAudio.Instance != null) GestorAudio.Instance.SonidoGanador();   // SFX: victoria
         if (vista != null) vista.MostrarFin(partida);   // pasa la partida para mostrar las estadísticas
     }
 

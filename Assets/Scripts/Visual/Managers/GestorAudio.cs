@@ -32,6 +32,11 @@ public class GestorAudio : MonoBehaviour
     public AudioClip danio;            // al recibir daño
     public AudioClip curacion;         // al curarse
     public AudioClip dados;            // al tirar los dados
+    public AudioClip comprar;          // al comprar una carta
+    public AudioClip cambiarObjetivo;  // al cambiar de objetivo
+    public AudioClip ganador;          // en la pantalla de fin (victoria)
+    public AudioClip monedasMuchas;    // al recolectar mucho (>= Reglas.RecoleccionAlta)
+    public AudioClip monedasPocas;     // al recolectar poco
 
     void Awake()
     {
@@ -98,8 +103,13 @@ public class GestorAudio : MonoBehaviour
 
     // --- Atajos para los sonidos concretos del juego ---
     // (así otros scripts llaman GestorAudio.Instance.SonidoDados() sin pasar el clip)
-    public void SonidoClic()     { ReproducirSFX(clic); }
-    public void SonidoDanio()    { ReproducirSFX(danio); }
-    public void SonidoCuracion() { ReproducirSFX(curacion); }
-    public void SonidoDados()    { ReproducirSFX(dados); }
+    public void SonidoClic()            { ReproducirSFX(clic); }
+    public void SonidoDanio()           { ReproducirSFX(danio); }
+    public void SonidoCuracion()        { ReproducirSFX(curacion); }
+    public void SonidoDados()           { ReproducirSFX(dados); }
+    public void SonidoComprar()         { ReproducirSFX(comprar); }
+    public void SonidoCambiarObjetivo() { ReproducirSFX(cambiarObjetivo); }
+    public void SonidoGanador()         { ReproducirSFX(ganador); }
+    public void SonidoMonedasMuchas()   { ReproducirSFX(monedasMuchas); }
+    public void SonidoMonedasPocas()    { ReproducirSFX(monedasPocas); }
 }

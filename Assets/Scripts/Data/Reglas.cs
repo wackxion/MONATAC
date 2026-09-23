@@ -16,4 +16,8 @@ public static class Reglas
 
     // Monedas que se gastan para absorber 1 punto de daño (carta Escudo de Monedas).
     public const int MonedasPorAbsorcion = 2;
+
+    // Desde cuántas monedas recolectadas se considera una recolección "alta"
+    // (Recolectar tira 3 dados: rango 3-18, promedio ~10,5). Se usa para el SFX.
+    public const int RecoleccionAlta = 11;
 }

@@ -1,51 +1,47 @@
 // ============================================================
 //  Splash.cs  —  Capa: VISUAL (Unity)
-//  Pantalla de presentación: reproduce un video corto y, al
-//  terminar, carga el menú. Se puede saltar con clic o tecla.
+//  Pantalla de presentación: el video se reproduce EN BUCLE.
+//  Cuando termina la PRIMERA vuelta, aparece el botón "Jugar",
+//  que es el único que lleva al menú (el video sigue en loop).
 //  Es puro flujo de escenas: no toca reglas del juego.
 // ============================================================
 
 using UnityEngine;
 using UnityEngine.Video;             // VideoPlayer
 using UnityEngine.SceneManagement;   // cambiar de escena
-using UnityEngine.InputSystem;       // Input System nuevo (para saltar)
 
 public class Splash : MonoBehaviour
 {
     public VideoPlayer video;                 // el reproductor del video (se asigna en el Inspector)
-    public string escenaSiguiente = "MENU";   // a qué escena ir cuando termina
-    public bool sePuedeSaltar = true;         // permitir saltar con clic o tecla
-
-    private bool yaCargo = false;             // evita cargar la escena dos veces
+    public GameObject botonJugar;             // el botón "Jugar" (arranca OCULTO)
+    public string escenaSiguiente = "MENU";   // a qué escena ir al tocar Jugar
 
     void Start()
     {
-        // loopPointReached se dispara cuando el video LLEGA AL FINAL.
-        if (video != null) video.loopPointReached += AlTerminar;
-        else Continuar();   // si no hay video asignado, no nos trabamos: vamos directo al menú
+        // El video se repite solo (por las dudas lo forzamos por código también).
+        if (video != null)
+        {
+            video.isLooping = true;
+            // loopPointReached se dispara cada vez que el video llega al final.
+            // Como está en loop, lo usamos para saber que terminó la PRIMERA vuelta.
+            video.loopPointReached += AlTerminarVuelta;
+        }
+
+        // El botón arranca oculto: recién aparece cuando termina la primera reproducción.
+        if (botonJugar != null) botonJugar.SetActive(false);
     }
 
-    void Update()
+    // Se llama cuando el video llega al final (fin de una vuelta del loop).
+    private void AlTerminarVuelta(VideoPlayer vp)
     {
-        // Saltar la intro con cualquier tecla o clic.
-        if (sePuedeSaltar && SeApretoAlgo()) Continuar();
+        // Mostramos el botón Jugar. Ya no necesitamos escuchar más el evento.
+        if (botonJugar != null) botonJugar.SetActive(true);
+        video.loopPointReached -= AlTerminarVuelta;   // solo la primera vez
     }
 
-    private bool SeApretoAlgo()
+    // Botón "Jugar" → conectar a este método. Lleva al menú.
+    public void Jugar()
     {
-        // Guards por si no hay teclado/mouse conectado (evita null).
-        bool tecla = Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame;
-        bool clic  = Mouse.current    != null && Mouse.current.leftButton.wasPressedThisFrame;
-        return tecla || clic;
-    }
-
-    // Se llama solo cuando el video termina.
-    private void AlTerminar(VideoPlayer vp) { Continuar(); }
-
-    private void Continuar()
-    {
-        if (yaCargo) return;   // si ya saltamos (o ya terminó), no cargamos de nuevo
-        yaCargo = true;
         SceneManager.LoadScene(escenaSiguiente);
     }
 }
