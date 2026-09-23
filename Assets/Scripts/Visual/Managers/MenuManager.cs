@@ -38,4 +38,17 @@ public class MenuManager : MonoBehaviour
     {
         SceneManager.LoadScene("Personalizacion");
     }
+
+    // Botón "Salir": cierra el juego.
+    public void Salir()
+    {
+        Debug.Log("Saliendo del juego...");
+#if UNITY_EDITOR
+        // Dentro del Editor, Application.Quit() no hace nada; frenamos el Play manualmente.
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // En el build (.exe) sí cierra la aplicación.
+        Application.Quit();
+#endif
+    }
 }
