@@ -9778,10 +9778,10 @@ MonoBehaviour:
   prefabNumeroFlotante: {fileID: 3091139437628401219, guid: 4bba40e24337fcf48a337962fea26191, type: 3}
   canvas: {fileID: 1867816690}
   avatares:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1680788635}
+  - {fileID: 2001175844}
+  - {fileID: 542031658}
+  - {fileID: 618126933}
   colorDanio: {r: 1, g: 0.3, b: 0.3, a: 1}
   colorCuracion: {r: 0.3, g: 1, b: 0.3, a: 1}
 --- !u!4 &2128264649
