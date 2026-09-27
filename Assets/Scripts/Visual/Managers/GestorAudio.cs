@@ -38,6 +38,13 @@ public class GestorAudio : MonoBehaviour
     public AudioClip monedasMuchas;    // al recolectar mucho (>= Reglas.RecoleccionAlta)
     public AudioClip monedasPocas;     // al recolectar poco
 
+    // ¿El sonido está silenciado? (solo lectura desde afuera)
+    public bool silenciado { get; private set; }
+
+    // Volumen de música y efectos (0 a 1). Solo lectura desde afuera.
+    public float volumenMusica { get; private set; } = 1f;
+    public float volumenSFX    { get; private set; } = 1f;
+
     void Awake()
     {
         // Si ya existe otro GestorAudio, este se destruye (única instancia).
@@ -52,6 +59,13 @@ public class GestorAudio : MonoBehaviour
 
     void Start()
     {
+        // Recupera lo que el jugador dejó guardado (silencio y volúmenes) con PlayerPrefs.
+        silenciado    = PlayerPrefs.GetInt("silenciado", 0) == 1;
+        volumenMusica = PlayerPrefs.GetFloat("volMusica", 1f);
+        volumenSFX    = PlayerPrefs.GetFloat("volSFX", 1f);
+        AplicarVolumenes();
+        AplicarSilencio();
+
         // Arranca la música de fondo al iniciar.
         if (musicaFondo != null)
             ReproducirMusica(musicaFondo);
@@ -112,4 +126,44 @@ public class GestorAudio : MonoBehaviour
     public void SonidoGanador()         { ReproducirSFX(ganador); }
     public void SonidoMonedasMuchas()   { ReproducirSFX(monedasMuchas); }
     public void SonidoMonedasPocas()    { ReproducirSFX(monedasPocas); }
+
+    // --- Silenciar / activar el sonido (botón de sonido) ---
+    // Alterna entre mute y no-mute, aplica el cambio y lo recuerda.
+    public void AlternarSonido()
+    {
+        silenciado = !silenciado;
+        AplicarSilencio();
+        PlayerPrefs.SetInt("silenciado", silenciado ? 1 : 0);   // lo guarda para la próxima vez
+    }
+
+    // Aplica el estado 'silenciado' a las dos fuentes (música y efectos).
+    private void AplicarSilencio()
+    {
+        if (fuenteMusica != null) fuenteMusica.mute = silenciado;
+        if (fuenteSFX != null)    fuenteSFX.mute = silenciado;
+    }
+
+    // --- Volumen (slider del panel de sonido) ---
+    // Ajusta el volumen de la MÚSICA (0 a 1) y lo recuerda.
+    public void SetVolumenMusica(float v)
+    {
+        volumenMusica = Mathf.Clamp01(v);
+        if (fuenteMusica != null) fuenteMusica.volume = volumenMusica;
+        PlayerPrefs.SetFloat("volMusica", volumenMusica);
+    }
+
+    // Ajusta el volumen de los EFECTOS (0 a 1) y lo recuerda.
+    public void SetVolumenSFX(float v)
+    {
+        volumenSFX = Mathf.Clamp01(v);
+        if (fuenteSFX != null) fuenteSFX.volume = volumenSFX;   // PlayOneShot usa este volumen
+        PlayerPrefs.SetFloat("volSFX", volumenSFX);
+    }
+
+    // Aplica los volúmenes guardados a las dos fuentes.
+    private void AplicarVolumenes()
+    {
+        if (fuenteMusica != null) fuenteMusica.volume = volumenMusica;
+        if (fuenteSFX != null)    fuenteSFX.volume = volumenSFX;
+    }
 }
