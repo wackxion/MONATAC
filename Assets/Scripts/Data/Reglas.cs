@@ -20,4 +20,15 @@ public static class Reglas
     // Desde cuántas monedas recolectadas se considera una recolección "alta"
     // (Recolectar tira 3 dados: rango 3-18, promedio ~10,5). Se usa para el SFX.
     public const int RecoleccionAlta = 11;
+
+    // --- Dados (balance) ---
+    // Caras de cada dado (d4). Cambiar acá afecta el rango de todas las tiradas.
+    public const int CarasDado = 4;
+
+    // Cuántos dados tira cada acción. Subir/bajar estos números ajusta el "poder"
+    // de cada acción sin tocar la lógica (Accion.cs los lee de acá).
+    public const int DadosAtacar     = 3;
+    public const int DadosCurarse    = 2;
+    public const int DadosRecolectar = 3;
+    public const int DadosDescartar  = 0;   // Descartar no tira dados
 }

@@ -25,7 +25,7 @@ public abstract class Accion
 public class AccionAtacar : Accion
 {
     public override string Nombre => "Atacar";
-    public override int CantidadDados => 3;
+    public override int CantidadDados => Reglas.DadosAtacar;
 
     public override void Aplicar(IPartida partida, int total)
     {
@@ -36,7 +36,7 @@ public class AccionAtacar : Accion
 public class AccionCurarse : Accion
 {
     public override string Nombre => "Curarse";
-    public override int CantidadDados => 2;
+    public override int CantidadDados => Reglas.DadosCurarse;
 
     public override void Aplicar(IPartida partida, int total)
     {
@@ -49,7 +49,7 @@ public class AccionCurarse : Accion
 public class AccionRecolectar : Accion
 {
     public override string Nombre => "Recolectar";
-    public override int CantidadDados => 3;
+    public override int CantidadDados => Reglas.DadosRecolectar;
 
     public override void Aplicar(IPartida partida, int total)
     {
@@ -64,7 +64,7 @@ public class AccionRecolectar : Accion
 public class AccionDescartar : Accion
 {
     public override string Nombre => "Descartar";
-    public override int CantidadDados => 0;   // no tira dados
+    public override int CantidadDados => Reglas.DadosDescartar;   // no tira dados
 
     public override void Aplicar(IPartida partida, int total)
     {

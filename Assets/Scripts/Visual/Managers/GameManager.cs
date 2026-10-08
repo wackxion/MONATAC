@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         if (vista != null) vista.OcultarBarrasSobrantes(cantidadJugadores);   // esconde barras de los que no juegan
         if (vista != null) vista.AplicarPersonajes(cantidadJugadores);        // pone el personaje elegido a cada avatar
 
-        dado = new Dado();
+        dado = new Dado(Reglas.CarasDado);   // caras del dado centralizadas en Reglas (balance)
         descarte = new PilaDescarte();
         gestorCartas = new GestorCartas(descarte);
         mazo = FabricaDeCartas.CrearMazo();   // la Fábrica arma el mazo
