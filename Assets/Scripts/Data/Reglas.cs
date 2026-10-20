@@ -1,3 +1,4 @@
+
 // ============================================================
 //  Reglas.cs  —  Capa: DATA
 //  Constantes de las REGLAS del juego: los "números" que antes

@@ -1,0 +1,37 @@
+{
+  "cartas": [
+    { "nombre": "Filo Eterno",          "copias": 2, "clase": "Pasiva",               "accion": "Atacar",     "valor": 4 },
+    { "nombre": "Golpe Rapido",         "copias": 4, "clase": "UnUso",                "accion": "Atacar",     "valor": 4 },
+    { "nombre": "Golpe Directo",        "copias": 2, "clase": "UnUso",                "accion": "Atacar",     "valor": 5 },
+    { "nombre": "Impulso",              "copias": 2, "clase": "Vencimiento",          "accion": "Atacar",     "valor": 5, "usos": 2 },
+    { "nombre": "Frenesi",              "copias": 2, "clase": "Vencimiento",          "accion": "Atacar",     "valor": 6, "usos": 3 },
+    { "nombre": "Espejo de Sangre",     "copias": 2, "clase": "Reflectante",          "valor": 6 },
+    { "nombre": "Golpe Critico",        "copias": 1, "clase": "ComodinMultiplicador", "accion": "Atacar",     "valor": 3, "conAccion": true },
+
+    { "nombre": "Vena de Oro",          "copias": 2, "clase": "Pasiva",               "accion": "Recolectar", "valor": 2 },
+    { "nombre": "Rebusque",             "copias": 4, "clase": "UnUso",                "accion": "Recolectar", "valor": 4 },
+    { "nombre": "Bolsa de Monedas",     "copias": 2, "clase": "UnUso",                "accion": "Recolectar", "valor": 5 },
+    { "nombre": "Comerciante",          "copias": 2, "clase": "Vencimiento",          "accion": "Recolectar", "valor": 5, "usos": 2 },
+    { "nombre": "Racha",                "copias": 3, "clase": "Vencimiento",          "accion": "Recolectar", "valor": 6, "usos": 3 },
+    { "nombre": "Golpe de Suerte",      "copias": 2, "clase": "ComodinMultiplicador", "accion": "Recolectar", "valor": 2, "conAccion": true },
+    { "nombre": "Bolsillo Roto",        "copias": 2, "clase": "BolsilloRoto",         "valor": 10 },
+
+    { "nombre": "Savia Vital",          "copias": 1, "clase": "Pasiva",               "accion": "Curarse",    "valor": 2 },
+    { "nombre": "Alivio",               "copias": 3, "clase": "UnUso",                "accion": "Curarse",    "valor": 4 },
+    { "nombre": "Regeneracion Total",   "copias": 1, "clase": "UnUso",                "accion": "Curarse",    "valor": 8 },
+    { "nombre": "Vampirismo Defensivo", "copias": 2, "clase": "VampirismoDefensivo", "valor": 5 },
+    { "nombre": "Recuperacion",         "copias": 2, "clase": "Vencimiento",          "accion": "Curarse",    "valor": 5, "usos": 2 },
+    { "nombre": "Vitalidad Sostenida",  "copias": 2, "clase": "Vencimiento",          "accion": "Curarse",    "valor": 6, "usos": 3 },
+
+    { "nombre": "Escudo de Monedas",    "copias": 4, "clase": "Reaccion" },
+
+    { "nombre": "Comodin Multiplicador","copias": 1, "clase": "ComodinMultiplicador", "valor": 2, "conAccion": false },
+    { "nombre": "Comodin Adicional",    "copias": 1, "clase": "ComodinDado",          "valor": 1 },
+
+    { "nombre": "Ley Marcial",          "copias": 1, "clase": "LeyMarcial" },
+    { "nombre": "Colecta",              "copias": 1, "clase": "Colecta" },
+    { "nombre": "Descarte Grupal",      "copias": 1, "clase": "DescarteGrupal" },
+    { "nombre": "Exceso",               "copias": 1, "clase": "Exceso" },
+    { "nombre": "Penitencia",           "copias": 1, "clase": "Penitencia" }
+  ]
+}

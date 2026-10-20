@@ -108,7 +108,13 @@ public class GameManager : MonoBehaviour, IVistaJuego   // implementa la interfa
         dado = new Dado(Reglas.CarasDado);   // caras del dado centralizadas en Reglas (balance)
         descarte = new PilaDescarte();
         gestorCartas = new GestorCartas(descarte);
-        mazo = FabricaDeCartas.CrearMazo();   // la Fábrica arma el mazo
+
+        // Las cartas salen de un archivo de texto editable (Resources/cartas.json).
+        // Si el archivo no está o es inválido, CargadorCartas devuelve null y usamos
+        // el catálogo en código como respaldo (así nunca se rompe la partida).
+        List<CartaDefinicion> fichas = CargadorCartas.Cargar();
+        mazo = (fichas != null) ? FabricaDeCartas.CrearMazo(fichas)   // data-driven desde JSON
+                                : FabricaDeCartas.CrearMazo();         // respaldo: catálogo en código
         mazo.Mezclar();
 
         // MVP: creamos el Presentador y le pasamos esta Vista (this) y el Modelo (partida).
