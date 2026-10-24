@@ -19,7 +19,7 @@ public class IdentidadJugadores : MonoBehaviour
     private readonly Dictionary<ulong, int> jugadorDeCliente = new Dictionary<ulong, int>();
 
     // El próximo número a repartir (sube con cada conexión).
-    private int proximoJugador = 0;
+    private int proximoJugador = 000;
 
     void Start()
     {
