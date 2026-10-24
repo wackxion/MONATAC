@@ -41,12 +41,16 @@ public class EstadoOnline : NetworkBehaviour
     public int cantidadJugadores = 2;
     public int hpInicial = 40;
 
+    [Header("Identidad (arrastrar el objeto Red)")]
+    public IdentidadJugadores identidad;   // el mapa clientId → Jugador (Etapa 1), para validar el turno
+
     // --- Estado sincronizado (server escribe, todos leen) ---
     public NetworkVariable<int> turnoActual = new NetworkVariable<int>(0);
     public NetworkList<EstadoJugador> jugadores;
 
     // La Partida REAL (de /Rules). Solo existe en el server; el cliente la deja en null.
     private IPartida partida;
+    private Dado dado;   // el dado del server: las tiradas corren acá (nadie las puede falsear)
 
     void Awake()
     {
@@ -62,6 +66,7 @@ public class EstadoOnline : NetworkBehaviour
         if (IsServer)
         {
             partida = new Partida(cantidadJugadores, hpInicial);   // reusa /Rules tal cual
+            dado = new Dado(Reglas.CarasDado);                      // el dado vive en el server
             EspejarPartida();
         }
 
@@ -110,12 +115,84 @@ public class EstadoOnline : NetworkBehaviour
         if (textoTurno != null) textoTurno.text = "Turno del Jugador " + valor;
     }
 
-    // Botón "Siguiente turno": pasa el turno en la PARTIDA REAL y espeja.
-    public void SiguienteTurno()
+    // --- Botón "Siguiente turno" (Etapa 3: ahora el cliente le PIDE al server) ---
+
+    // Lo llama el botón, en el host O en el cliente. No ejecuta: manda el pedido.
+    public void PedirSiguienteTurno()
     {
-        if (!IsServer) return;
-        partida.PasarTurno();   // lógica real de /Rules (saltea muertos, cuenta rondas...)
+        SiguienteTurnoRpc();
+    }
+
+    // Corre SIEMPRE en el server (venga del host o de un cliente).
+    [Rpc(SendTo.Server)]
+    private void SiguienteTurnoRpc(RpcParams rpcParams = default)
+    {
+        int numeroJugador = NumeroDelQuePide(rpcParams);
+
+        // GATING (3B): solo el jugador EN TURNO puede avanzar. Si no, se rechaza el pedido.
+        if (numeroJugador != partida.IndiceActual)
+        {
+            Debug.Log("[EstadoOnline] Pedido rechazado: pidió el Jugador " + numeroJugador
+                      + " pero es el turno del Jugador " + partida.IndiceActual + ".");
+            return;
+        }
+
+        partida.PasarTurno();                 // lógica real de /Rules (saltea muertos, cuenta rondas...)
+        partida.ElegirObjetivoPorDefecto();   // re-elige el rival para el nuevo turno (como IniciarTurno)
         EspejarPartida();
+    }
+
+    // ---------------- Acciones reales (3C) ----------------
+    // Cada botón pide su acción; el server valida el turno, tira los dados y aplica el efecto.
+    public void PedirAtacar()     { AccionRpc(TipoAccion.Atacar); }
+    public void PedirCurarse()    { AccionRpc(TipoAccion.Curarse); }
+    public void PedirRecolectar() { AccionRpc(TipoAccion.Recolectar); }
+
+    [Rpc(SendTo.Server)]
+    private void AccionRpc(TipoAccion tipo, RpcParams rpcParams = default)
+    {
+        int numeroJugador = NumeroDelQuePide(rpcParams);
+
+        // Mismo gating que el turno: solo el jugador en turno puede actuar.
+        if (numeroJugador != partida.IndiceActual)
+        {
+            Debug.Log("[EstadoOnline] Acción rechazada: no es el turno del Jugador " + numeroJugador + ".");
+            return;
+        }
+
+        // Igual que el GameManager, pero corriendo en el SERVER:
+        Accion accion = CrearAccion(tipo);             // 1) crea la acción (polimorfismo de /Rules)
+        int total = TirarDados(accion.CantidadDados);  // 2) tira los dados (en el server)
+        accion.Aplicar(partida, total);                // 3) aplica el efecto sobre la Partida real
+
+        Debug.Log("[EstadoOnline] Jugador " + numeroJugador + " hizo " + accion.Nombre + " (total " + total + ").");
+        EspejarPartida();                              // 4) todos ven el resultado
+    }
+
+    // Crea la acción concreta según el tipo (como GameManager.CrearAccion).
+    private Accion CrearAccion(TipoAccion tipo)
+    {
+        switch (tipo)
+        {
+            case TipoAccion.Atacar:  return new AccionAtacar();
+            case TipoAccion.Curarse: return new AccionCurarse();
+            default:                 return new AccionRecolectar();
+        }
+    }
+
+    // Tira 'cantidad' dados en el server y suma el total.
+    private int TirarDados(int cantidad)
+    {
+        int total = 0;
+        for (int i = 0; i < cantidad; i++) total += dado.Tirar();
+        return total;
+    }
+
+    // Devuelve el número de Jugador de quien mandó el RPC (o -1 si no está registrado).
+    private int NumeroDelQuePide(RpcParams rpcParams)
+    {
+        ulong sender = rpcParams.Receive.SenderClientId;
+        return (identidad != null) ? identidad.NumeroDe(sender) : -1;
     }
 
     // ---------------- Jugadores ----------------

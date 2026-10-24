@@ -66,4 +66,11 @@ public class IdentidadJugadores : MonoBehaviour
             jugadorDeCliente.Remove(clientId);
         }
     }
+
+    // Devuelve el número de Jugador de un clientId (o -1 si no está registrado).
+    // Lo usa EstadoOnline para validar "¿es tu turno?" en los RPCs (Etapa 3).
+    public int NumeroDe(ulong clientId)
+    {
+        return jugadorDeCliente.TryGetValue(clientId, out int numero) ? numero : -1;
+    }
 }
