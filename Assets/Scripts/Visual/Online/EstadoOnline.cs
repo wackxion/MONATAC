@@ -36,6 +36,7 @@ public class EstadoOnline : NetworkBehaviour
     [Header("UI")]
     public TMP_Text textoTurno;       // de quién es el turno
     public TMP_Text textoJugadores;   // HP y monedas de cada jugador
+    public TMP_Text textoTirada;      // la última tirada de dados (la ve todo el mundo · Etapa 4)
 
     [Header("Partida (la crea el server)")]
     public int cantidadJugadores = 2;
@@ -161,12 +162,29 @@ public class EstadoOnline : NetworkBehaviour
         }
 
         // Igual que el GameManager, pero corriendo en el SERVER:
-        Accion accion = CrearAccion(tipo);             // 1) crea la acción (polimorfismo de /Rules)
-        int total = TirarDados(accion.CantidadDados);  // 2) tira los dados (en el server)
-        accion.Aplicar(partida, total);                // 3) aplica el efecto sobre la Partida real
+        Accion accion = CrearAccion(tipo);                // 1) crea la acción (polimorfismo de /Rules)
+        int[] valores = TirarDados(accion.CantidadDados); // 2) tira los dados EN EL SERVER (anti-trampa)
+        int total = Sumar(valores);
+        accion.Aplicar(partida, total);                   // 3) aplica el efecto sobre la Partida real
 
-        Debug.Log("[EstadoOnline] Jugador " + numeroJugador + " hizo " + accion.Nombre + " (total " + total + ").");
-        EspejarPartida();                              // 4) todos ven el resultado
+        MostrarTiradaRpc(numeroJugador, tipo, valores);   // 4) DIFUNDE la tirada a todos (Etapa 4)
+        EspejarPartida();                                 // 5) todos ven el estado nuevo
+    }
+
+    // Etapa 4: el server DIFUNDE la tirada a TODOS (patrón inverso al ServerRpc: server → todos).
+    [Rpc(SendTo.Everyone)]
+    private void MostrarTiradaRpc(int numeroJugador, TipoAccion tipo, int[] valores)
+    {
+        if (textoTirada == null) return;
+        string detalle = "";
+        int total = 0;
+        for (int i = 0; i < valores.Length; i++)
+        {
+            detalle += valores[i];
+            total += valores[i];
+            if (i < valores.Length - 1) detalle += " + ";
+        }
+        textoTirada.text = "Jugador " + numeroJugador + " — " + tipo + ":  " + detalle + " = " + total;
     }
 
     // Crea la acción concreta según el tipo (como GameManager.CrearAccion).
@@ -180,11 +198,19 @@ public class EstadoOnline : NetworkBehaviour
         }
     }
 
-    // Tira 'cantidad' dados en el server y suma el total.
-    private int TirarDados(int cantidad)
+    // Tira 'cantidad' dados en el server y devuelve los valores individuales.
+    private int[] TirarDados(int cantidad)
+    {
+        int[] valores = new int[cantidad];
+        for (int i = 0; i < cantidad; i++) valores[i] = dado.Tirar();
+        return valores;
+    }
+
+    // Suma los valores de una tirada.
+    private int Sumar(int[] valores)
     {
         int total = 0;
-        for (int i = 0; i < cantidad; i++) total += dado.Tirar();
+        foreach (int v in valores) total += v;
         return total;
     }
 
