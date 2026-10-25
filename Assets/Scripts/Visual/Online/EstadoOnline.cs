@@ -11,6 +11,7 @@
 // ============================================================
 
 using Unity.Netcode;
+using Unity.Collections;   // FixedString: así los nombres de las cartas viajan por la red
 using UnityEngine;
 using TMPro;
 
@@ -21,14 +22,16 @@ public struct EstadoJugador : INetworkSerializable, System.IEquatable<EstadoJuga
 {
     public int hp;
     public int monedas;
+    public int cartas;   // cuántas cartas en mano (la ven todos; el CONTENIDO es privado · Etapa 5)
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         serializer.SerializeValue(ref hp);
         serializer.SerializeValue(ref monedas);
+        serializer.SerializeValue(ref cartas);
     }
 
-    public bool Equals(EstadoJugador otro) => hp == otro.hp && monedas == otro.monedas;
+    public bool Equals(EstadoJugador otro) => hp == otro.hp && monedas == otro.monedas && cartas == otro.cartas;
 }
 
 public class EstadoOnline : NetworkBehaviour
@@ -37,6 +40,7 @@ public class EstadoOnline : NetworkBehaviour
     public TMP_Text textoTurno;       // de quién es el turno
     public TMP_Text textoJugadores;   // HP y monedas de cada jugador
     public TMP_Text textoTirada;      // la última tirada de dados (la ve todo el mundo · Etapa 4)
+    public TMP_Text textoMiMano;      // MI mano (privada · solo la ve su dueño · Etapa 5B)
 
     [Header("Partida (la crea el server)")]
     public int cantidadJugadores = 2;
@@ -52,6 +56,7 @@ public class EstadoOnline : NetworkBehaviour
     // La Partida REAL (de /Rules). Solo existe en el server; el cliente la deja en null.
     private IPartida partida;
     private Dado dado;   // el dado del server: las tiradas corren acá (nadie las puede falsear)
+    private Mazo mazo;   // el mazo del server (de acá se reparten las cartas · Etapa 5)
 
     void Awake()
     {
@@ -68,6 +73,9 @@ public class EstadoOnline : NetworkBehaviour
         {
             partida = new Partida(cantidadJugadores, hpInicial);   // reusa /Rules tal cual
             dado = new Dado(Reglas.CarasDado);                      // el dado vive en el server
+            mazo = FabricaDeCartas.CrearMazo();                     // el mazo también (reusa la Fábrica)
+            mazo.Mezclar();
+            RepartirManoInicial(3);                                 // 3 cartas a cada jugador
             EspejarPartida();
         }
 
@@ -94,7 +102,7 @@ public class EstadoOnline : NetworkBehaviour
             // Primera vez: armamos la lista de red con los jugadores reales.
             jugadores.Clear();
             foreach (Jugador j in partida.Jugadores)
-                jugadores.Add(new EstadoJugador { hp = j.hp, monedas = j.monedas });
+                jugadores.Add(new EstadoJugador { hp = j.hp, monedas = j.monedas, cartas = j.mano.Count });
         }
         else
         {
@@ -102,10 +110,18 @@ public class EstadoOnline : NetworkBehaviour
             for (int i = 0; i < partida.Jugadores.Count; i++)
             {
                 Jugador j = partida.Jugadores[i];
-                EstadoJugador nuevo = new EstadoJugador { hp = j.hp, monedas = j.monedas };
+                EstadoJugador nuevo = new EstadoJugador { hp = j.hp, monedas = j.monedas, cartas = j.mano.Count };
                 if (!jugadores[i].Equals(nuevo)) jugadores[i] = nuevo;
             }
         }
+    }
+
+    // Reparte 'cantidadPorJugador' cartas a cada jugador desde el mazo (solo server · Etapa 5).
+    private void RepartirManoInicial(int cantidadPorJugador)
+    {
+        foreach (Jugador j in partida.Jugadores)
+            for (int c = 0; c < cantidadPorJugador; c++)
+                if (!mazo.EstaVacio()) j.mano.Add(mazo.Robar());
     }
 
     // ---------------- Turno ----------------
@@ -221,6 +237,37 @@ public class EstadoOnline : NetworkBehaviour
         return (identidad != null) ? identidad.NumeroDe(sender) : -1;
     }
 
+    // ---------------- Mano privada (5B) ----------------
+    // Lo llama el botón "Ver mi mano": le pide al server MI mano.
+    public void PedirMiMano() { PedirMiManoRpc(); }
+
+    // Corre en el server: arma la mano del que pidió y se la manda SOLO a él.
+    [Rpc(SendTo.Server)]
+    private void PedirMiManoRpc(RpcParams rpcParams = default)
+    {
+        ulong sender = rpcParams.Receive.SenderClientId;
+        int numero = (identidad != null) ? identidad.NumeroDe(sender) : -1;
+        if (numero < 0 || numero >= partida.Jugadores.Count) return;
+
+        // Arma el texto de SU mano (solo nombres).
+        string lista = "";
+        foreach (Carta c in partida.Jugadores[numero].mano)
+            lista += "• " + c.nombre + "\n";
+
+        // FixedString: los string no se serializan solos en RPCs.
+        FixedString512Bytes texto = lista;
+
+        // ClientRpc DIRIGIDO: llega SOLO al clientId que pidió (su dueño).
+        ManoPrivadaRpc(texto, RpcTarget.Single(sender, RpcTargetUse.Temp));
+    }
+
+    // Llega SOLO al dueño (por SendTo.SpecifiedInParams + RpcTarget.Single).
+    [Rpc(SendTo.SpecifiedInParams)]
+    private void ManoPrivadaRpc(FixedString512Bytes texto, RpcParams rpcParams)
+    {
+        if (textoMiMano != null) textoMiMano.text = "Tu mano:\n" + texto.ToString();
+    }
+
     // ---------------- Jugadores ----------------
     private void AlCambiarJugadores(NetworkListEvent<EstadoJugador> evento) => MostrarJugadores();
 
@@ -229,7 +276,8 @@ public class EstadoOnline : NetworkBehaviour
         if (textoJugadores == null) return;
         string txt = "";
         for (int i = 0; i < jugadores.Count; i++)
-            txt += "Jugador " + i + ": HP " + jugadores[i].hp + " · Monedas " + jugadores[i].monedas + "\n";
+            txt += "Jugador " + i + ": HP " + jugadores[i].hp + " · Monedas " + jugadores[i].monedas
+                 + " · Cartas " + jugadores[i].cartas + "\n";
         textoJugadores.text = txt;
     }
 
