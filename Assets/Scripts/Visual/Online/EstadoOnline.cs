@@ -12,6 +12,7 @@
 
 using Unity.Netcode;
 using Unity.Collections;   // FixedString: así los nombres de las cartas viajan por la red
+using System.Collections.Generic;   // List<>
 using UnityEngine;
 using TMPro;
 
@@ -41,6 +42,7 @@ public class EstadoOnline : NetworkBehaviour
     public TMP_Text textoJugadores;   // HP y monedas de cada jugador
     public TMP_Text textoTirada;      // la última tirada de dados (la ve todo el mundo · Etapa 4)
     public TMP_Text textoMiMano;      // MI mano (privada · solo la ve su dueño · Etapa 5B)
+    public TMP_InputField inputCartas;   // índices de cartas a usar (ej: "0" o "0,2") · Etapa 6B
 
     [Header("Partida (la crea el server)")]
     public int cantidadJugadores = 2;
@@ -57,6 +59,8 @@ public class EstadoOnline : NetworkBehaviour
     private IPartida partida;
     private Dado dado;   // el dado del server: las tiradas corren acá (nadie las puede falsear)
     private Mazo mazo;   // el mazo del server (de acá se reparten las cartas · Etapa 5)
+    private PilaDescarte descarte;   // pila de descarte (para reciclar el mazo si se vacía · Etapa 6)
+    private GestorCartas gestorCartas;   // resuelve el efecto de las cartas: bonus, dados, multiplicador
 
     void Awake()
     {
@@ -75,6 +79,8 @@ public class EstadoOnline : NetworkBehaviour
             dado = new Dado(Reglas.CarasDado);                      // el dado vive en el server
             mazo = FabricaDeCartas.CrearMazo();                     // el mazo también (reusa la Fábrica)
             mazo.Mezclar();
+            descarte = new PilaDescarte();                          // para reciclar si el mazo se vacía
+            gestorCartas = new GestorCartas(descarte);              // resuelve las cartas (reusa /Rules)
             RepartirManoInicial(3);                                 // 3 cartas a cada jugador
             EspejarPartida();
         }
@@ -117,11 +123,22 @@ public class EstadoOnline : NetworkBehaviour
     }
 
     // Reparte 'cantidadPorJugador' cartas a cada jugador desde el mazo (solo server · Etapa 5).
+    // Saltea las GRUPALES: no deben estar en la mano (se activan al comprarse, no al tenerlas).
     private void RepartirManoInicial(int cantidadPorJugador)
     {
         foreach (Jugador j in partida.Jugadores)
-            for (int c = 0; c < cantidadPorJugador; c++)
-                if (!mazo.EstaVacio()) j.mano.Add(mazo.Robar());
+        {
+            int dadas = 0;
+            int intentos = 0;   // tope de seguridad
+            while (dadas < cantidadPorJugador && !mazo.EstaVacio() && intentos < 100)
+            {
+                intentos++;
+                Carta c = mazo.Robar();
+                if (c is CartaGrupal) { descarte.Agregar(c); continue; }   // grupal → al descarte, no a la mano
+                j.mano.Add(c);
+                dadas++;
+            }
+        }
     }
 
     // ---------------- Turno ----------------
@@ -159,14 +176,25 @@ public class EstadoOnline : NetworkBehaviour
         EspejarPartida();
     }
 
-    // ---------------- Acciones reales (3C) ----------------
-    // Cada botón pide su acción; el server valida el turno, tira los dados y aplica el efecto.
-    public void PedirAtacar()     { AccionRpc(TipoAccion.Atacar); }
-    public void PedirCurarse()    { AccionRpc(TipoAccion.Curarse); }
-    public void PedirRecolectar() { AccionRpc(TipoAccion.Recolectar); }
+    // ---------------- Acciones reales (3C) + usar cartas (6B) ----------------
+    // Cada botón pide su acción, llevando QUÉ cartas usar (los índices del input).
+    public void PedirAtacar()     { AccionRpc(TipoAccion.Atacar,     LeerSeleccion()); }
+    public void PedirCurarse()    { AccionRpc(TipoAccion.Curarse,    LeerSeleccion()); }
+    public void PedirRecolectar() { AccionRpc(TipoAccion.Recolectar, LeerSeleccion()); }
+
+    // Lee del input los índices de cartas a usar: "0" o "0,2" (vacío = ninguna).
+    private int[] LeerSeleccion()
+    {
+        if (inputCartas == null || string.IsNullOrWhiteSpace(inputCartas.text))
+            return new int[0];
+        List<int> indices = new List<int>();
+        foreach (string p in inputCartas.text.Split(','))
+            if (int.TryParse(p.Trim(), out int n)) indices.Add(n);
+        return indices.ToArray();
+    }
 
     [Rpc(SendTo.Server)]
-    private void AccionRpc(TipoAccion tipo, RpcParams rpcParams = default)
+    private void AccionRpc(TipoAccion tipo, int[] cartasUsadas, RpcParams rpcParams = default)
     {
         int numeroJugador = NumeroDelQuePide(rpcParams);
 
@@ -177,14 +205,49 @@ public class EstadoOnline : NetworkBehaviour
             return;
         }
 
-        // Igual que el GameManager, pero corriendo en el SERVER:
-        Accion accion = CrearAccion(tipo);                // 1) crea la acción (polimorfismo de /Rules)
-        int[] valores = TirarDados(accion.CantidadDados); // 2) tira los dados EN EL SERVER (anti-trampa)
-        int total = Sumar(valores);
-        accion.Aplicar(partida, total);                   // 3) aplica el efecto sobre la Partida real
+        // Ley Marcial (grupal): mientras está activa, solo se puede Atacar.
+        if (partida.LeyMarcialActiva() && tipo != TipoAccion.Atacar)
+        {
+            Debug.Log("[EstadoOnline] Ley Marcial activa: este round solo se puede Atacar.");
+            return;
+        }
 
-        MostrarTiradaRpc(numeroJugador, tipo, valores);   // 4) DIFUNDE la tirada a todos (Etapa 4)
-        EspejarPartida();                                 // 5) todos ven el estado nuevo
+        Jugador jugador = partida.Jugadores[numeroJugador];
+        gestorCartas.Mensajes.Clear();
+
+        // Las cartas que el jugador eligió usar (por índice en SU mano).
+        List<Carta> seleccionadas = new List<Carta>();
+        foreach (int idx in cartasUsadas)
+            if (idx >= 0 && idx < jugador.mano.Count) seleccionadas.Add(jugador.mano[idx]);
+
+        // Igual que el GameManager, pero en el SERVER:
+        Accion accion     = CrearAccion(tipo);                                // acción (polimorfismo)
+        int dadosExtra    = gestorCartas.DadosExtra(seleccionadas, tipo);      // comodines de dado
+        int multiplicador = gestorCartas.Multiplicador(seleccionadas, tipo);  // comodines de multiplicador
+        int bonus         = gestorCartas.Bonus(seleccionadas, jugador, tipo); // bonus fijo de cartas
+
+        int[] valores = TirarDados(accion.CantidadDados + dadosExtra);        // tira (base + extra)
+        int total = Sumar(valores) * multiplicador + bonus;                   // total CON cartas
+
+        if (tipo == TipoAccion.Atacar)
+        {
+            // Defensivas del objetivo (6C): absorbe, recibe el daño restante, y refleja.
+            Jugador defensor = partida.Objetivo();
+            total = gestorCartas.Absorber(defensor, total);   // Escudo de Monedas (absorbe)
+            accion.Aplicar(partida, total);                   // daño restante al objetivo
+            gestorCartas.Reflejar(defensor, jugador);         // Espejo de Sangre / Vampirismo Defensivo
+            gestorCartas.DescartarUsadas(defensor);           // descarta las defensivas usadas del objetivo
+        }
+        else
+        {
+            accion.Aplicar(partida, total);                   // Curarse / Recolectar (a uno mismo)
+        }
+
+        gestorCartas.DescartarUsadas(jugador);                // descarta las de un solo uso del que actuó
+
+        MostrarTiradaRpc(numeroJugador, tipo, valores);       // difunde los dados (base)
+        EspejarPartida();                                     // estado público (HP, monedas, cantidad)
+        EnviarManoATodos();                                   // varias manos pudieron cambiar (atacante y defensor)
     }
 
     // Etapa 4: el server DIFUNDE la tirada a TODOS (patrón inverso al ServerRpc: server → todos).
@@ -247,18 +310,32 @@ public class EstadoOnline : NetworkBehaviour
     {
         ulong sender = rpcParams.Receive.SenderClientId;
         int numero = (identidad != null) ? identidad.NumeroDe(sender) : -1;
+        EnviarManoA(sender, numero);
+    }
+
+    // Arma la mano del jugador 'numero' y se la manda SOLO a 'clientId' (ClientRpc dirigido).
+    // Se usa al pedir la mano (5B) y después de comprar (6A).
+    private void EnviarManoA(ulong clientId, int numero)
+    {
         if (numero < 0 || numero >= partida.Jugadores.Count) return;
 
-        // Arma el texto de SU mano (solo nombres).
+        List<Carta> mano = partida.Jugadores[numero].mano;
         string lista = "";
-        foreach (Carta c in partida.Jugadores[numero].mano)
-            lista += "• " + c.nombre + "\n";
+        for (int i = 0; i < mano.Count; i++)
+            lista += i + ") " + mano[i].nombre + "\n";   // el número es el índice para usarla (6B)
 
-        // FixedString: los string no se serializan solos en RPCs.
-        FixedString512Bytes texto = lista;
+        FixedString512Bytes texto = lista;   // los string no se serializan solos en RPCs
+        ManoPrivadaRpc(texto, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+    }
 
-        // ClientRpc DIRIGIDO: llega SOLO al clientId que pidió (su dueño).
-        ManoPrivadaRpc(texto, RpcTarget.Single(sender, RpcTargetUse.Temp));
+    // Le reenvía a CADA jugador conectado su mano privada (cuando varias manos pudieron cambiar · 6C).
+    private void EnviarManoATodos()
+    {
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            int numero = (identidad != null) ? identidad.NumeroDe(clientId) : -1;
+            EnviarManoA(clientId, numero);
+        }
     }
 
     // Llega SOLO al dueño (por SendTo.SpecifiedInParams + RpcTarget.Single).
@@ -266,6 +343,49 @@ public class EstadoOnline : NetworkBehaviour
     private void ManoPrivadaRpc(FixedString512Bytes texto, RpcParams rpcParams)
     {
         if (textoMiMano != null) textoMiMano.text = "Tu mano:\n" + texto.ToString();
+    }
+
+    // ---------------- Comprar carta (6A) ----------------
+    // Lo llama el botón "Comprar": le pide al server comprar una carta.
+    public void PedirComprar() { ComprarRpc(); }
+
+    [Rpc(SendTo.Server)]
+    private void ComprarRpc(RpcParams rpcParams = default)
+    {
+        ulong sender = rpcParams.Receive.SenderClientId;
+        int numero = (identidad != null) ? identidad.NumeroDe(sender) : -1;
+        if (numero != partida.IndiceActual)
+        {
+            Debug.Log("[EstadoOnline] Compra rechazada: no es el turno del Jugador " + numero + ".");
+            return;
+        }
+
+        Jugador j = partida.Jugadores[numero];
+        if (j.monedas < Reglas.CostoCarta)     { Debug.Log("[EstadoOnline] Sin monedas para comprar."); return; }
+        if (j.mano.Count >= Reglas.ManoMaxima) { Debug.Log("[EstadoOnline] Mano llena.");               return; }
+
+        if (mazo.EstaVacio()) mazo.Reciclar(descarte);   // mazo circular (reusa /Data)
+        Carta comprada = mazo.Robar();
+        j.GastarMonedas(Reglas.CostoCarta);
+
+        // Grupal: se activa al instante para TODOS y NO va a la mano (6C).
+        CartaGrupal grupal = comprada as CartaGrupal;
+        if (grupal != null)
+        {
+            ContextoGrupal ctx = new ContextoGrupal {
+                jugadores = partida.Jugadores, mazo = mazo, descarte = descarte, comprador = j, partida = partida
+            };
+            grupal.AplicarATodos(ctx);                 // efecto grupal (reusa /Rules)
+            descarte.Agregar(comprada);
+            Debug.Log("[EstadoOnline] Se jugó la carta grupal: " + grupal.nombre + ".");
+        }
+        else
+        {
+            j.mano.Add(comprada);   // carta normal: va a la mano
+        }
+
+        EspejarPartida();       // monedas y cantidad de cartas → público (todos lo ven)
+        EnviarManoATodos();     // una grupal pudo cambiar las manos de todos
     }
 
     // ---------------- Jugadores ----------------
