@@ -56,15 +56,13 @@ public class IdentidadJugadores : MonoBehaviour
                   + "  [clientId " + clientId + "]");
     }
 
-    // (Adelanto de la Etapa 7) Por ahora solo avisa y lo saca del mapa.
+    // Etapa 7: avisa la desconexión. NO borra el mapeo, para que EstadoOnline pueda
+    // resolver qué Jugador era y eliminarlo (el efecto en el juego lo maneja EstadoOnline).
     private void AlDesconectarse(ulong clientId)
     {
         if (!NetworkManager.Singleton.IsServer) return;
         if (jugadorDeCliente.TryGetValue(clientId, out int numero))
-        {
             Debug.Log("[Identidad] Jugador " + numero + " se desconectó  [clientId " + clientId + "].");
-            jugadorDeCliente.Remove(clientId);
-        }
     }
 
     // Devuelve el número de Jugador de un clientId (o -1 si no está registrado).

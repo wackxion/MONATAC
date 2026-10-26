@@ -43,6 +43,7 @@ public class EstadoOnline : NetworkBehaviour
     public TMP_Text textoTirada;      // la última tirada de dados (la ve todo el mundo · Etapa 4)
     public TMP_Text textoMiMano;      // MI mano (privada · solo la ve su dueño · Etapa 5B)
     public TMP_InputField inputCartas;   // índices de cartas a usar (ej: "0" o "0,2") · Etapa 6B
+    public TMP_Text textoFin;         // cartel de fin de partida (el ganador) · Etapa 7
 
     [Header("Partida (la crea el server)")]
     public int cantidadJugadores = 2;
@@ -61,6 +62,7 @@ public class EstadoOnline : NetworkBehaviour
     private Mazo mazo;   // el mazo del server (de acá se reparten las cartas · Etapa 5)
     private PilaDescarte descarte;   // pila de descarte (para reciclar el mazo si se vacía · Etapa 6)
     private GestorCartas gestorCartas;   // resuelve el efecto de las cartas: bonus, dados, multiplicador
+    private bool yaActuo = false;   // ¿el jugador en turno ya hizo su acción? (1 acción por turno · 7C)
 
     void Awake()
     {
@@ -71,6 +73,10 @@ public class EstadoOnline : NetworkBehaviour
     {
         turnoActual.OnValueChanged += AlCambiarTurno;
         jugadores.OnListChanged += AlCambiarJugadores;
+
+        // Nos enteramos cuando un cliente se cae (lo maneja el server · Etapa 7B).
+        if (NetworkManager.Singleton != null)
+            NetworkManager.Singleton.OnClientDisconnectCallback += ManejarDesconexion;
 
         // Solo el server crea la Partida real y la espeja a la red.
         if (IsServer)
@@ -93,6 +99,8 @@ public class EstadoOnline : NetworkBehaviour
     {
         turnoActual.OnValueChanged -= AlCambiarTurno;
         jugadores.OnListChanged -= AlCambiarJugadores;
+        if (NetworkManager.Singleton != null)
+            NetworkManager.Singleton.OnClientDisconnectCallback -= ManejarDesconexion;
     }
 
     // Copia el estado de la Partida real a las variables de red (solo server).
@@ -171,9 +179,13 @@ public class EstadoOnline : NetworkBehaviour
             return;
         }
 
+        if (partida.Terminada) return;   // la partida ya terminó
+
         partida.PasarTurno();                 // lógica real de /Rules (saltea muertos, cuenta rondas...)
         partida.ElegirObjetivoPorDefecto();   // re-elige el rival para el nuevo turno (como IniciarTurno)
+        yaActuo = false;                      // nuevo turno: el jugador puede volver a actuar
         EspejarPartida();
+        RevisarFin();                         // PasarTurno pudo terminar por límite de rondas
     }
 
     // ---------------- Acciones reales (3C) + usar cartas (6B) ----------------
@@ -205,6 +217,10 @@ public class EstadoOnline : NetworkBehaviour
             return;
         }
 
+        if (partida.Terminada) return;   // la partida ya terminó: no se aceptan más acciones
+
+        if (yaActuo) { Debug.Log("[EstadoOnline] Ya actuaste este turno; pasá el turno."); return; }
+
         // Ley Marcial (grupal): mientras está activa, solo se puede Atacar.
         if (partida.LeyMarcialActiva() && tipo != TipoAccion.Atacar)
         {
@@ -228,6 +244,7 @@ public class EstadoOnline : NetworkBehaviour
 
         int[] valores = TirarDados(accion.CantidadDados + dadosExtra);        // tira (base + extra)
         int total = Sumar(valores) * multiplicador + bonus;                   // total CON cartas
+        int totalMostrar = total;                                             // para el cartel (antes de absorber)
 
         if (tipo == TipoAccion.Atacar)
         {
@@ -244,26 +261,30 @@ public class EstadoOnline : NetworkBehaviour
         }
 
         gestorCartas.DescartarUsadas(jugador);                // descarta las de un solo uso del que actuó
+        yaActuo = true;                                       // una acción por turno (7C)
 
-        MostrarTiradaRpc(numeroJugador, tipo, valores);       // difunde los dados (base)
+        MostrarTiradaRpc(numeroJugador, tipo, valores, totalMostrar);   // difunde la tirada (dados + total final)
         EspejarPartida();                                     // estado público (HP, monedas, cantidad)
         EnviarManoATodos();                                   // varias manos pudieron cambiar (atacante y defensor)
+        RevisarFin();                                         // ¿quedó un solo vivo? → fin
     }
 
     // Etapa 4: el server DIFUNDE la tirada a TODOS (patrón inverso al ServerRpc: server → todos).
     [Rpc(SendTo.Everyone)]
-    private void MostrarTiradaRpc(int numeroJugador, TipoAccion tipo, int[] valores)
+    private void MostrarTiradaRpc(int numeroJugador, TipoAccion tipo, int[] valores, int totalFinal)
     {
         if (textoTirada == null) return;
         string detalle = "";
-        int total = 0;
+        int sumaDados = 0;
         for (int i = 0; i < valores.Length; i++)
         {
             detalle += valores[i];
-            total += valores[i];
+            sumaDados += valores[i];
             if (i < valores.Length - 1) detalle += " + ";
         }
-        textoTirada.text = "Jugador " + numeroJugador + " — " + tipo + ":  " + detalle + " = " + total;
+        string txt = "Jugador " + numeroJugador + " — " + tipo + ":  " + detalle + " = " + sumaDados;
+        if (totalFinal != sumaDados) txt += "  →  " + totalFinal + " (con cartas)";   // bonus/multiplicador
+        textoTirada.text = txt;
     }
 
     // Crea la acción concreta según el tipo (como GameManager.CrearAccion).
@@ -360,6 +381,8 @@ public class EstadoOnline : NetworkBehaviour
             return;
         }
 
+        if (partida.Terminada) return;   // la partida ya terminó
+
         Jugador j = partida.Jugadores[numero];
         if (j.monedas < Reglas.CostoCarta)     { Debug.Log("[EstadoOnline] Sin monedas para comprar."); return; }
         if (j.mano.Count >= Reglas.ManoMaxima) { Debug.Log("[EstadoOnline] Mano llena.");               return; }
@@ -408,5 +431,55 @@ public class EstadoOnline : NetworkBehaviour
         if (partida.Jugadores.Count < 2) return;
         partida.Jugadores[1].RecibirDanio(5);   // respeta el encapsulamiento del Jugador (no baja de 0)
         EspejarPartida();
+        RevisarFin();   // así el botón de prueba también puede terminar la partida
+    }
+
+    // ---------------- Fin de partida (7A) ----------------
+    // Revisa si hay ganador y, si la partida terminó, lo anuncia a todos.
+    private void RevisarFin()
+    {
+        partida.VerificarVictoria();   // marca Terminada si queda un solo vivo
+        if (partida.Terminada)         // (o se acabaron las rondas, que ya lo marca PasarTurno)
+        {
+            int ganador = (partida.Ganador != null) ? partida.Jugadores.IndexOf(partida.Ganador) : -1;
+            FinRpc(ganador);
+        }
+    }
+
+    // Anuncia el fin a TODOS (server → todos). Usa el índice (0,1,2...) igual que el resto de la UI.
+    [Rpc(SendTo.Everyone)]
+    private void FinRpc(int numeroGanador)
+    {
+        if (textoFin == null) return;
+        textoFin.text = (numeroGanador >= 0)
+            ? "FIN DE LA PARTIDA · Ganó el Jugador " + numeroGanador
+            : "FIN DE LA PARTIDA";
+    }
+
+    // ---------------- Desconexiones (7B) ----------------
+    // Lo llama NetworkManager cuando un cliente se cae (corre en el server).
+    // El que se va queda ELIMINADO (HP a 0) → reusa la lógica de "muerto" de /Rules.
+    private void ManejarDesconexion(ulong clientId)
+    {
+        if (!IsServer || partida == null || partida.Terminada) return;
+
+        int numero = (identidad != null) ? identidad.NumeroDe(clientId) : -1;
+        if (numero < 0 || numero >= partida.Jugadores.Count) return;
+
+        Jugador jugador = partida.Jugadores[numero];
+        if (!jugador.EstaVivo()) return;   // ya estaba fuera
+
+        jugador.RecibirDanio(jugador.hp);   // lo dejamos en 0 HP (eliminado)
+        Debug.Log("[EstadoOnline] El Jugador " + numero + " se desconectó → eliminado.");
+
+        // Si justo era su turno, pasamos al siguiente vivo (si no, la partida quedaría trabada).
+        if (partida.IndiceActual == numero)
+        {
+            partida.PasarTurno();
+            partida.ElegirObjetivoPorDefecto();
+        }
+
+        EspejarPartida();
+        RevisarFin();   // puede quedar un solo vivo → fin
     }
 }

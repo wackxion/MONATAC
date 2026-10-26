@@ -6,7 +6,8 @@
         "UnityEngine.UI",
         "Unity.InputSystem",
         "Unity.Netcode.Runtime",
-        "Unity.Collections"
+        "Unity.Collections",
+        "Unity.Networking.Transport"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
