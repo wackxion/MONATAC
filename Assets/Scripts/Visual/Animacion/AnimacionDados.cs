@@ -23,6 +23,12 @@ public class AnimacionDados : MonoBehaviour
     public TextMeshProUGUI dado2Texto;
     public TextMeshProUGUI dado3Texto;
 
+    [Header("Imagen/cajita de cada dado (opcional)")]
+    [Tooltip("Raíz de cada dado (imagen + texto), en el MISMO orden que los textos. " +
+             "Si se asigna, el dado que no se usa se oculta ENTERO (no queda la cajita vacía). " +
+             "Dejar vacío para el comportamiento viejo (solo se limpia el texto).")]
+    public GameObject[] dadosRaiz;
+
     [Header("Configuración de la animación")]
     [Tooltip("Cuánto tiempo giran los números antes de detenerse")]
     public float duracionGiro = 1.2f;
@@ -61,7 +67,16 @@ public class AnimacionDados : MonoBehaviour
         animacionEnCurso = true;
         int cantidadDados = Mathf.Min(valoresFinales.Length, textosDados.Length);
 
-        // Limpia los dados que NO se usan en esta tirada.
+        // Oculta/mostrar la IMAGEN completa de cada dado según cuántos se usan.
+        // Ej: Curarse usa 2 dados → el 3ro se oculta entero (no queda la cajita vacía).
+        // Si no se asignó 'dadosRaiz', este paso no hace nada (comportamiento viejo).
+        if (dadosRaiz != null)
+        {
+            for (int i = 0; i < dadosRaiz.Length; i++)
+                if (dadosRaiz[i] != null) dadosRaiz[i].SetActive(i < cantidadDados);
+        }
+
+        // Limpia los dados que NO se usan en esta tirada (respaldo si no hay 'dadosRaiz').
         // Ej: Curarse tira 2 dados, así que el 3ro se borra (antes quedaba
         // mostrando el número viejo de la tirada anterior).
         for (int i = cantidadDados; i < textosDados.Length; i++)

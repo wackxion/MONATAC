@@ -807,6 +807,7 @@ GameObject:
   - component: {fileID: 245560579}
   - component: {fileID: 245560578}
   - component: {fileID: 245560577}
+  - component: {fileID: 245560582}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -940,6 +941,14 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!222 &245560582
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245560576}
+  m_CullTransparentMesh: 1
 --- !u!1 &381021120
 GameObject:
   m_ObjectHideFlags: 0
@@ -2293,7 +2302,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -3
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 4938612190917257613, guid: 2901eaaf351a7574281cfd23e99c2f56, type: 3}
+  m_Sprite: {fileID: -3937106298483691413, guid: 7b54f3216034fc041b139e95a5275c9f, type: 3}
   m_Color: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2312,8 +2321,8 @@ Transform:
   m_GameObject: {fileID: 678899069}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0659, y: -0.0326, z: 0}
-  m_LocalScale: {x: 1.1608393, y: 1.557478, z: 1}
+  m_LocalPosition: {x: 0.1243, y: -0.0437, z: 0}
+  m_LocalScale: {x: 0.7496305, y: 0.76996076, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

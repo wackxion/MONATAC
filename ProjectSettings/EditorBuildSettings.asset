@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/online.unity
     guid: 906fd55d7feb2b04aa71e00496f567d1
+  - enabled: 1
+    path: Assets/Scenes/Lobby.unity
+    guid: 30beeff4931aa6d46a0b3ff0f389e914
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
