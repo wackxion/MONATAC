@@ -27,6 +27,9 @@ public class ManoOnline : MonoBehaviour
     public GameObject[] marcos;     // (opcional) marco de selección por slot · arranca apagado
     public TMP_Text[] textos;       // (opcional) nombre de la carta por slot, por si falta el sprite
 
+    [Header("Animación de carta grupal (opcional · reusa el componente del HotSeat)")]
+    public AnimacionCartaGrupal animacionGrupal;   // overlay que muestra la grupal jugada (la dispara el server)
+
     [Header("Colores")]
     public Color colorSeleccion = new Color(1f, 0.9f, 0.3f);   // tinte si NO hay marco asignado
     public Color colorSinSprite = new Color(0.2f, 0.2f, 0.2f); // slot con carta pero sin sprite encontrado
@@ -65,7 +68,8 @@ public class ManoOnline : MonoBehaviour
         if (estado != null)
         {
             estado.MiManoCambio += Refrescar;
-            estado.UICambio += Refrescar;   // re-tiñe las cartas cuando elegís/cambiás de acción
+            estado.UICambio += Refrescar;        // re-tiñe las cartas cuando elegís/cambiás de acción
+            estado.GrupalJugada += MostrarGrupal; // muestra la animación cuando alguien juega una grupal
         }
         Refrescar();
     }
@@ -76,7 +80,17 @@ public class ManoOnline : MonoBehaviour
         {
             estado.MiManoCambio -= Refrescar;
             estado.UICambio -= Refrescar;
+            estado.GrupalJugada -= MostrarGrupal;
         }
+    }
+
+    // Lo dispara el server (por RPC → evento): muestra la carta grupal jugada con su reverso.
+    // Reusa BuscarSprite, así que el reverso de la grupal debe estar en 'spritesCartas'.
+    private void MostrarGrupal(string nombre)
+    {
+        if (animacionGrupal == null) return;
+        Sprite reverso = BuscarSprite(nombre + " Reverso");
+        animacionGrupal.IniciarAnimacion(reverso, null);
     }
 
     // Lo dispara el click en un slot. EstadoOnline decide según la acción elegida:

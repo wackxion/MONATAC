@@ -65,12 +65,21 @@ public class EstadoOnline : NetworkBehaviour
     public AnimacionDados animacionDados;   // animación tipo casino de los dados (reusada de HotSeat)
     [Tooltip("Si NO hay animación de dados asignada, cuánto espera el server antes de aplicar el efecto.")]
     public float duracionResolucionFallback = 1.5f;   // respaldo del timing (B4)
+    [Tooltip("Cuánto espera el server antes de aplicar una carta GRUPAL (que dure lo que su animación).")]
+    public float duracionGrupal = 2.3f;   // ≈ fade+espera+fade de AnimacionCartaGrupal (B4)
 
     [Header("Fin de partida (B2.4) · opcionales")]
     public GameObject panelFin;           // panel que aparece al terminar (arranca APAGADO en la escena)
     public TMP_Text textoGanador;         // título del panel: "Ganó X"
     public TMP_Text textoEstadisticas;    // tabla con el estado final de todos los jugadores
     public string escenaMenu = "MENU";    // a dónde vuelve el botón "Volver al menú"
+
+    [Header("Pantalla de carga (espera a que entren TODOS) · opcional")]
+    [Tooltip("Overlay 'Cargando...' que arranca ACTIVO y se oculta recién cuando todos cargaron la partida.")]
+    public GameObject panelCarga;
+    [Tooltip("Tiempo MÍNIMO que se ve la pantalla de carga, para que el último en entrar también la vea.")]
+    public float duracionMinimaCarga = 1.0f;
+    private float tiempoMostroCarga;   // cuándo se mostró el overlay (para respetar el mínimo)
 
     [Header("Partida (la crea el server)")]
     public int cantidadJugadores = 2;
@@ -103,6 +112,7 @@ public class EstadoOnline : NetworkBehaviour
     private PilaDescarte descarte;   // pila de descarte (para reciclar el mazo si se vacía · Etapa 6)
     private GestorCartas gestorCartas;   // resuelve el efecto de las cartas: bonus, dados, multiplicador
     private bool yaActuo = false;   // ¿el jugador en turno ya hizo su acción? (1 acción por turno · 7C)
+    private readonly HashSet<ulong> clientesListos = new HashSet<ulong>();   // server: quiénes ya cargaron la escena (pantalla de carga)
 
     // --- Mi mano (B2.2): el cliente la guarda como NOMBRES de carta (para dibujar los sprites) ---
     public readonly List<string> MiMano = new List<string>();   // nombres de MIS cartas, en orden
@@ -127,6 +137,7 @@ public class EstadoOnline : NetworkBehaviour
     public TipoAccion AccionElegida => accionElegida;   // cuál elegí
     public event System.Action UICambio;                // avisa a la vista que refresque botones/cartas
     private void AvisarUI() { if (UICambio != null) UICambio.Invoke(); }
+    public event System.Action<string> GrupalJugada;    // avisa a la UI que muestre la animación de la grupal
 
     // Catálogo cliente: nombre de carta → una instancia, para preguntar AplicaA sin tener la Partida.
     // Se arma UNA vez desde la Fábrica (reusa /Data + /Rules, que son independientes del motor).
@@ -156,6 +167,10 @@ public class EstadoOnline : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        // Pantalla de carga: arranca tapando la partida hasta que estén TODOS (se oculta con TodosListosRpc).
+        if (panelCarga != null) panelCarga.SetActive(true);
+        tiempoMostroCarga = Time.time;
+
         turnoActual.OnValueChanged += AlCambiarTurno;
         jugadores.OnListChanged += AlCambiarJugadores;
 
@@ -172,6 +187,9 @@ public class EstadoOnline : NetworkBehaviour
 
         MostrarTurno(turnoActual.Value);
         MostrarJugadores();
+
+        // Cada cliente avisa que ya cargó → cuando estén todos, el server revela la partida a la vez.
+        StartCoroutine(AvisarListoCuandoCargue());
     }
 
     // Crea (o recrea) la Partida real en el server, reparte la mano inicial y la espeja.
@@ -193,7 +211,7 @@ public class EstadoOnline : NetworkBehaviour
         descarte = new PilaDescarte();                          // para reciclar si el mazo se vacía
         gestorCartas = new GestorCartas(descarte);              // resuelve las cartas (reusa /Rules)
         yaActuo = false;                                        // nadie actuó todavía en esta partida
-        RepartirManoInicial(3);                                 // 3 cartas a cada jugador
+        RepartirManoInicial(0);                                 // todos arrancan SIN cartas (se consiguen comprando)
         generacionPartida.Value++;                              // nueva partida → la UI resetea su estado visual
         EspejarPartida();
     }
@@ -204,6 +222,41 @@ public class EstadoOnline : NetworkBehaviour
         jugadores.OnListChanged -= AlCambiarJugadores;
         if (NetworkManager.Singleton != null)
             NetworkManager.Singleton.OnClientDisconnectCallback -= ManejarDesconexion;
+    }
+
+    // ---------------- Pantalla de carga (esperar a que entren todos) ----------------
+    // Cada cliente espera a tener el estado inicial (el roster sincronizado → los paneles ya dibujados)
+    // y recién ahí le avisa al server que está listo. Así, al revelar, todos se ven completos.
+    private System.Collections.IEnumerator AvisarListoCuandoCargue()
+    {
+        float tope = Time.time + 5f;   // respaldo: no esperar para siempre si algo no llega
+        while (jugadores.Count == 0 && Time.time < tope) yield return null;
+        ClienteListoRpc();
+    }
+
+    // El cliente (y el host, que también es jugador) avisa que terminó de cargar. Corre en el server.
+    [Rpc(SendTo.Server)]
+    private void ClienteListoRpc(RpcParams rpcParams = default)
+    {
+        clientesListos.Add(rpcParams.Receive.SenderClientId);
+        // Cuando TODOS los conectados cargaron, se revela la partida para todos a la vez.
+        if (clientesListos.Count >= NetworkManager.Singleton.ConnectedClientsIds.Count)
+            TodosListosRpc();
+    }
+
+    // El server avisa a TODOS que ya están todos dentro → cada uno oculta su pantalla de carga,
+    // respetando un tiempo mínimo para que el último en entrar también la alcance a ver.
+    [Rpc(SendTo.Everyone)]
+    private void TodosListosRpc()
+    {
+        StartCoroutine(OcultarCargaConMinimo());
+    }
+
+    private System.Collections.IEnumerator OcultarCargaConMinimo()
+    {
+        float restante = duracionMinimaCarga - (Time.time - tiempoMostroCarga);
+        if (restante > 0f) yield return new WaitForSeconds(restante);   // el host casi no espera; el último sí la ve
+        if (panelCarga != null) panelCarga.SetActive(false);
     }
 
     // Personaje elegido por el jugador 'i' (viene del lobby, por SesionRed).
@@ -771,26 +824,54 @@ public class EstadoOnline : NetworkBehaviour
         Carta comprada = mazo.Robar();
         j.GastarMonedas(Reglas.CostoCarta);
 
-        // Grupal: se activa al instante para TODOS y NO va a la mano (6C).
+        SonidoRpc(SonidoJuego.Comprar);   // SFX: compra exitosa (a todos)
+        AvisarAlEmisor(sender, "OK: compraste una carta.");
+
+        // Grupal: se activa para TODOS y NO va a la mano (6C). Igual que el HotSeat, primero se MUESTRA
+        // la animación en cada pantalla y el efecto se aplica RECIÉN cuando termina (corrutina en el server).
         CartaGrupal grupal = comprada as CartaGrupal;
         if (grupal != null)
         {
-            ContextoGrupal ctx = new ContextoGrupal {
-                jugadores = partida.Jugadores, mazo = mazo, descarte = descarte, comprador = j, partida = partida
-            };
-            grupal.AplicarATodos(ctx);                 // efecto grupal (reusa /Rules)
-            descarte.Agregar(comprada);
-            Debug.Log("[EstadoOnline] Se jugó la carta grupal: " + grupal.nombre + ".");
-        }
-        else
-        {
-            j.mano.Add(comprada);   // carta normal: va a la mano
+            MostrarGrupalRpc(grupal.nombre);   // cada cliente muestra la carta grupal (overlay oscuro + reverso)
+            resolviendo = true;                // bloquea otras acciones mientras se muestra
+            EspejarPartida();                  // las monedas ya bajaron (público)
+            EspejarFaseTurno();
+            StartCoroutine(AplicarGrupalTrasAnimacion(grupal, comprada, j));
+            return;                            // el efecto + el espejo final los hace la corrutina
         }
 
-        SonidoRpc(SonidoJuego.Comprar);   // SFX: compra exitosa (a todos)
-        AvisarAlEmisor(sender, "OK: compraste una carta.");
+        j.mano.Add(comprada);   // carta normal: va a la mano
         EspejarPartida();       // monedas y cantidad de cartas → público (todos lo ven)
-        EnviarManoATodos();     // una grupal pudo cambiar las manos de todos
+        EnviarManoATodos();     // mi mano privada cambió
+    }
+
+    // Espera lo que dura la animación de la grupal y RECIÉN AHÍ aplica el efecto (como el callback del HotSeat).
+    private System.Collections.IEnumerator AplicarGrupalTrasAnimacion(CartaGrupal grupal, Carta comprada, Jugador comprador)
+    {
+        yield return new WaitForSeconds(duracionGrupal);
+
+        // Si mientras tanto cerramos / reiniciamos, no aplicamos nada (no tocar una Partida vieja).
+        if (saliendo || partida == null || partida.Terminada) { resolviendo = false; EspejarFaseTurno(); yield break; }
+
+        ContextoGrupal ctx = new ContextoGrupal {
+            jugadores = partida.Jugadores, mazo = mazo, descarte = descarte, comprador = comprador, partida = partida
+        };
+        grupal.AplicarATodos(ctx);     // efecto grupal (reusa /Rules)
+        descarte.Agregar(comprada);
+        Debug.Log("[EstadoOnline] Se jugó la carta grupal: " + grupal.nombre + ".");
+
+        EspejarPartida();              // HP / monedas / cartas públicos (recién ahora cambian las barras)
+        EnviarManoATodos();            // una grupal pudo cambiar las manos de todos
+        RevisarFin();                  // por las dudas: el efecto pudo dejar un solo vivo
+        resolviendo = false;
+        EspejarFaseTurno();
+    }
+
+    // El server difunde que se jugó una grupal → cada cliente muestra su animación (overlay con el reverso).
+    [Rpc(SendTo.Everyone)]
+    private void MostrarGrupalRpc(FixedString64Bytes nombre)
+    {
+        if (GrupalJugada != null) GrupalJugada.Invoke(nombre.ToString());
     }
 
     // ---------------- Jugadores ----------------

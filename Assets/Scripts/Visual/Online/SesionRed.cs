@@ -10,6 +10,7 @@
 //  Singleton accesible con SesionRed.Instancia desde cualquier lado.
 // ============================================================
 
+using System.Collections;            // IEnumerator (corrutinas para cerrar/reabrir la red)
 using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -26,6 +27,10 @@ public class SesionRed : MonoBehaviour
 
     // Código de la sala (lo genera el host al crear). Los clientes lo reciben sincronizado.
     public int CodigoSala { get; private set; }
+
+    // Avisos de red para la UI del menú (ej: "no se pudo conectar"). El PanelOnline se suscribe.
+    public event System.Action<string> OnMensajeRed;
+    private bool intentandoConectar = false;   // true mientras un cliente trata de unirse (para detectar el fallo)
 
     // Personaje elegido por cada jugador en el lobby (numero → índice). La sala lo copia antes de iniciar.
     private readonly Dictionary<int, int> personajeDeJugador = new Dictionary<int, int>();
@@ -72,8 +77,14 @@ public class SesionRed : MonoBehaviour
     }
 
     // --- Crear / Unirse (lo llaman los botones del panel Online) ---
-    public void Crear()
+    // Van por corrutina para poder CERRAR primero una conexión anterior que haya quedado a medias
+    // (ej: intenté unirme a una sala que no existía). Si no, el NetworkManager queda activo y no arranca.
+    public void Crear()  { StartCoroutine(CrearRutina()); }
+    public void Unirse(string ip) { StartCoroutine(UnirseRutina(ip)); }
+
+    private IEnumerator CrearRutina()
     {
+        yield return CerrarRedSiHaceFalta();
         Limpiar();   // arranque limpio (por si venimos de una sala anterior)
         CodigoSala = Random.Range(1000, 10000);   // código de sala de 4 dígitos (1000-9999)
         NetworkManager.Singleton.StartHost();
@@ -82,14 +93,38 @@ public class SesionRed : MonoBehaviour
         Debug.Log("[SesionRed] Sala creada (Host). Código #" + CodigoSala + ". Cargando Lobby...");
     }
 
-    public void Unirse(string ip)
+    private IEnumerator UnirseRutina(string ip)
     {
+        yield return CerrarRedSiHaceFalta();
         Limpiar();   // arranque limpio (por si venimos de una sala anterior)
         if (string.IsNullOrWhiteSpace(ip)) ip = "127.0.0.1";   // por defecto, misma PC
         UnityTransport t = NetworkManager.Singleton.GetComponent<UnityTransport>();
-        if (t != null) t.SetConnectionData(ip.Trim(), 7777);   // 7777 = puerto por defecto de UTP
+        if (t != null)
+        {
+            t.SetConnectionData(ip.Trim(), 7777);   // 7777 = puerto por defecto de UTP
+            // Fallar RÁPIDO si no hay sala (en vez de reintentar ~60s y quedar "colgado").
+            t.MaxConnectAttempts = 6;
+            t.ConnectTimeoutMS   = 500;   // 6 × 500ms ≈ 3s y avisa
+        }
+        intentandoConectar = true;   // para detectar si el join falla (no había sala)
         NetworkManager.Singleton.StartClient();
         Debug.Log("[SesionRed] Uniéndome a " + ip + "...");
+    }
+
+    // Cierra una conexión anterior que haya quedado a medias y espera a que termine, así el
+    // siguiente StartHost/StartClient arranca limpio (si no, "no deja crear/unirse de nuevo").
+    private IEnumerator CerrarRedSiHaceFalta()
+    {
+        NetworkManager nm = NetworkManager.Singleton;
+        if (nm != null && (nm.IsListening || nm.IsClient || nm.IsServer))
+        {
+            Debug.Log("[SesionRed] Cerrando la red anterior antes de reconectar...");
+            intentandoConectar = false;
+            nm.Shutdown();
+            float tope = Time.time + 3f;                               // tope de seguridad
+            while (nm.IsListening && Time.time < tope) yield return null;   // esperar a que termine de cerrar
+            yield return null;                                         // un frame de gracia
+        }
     }
 
     // Botón "Iniciar" del host: lleva a TODOS a la escena del juego (carga sincronizada).
@@ -103,7 +138,17 @@ public class SesionRed : MonoBehaviour
     // --- Roster (lo arma el server a medida que se conectan) ---
     private void AlConectarse(ulong clientId)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
+        NetworkManager nm = NetworkManager.Singleton;
+        if (nm == null) return;
+
+        // Cliente: me conecté bien → ya no estoy "intentando" (el join salió).
+        if (!nm.IsServer)
+        {
+            if (clientId == nm.LocalClientId) intentandoConectar = false;
+            return;
+        }
+
+        // Server: armo el roster por orden de conexión.
         int numero = proximo++;
         jugadorDeCliente[clientId] = numero;
         bool esHost = clientId == NetworkManager.ServerClientId;
@@ -113,9 +158,25 @@ public class SesionRed : MonoBehaviour
 
     private void AlDesconectarse(ulong clientId)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
-        if (jugadorDeCliente.TryGetValue(clientId, out int numero))
-            Debug.Log("[SesionRed] Jugador " + numero + " se desconectó  [clientId " + clientId + "].");
+        NetworkManager nm = NetworkManager.Singleton;
+        if (nm == null) return;
+
+        if (nm.IsServer)
+        {
+            if (jugadorDeCliente.TryGetValue(clientId, out int numero))
+                Debug.Log("[SesionRed] Jugador " + numero + " se desconectó  [clientId " + clientId + "].");
+            return;
+        }
+
+        // Cliente: si NUNCA llegué a conectarme, el join falló (no había sala) → cierro y aviso para reintentar.
+        // Si ya estaba conectado, es una desconexión normal (salí / se cayó el host): lo maneja EstadoOnline.
+        if (intentandoConectar)
+        {
+            intentandoConectar = false;
+            Debug.Log("[SesionRed] No se pudo conectar (no hay sala en esa IP).");
+            nm.Shutdown();
+            if (OnMensajeRed != null) OnMensajeRed.Invoke("No se pudo conectar. ¿Hay una sala creada en esa IP?");
+        }
     }
 
     // Consultas que va a usar el juego (EstadoOnline) más adelante.
