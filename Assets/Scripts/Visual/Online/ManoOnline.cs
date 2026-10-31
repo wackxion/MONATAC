@@ -30,6 +30,7 @@ public class ManoOnline : MonoBehaviour
     [Header("Colores")]
     public Color colorSeleccion = new Color(1f, 0.9f, 0.3f);   // tinte si NO hay marco asignado
     public Color colorSinSprite = new Color(0.2f, 0.2f, 0.2f); // slot con carta pero sin sprite encontrado
+    public Color colorApagada   = new Color(0.4f, 0.4f, 0.4f, 1f);   // gris: carta que NO sirve para la acción elegida
 
     private GameObject[] raices;   // raíz (el 'carta') de cada slot: se apaga entero si el slot está vacío
 
@@ -61,13 +62,21 @@ public class ManoOnline : MonoBehaviour
             }
         }
 
-        if (estado != null) estado.MiManoCambio += Refrescar;
+        if (estado != null)
+        {
+            estado.MiManoCambio += Refrescar;
+            estado.UICambio += Refrescar;   // re-tiñe las cartas cuando elegís/cambiás de acción
+        }
         Refrescar();
     }
 
     void OnDestroy()
     {
-        if (estado != null) estado.MiManoCambio -= Refrescar;
+        if (estado != null)
+        {
+            estado.MiManoCambio -= Refrescar;
+            estado.UICambio -= Refrescar;
+        }
     }
 
     // Lo dispara el click en un slot. EstadoOnline decide según la acción elegida:
@@ -97,6 +106,12 @@ public class ManoOnline : MonoBehaviour
             string nombre = estado.MiMano[i];
             Sprite sp = BuscarSprite(nombre);
 
+            // ¿Esta carta se resalta? Sin acción elegida, todas normales. Con acción elegida, solo las que
+            // aplican (Descartar deja todas normales: podés tirar cualquiera). Mismo criterio que el HotSeat.
+            bool resaltar = !estado.HaElegido
+                || estado.AccionElegida == TipoAccion.Descartar
+                || estado.CartaAplica(nombre, estado.AccionElegida);
+
             // FRENTE.
             if (cartas[i] != null)
             {
@@ -105,11 +120,12 @@ public class ManoOnline : MonoBehaviour
 
                 bool sel = estado.EstaSeleccionada(i);
                 bool hayMarco = marcos != null && i < marcos.Length && marcos[i] != null;
+                Color baseColor = (sp != null) ? Color.white : colorSinSprite;
 
-                // Con marco: la carta va normal y el marco marca la selección.
-                // Sin marco: usamos un tinte como respaldo para que se note igual.
-                if (hayMarco) cartas[i].color = (sp != null) ? Color.white : colorSinSprite;
-                else          cartas[i].color = sel ? colorSeleccion : (sp != null ? Color.white : colorSinSprite);
+                // Si la carta NO sirve para la acción elegida, va en gris (y tampoco se puede seleccionar).
+                if (!resaltar)     cartas[i].color = colorApagada;
+                else if (hayMarco) cartas[i].color = baseColor;                        // con marco: el marco marca la selección
+                else               cartas[i].color = sel ? colorSeleccion : baseColor; // sin marco: tinte de respaldo
             }
 
             // REVERSO (se muestra al hacer hover): mismo criterio que HotSeat → "<nombre> Reverso".
@@ -117,7 +133,7 @@ public class ManoOnline : MonoBehaviour
             {
                 Sprite rev = BuscarSprite(nombre + " Reverso");
                 reversos[i].sprite = rev;
-                reversos[i].color = (rev != null) ? Color.white : colorSinSprite;
+                reversos[i].color = !resaltar ? colorApagada : ((rev != null) ? Color.white : colorSinSprite);
             }
 
             // TEXTO (opcional).

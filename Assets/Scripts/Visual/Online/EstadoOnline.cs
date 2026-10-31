@@ -44,6 +44,12 @@ public struct EstadoJugador : INetworkSerializable, System.IEquatable<EstadoJuga
         && personaje == otro.personaje && clientId == otro.clientId && nombre.Equals(otro.nombre);
 }
 
+// Qué efecto de sonido pedirle al GestorAudio. Vive en la capa VISUAL (no en /Rules ni /Data):
+// el sonido es cosa del motor. El server manda este enum por RPC y cada cliente lo suena localmente.
+// (Los dados y el ganador NO están acá: se disparan directo en MostrarTiradaRpc / FinRpc, que ya
+//  corren en todos los clientes.)
+public enum SonidoJuego { Danio, Curacion, MonedasMuchas, MonedasPocas, Comprar, CambiarObjetivo }
+
 public class EstadoOnline : NetworkBehaviour
 {
     [Header("UI")]
@@ -79,6 +85,15 @@ public class EstadoOnline : NetworkBehaviour
     // (que el salto de HP al reiniciar NO dispare números flotantes). Declarado ANTES de 'jugadores'
     // para que, al llegar un cambio, ya esté actualizado cuando la UI reaccione a la lista.
     public NetworkVariable<int> generacionPartida = new NetworkVariable<int>(0);
+    // Fase del turno (SOLO la escribe el server) para habilitar/apagar los botones en cada cliente (B4).
+    // yaActuo/resolviendo son privados del server y el cliente no tiene la Partida → se espejan acá.
+    public NetworkVariable<bool> turnoYaActuo     = new NetworkVariable<bool>(false);   // el de turno ya tiró/descartó
+    public NetworkVariable<bool> turnoResolviendo = new NetworkVariable<bool>(false);   // los dados están girando
+    public NetworkVariable<bool> leyMarcialRed    = new NetworkVariable<bool>(false);   // grupal: solo se puede Atacar
+    public NetworkVariable<bool> partidaTerminada = new NetworkVariable<bool>(false);   // ya hay ganador
+    // Rondas (las escribe el server) para el contador del cliente. Total = 0 → sin límite (B4).
+    public NetworkVariable<int> rondaActual   = new NetworkVariable<int>(1);   // ronda en curso (1-based)
+    public NetworkVariable<int> rondasTotales = new NetworkVariable<int>(0);   // límite elegido (0 = sin límite)
     public NetworkList<EstadoJugador> jugadores;
 
     // La Partida REAL (de /Rules). Solo existe en el server; el cliente la deja en null.
@@ -106,6 +121,33 @@ public class EstadoOnline : NetworkBehaviour
     private bool resolviendo = false;
 
     private bool saliendo = false;   // true cuando ya estoy volviendo al menú (evita re-entrar / procesar en el shutdown)
+
+    // --- Lo que el CLIENTE necesita para pintar botones/cartas (la elección vive en el cliente) ---
+    public bool HaElegido => haElegido;                 // ¿ya elegí una acción este turno?
+    public TipoAccion AccionElegida => accionElegida;   // cuál elegí
+    public event System.Action UICambio;                // avisa a la vista que refresque botones/cartas
+    private void AvisarUI() { if (UICambio != null) UICambio.Invoke(); }
+
+    // Catálogo cliente: nombre de carta → una instancia, para preguntar AplicaA sin tener la Partida.
+    // Se arma UNA vez desde la Fábrica (reusa /Data + /Rules, que son independientes del motor).
+    private Dictionary<string, Carta> catalogoCartas;
+    private void AsegurarCatalogo()
+    {
+        if (catalogoCartas != null) return;
+        catalogoCartas = new Dictionary<string, Carta>();
+        Mazo m = FabricaDeCartas.CrearMazo();
+        while (!m.EstaVacio())
+        {
+            Carta c = m.Robar();
+            if (c != null && !catalogoCartas.ContainsKey(c.nombre)) catalogoCartas[c.nombre] = c;
+        }
+    }
+    // ¿La carta 'nombre' sirve para esa acción? (para apagarla en gris y no dejar seleccionarla si no).
+    public bool CartaAplica(string nombre, TipoAccion accion)
+    {
+        AsegurarCatalogo();
+        return catalogoCartas.TryGetValue(nombre, out Carta c) && c.AplicaA(accion);
+    }
 
     void Awake()
     {
@@ -195,6 +237,8 @@ public class EstadoOnline : NetworkBehaviour
 
         turnoActual.Value = partida.IndiceActual;       // de quién es el turno
         objetivoActual.Value = partida.IndiceObjetivo;  // a quién apunta (para resaltar · B2)
+        rondaActual.Value = partida.RondaActual;        // ronda en curso (para el contador · B4)
+        rondasTotales.Value = partida.TotalRondas;      // límite elegido (0 = sin límite)
 
         // HP y monedas de cada jugador.
         if (jugadores.Count != partida.Jugadores.Count)
@@ -217,6 +261,19 @@ public class EstadoOnline : NetworkBehaviour
                 if (!jugadores[i].Equals(nuevo)) jugadores[i] = nuevo;
             }
         }
+
+        EspejarFaseTurno();   // refleja yaActuo/resolviendo/leyMarcial/terminada para los botones del cliente
+    }
+
+    // Server → red: espeja las banderas de "fase del turno" para que cada CLIENTE sepa qué botones
+    // habilitar (el cliente no tiene la Partida ni ve yaActuo/resolviendo, que son del server). B4.
+    private void EspejarFaseTurno()
+    {
+        if (!IsServer) return;
+        turnoYaActuo.Value     = yaActuo;
+        turnoResolviendo.Value = resolviendo;
+        leyMarcialRed.Value    = (partida != null) && partida.LeyMarcialActiva();
+        partidaTerminada.Value = (partida != null) && partida.Terminada;
     }
 
     // Reparte 'cantidadPorJugador' cartas a cada jugador desde el mazo (solo server · Etapa 5).
@@ -242,7 +299,9 @@ public class EstadoOnline : NetworkBehaviour
     private void AlCambiarTurno(int anterior, int nuevo)
     {
         haElegido = false;   // turno nuevo: hay que volver a elegir una acción (se limpia la elección local)
+        seleccion.Clear();   // y la selección de cartas no se arrastra al próximo turno (como el HotSeat)
         MostrarTurno(nuevo);
+        AvisarUI();          // refresca botones/cartas (ahora no hay acción elegida)
     }
 
     private void MostrarTurno(int valor)
@@ -301,6 +360,7 @@ public class EstadoOnline : NetworkBehaviour
             else
                 textoResultado.text = "Elegiste " + tipo + ". Cambiá el objetivo o elegí cartas, y lanzá los dados.";
         }
+        AvisarUI();   // resalta el botón elegido y tiñe las cartas usables de esta acción
     }
 
     // PASO 3 — Botón "Lanzar dados": ahora SÍ manda la acción al server, con las cartas seleccionadas.
@@ -318,8 +378,27 @@ public class EstadoOnline : NetworkBehaviour
     // La mano llama a ClickCarta; según la acción elegida, descarta esa carta o la selecciona.
     public void ClickCarta(int indice)
     {
-        if (haElegido && accionElegida == TipoAccion.Descartar) { PedirDescartarCarta(indice); return; }
+        // SFX de clic: ManoOnline re-cablea el Button de la carta (RemoveAllListeners), así que el clic
+        // de las cartas lo disparamos a mano (los demás botones ya lo tienen por GestorAudio.EngancharBotones).
+        if (GestorAudio.Instance != null) GestorAudio.Instance.SonidoClic();
+
+        // Igual que el HotSeat: primero hay que ELEGIR una acción para poder tocar cartas.
+        if (!haElegido) { if (textoResultado != null) textoResultado.text = "Primero elegí una acción."; return; }
+
+        // Modo Descartar: tocar una carta la descarta (pierde el turno).
+        if (accionElegida == TipoAccion.Descartar) { PedirDescartarCarta(indice); return; }
+
+        // Solo se SELECCIONAN cartas que sirven para la acción elegida (las demás van en gris, como el
+        // HotSeat). Deseleccionar una ya elegida siempre se permite.
+        if (indice >= 0 && indice < MiMano.Count && !EstaSeleccionada(indice)
+            && !CartaAplica(MiMano[indice], accionElegida))
+        {
+            if (textoResultado != null) textoResultado.text = "Esa carta no sirve para " + accionElegida + ".";
+            return;
+        }
+
         AlternarSeleccion(indice);
+        AvisarUI();   // refresca el tinte de las cartas y los botones
     }
 
     public void AlternarSeleccion(int indice)
@@ -389,6 +468,7 @@ public class EstadoOnline : NetworkBehaviour
         // ...pero el EFECTO se aplica RECIÉN cuando los dados paran (como el callback del HotSeat).
         yaActuo = true;        // una acción por turno (7C)
         resolviendo = true;    // bloquea otra acción / pasar turno mientras gira la animación
+        EspejarFaseTurno();    // los botones se apagan YA en todos los clientes (no recién al aplicar)
 
         // 1) Difundimos la tirada a TODOS → arranca la animación de dados en cada cliente.
         MostrarTiradaRpc(numeroJugador, tipo, valores, total);
@@ -404,7 +484,7 @@ public class EstadoOnline : NetworkBehaviour
         yield return new WaitForSeconds(DuracionAnimacion(cantidadDados));
 
         // Si mientras tanto cerramos / reiniciamos, no aplicamos nada (evita tocar una Partida vieja).
-        if (saliendo || partida == null || partida.Terminada) { resolviendo = false; yield break; }
+        if (saliendo || partida == null || partida.Terminada) { resolviendo = false; EspejarFaseTurno(); yield break; }
 
         int totalMostrar = total;   // para el aviso al emisor (el total ANTES de absorber)
 
@@ -416,10 +496,18 @@ public class EstadoOnline : NetworkBehaviour
             accion.Aplicar(partida, total);                   // daño restante al objetivo
             gestorCartas.Reflejar(defensor, jugador);         // Espejo de Sangre / Vampirismo Defensivo
             gestorCartas.DescartarUsadas(defensor);           // descarta las defensivas usadas del objetivo
+            SonidoRpc(SonidoJuego.Danio);                     // SFX: daño (a todos, recién cuando los dados paran)
+        }
+        else if (tipo == TipoAccion.Curarse)
+        {
+            accion.Aplicar(partida, total);                   // Curarse (a uno mismo)
+            SonidoRpc(SonidoJuego.Curacion);                  // SFX: curación
         }
         else
         {
-            accion.Aplicar(partida, total);                   // Curarse / Recolectar (a uno mismo)
+            accion.Aplicar(partida, total);                   // Recolectar (a uno mismo)
+            // Igual que el HotSeat: distinto sonido según si recolectó mucho o poco.
+            SonidoRpc(totalMostrar >= Reglas.RecoleccionAlta ? SonidoJuego.MonedasMuchas : SonidoJuego.MonedasPocas);
         }
 
         gestorCartas.DescartarUsadas(jugador);                // descarta las de un solo uso del que actuó
@@ -429,6 +517,7 @@ public class EstadoOnline : NetworkBehaviour
         EnviarManoATodos();      // varias manos pudieron cambiar (atacante y defensor)
         RevisarFin();            // ¿quedó un solo vivo? → fin
         resolviendo = false;     // listo: ya se puede actuar de nuevo (próximo turno)
+        EspejarFaseTurno();      // los dados pararon → habilita "pasar turno" en el cliente que actuó
     }
 
     // Cuánto dura la animación de dados (para esperar antes de aplicar). Si no hay animación, usa el fallback.
@@ -453,6 +542,7 @@ public class EstadoOnline : NetworkBehaviour
         if (resolviendo) { AvisarAlEmisor(sender, "Esperá: los dados están girando."); return; }
 
         partida.CambiarObjetivo();   // regla de /Rules: rota al próximo rival vivo
+        SonidoRpc(SonidoJuego.CambiarObjetivo);   // SFX: a todos (en todas las pantallas se mueve el resaltado)
         AvisarAlEmisor(sender, "Apuntás a " + NombreVisible(partida.IndiceObjetivo) + ".");
         EspejarPartida();            // objetivoActual cambia → el resaltado se mueve en todos los clientes
     }
@@ -492,6 +582,9 @@ public class EstadoOnline : NetworkBehaviour
         if (animacionDados != null && valores != null && valores.Length > 0)
             animacionDados.IniciarAnimacion(valores, null);
 
+        // SFX: sonido de tirar los dados (local en cada cliente · igual que el HotSeat). B2.
+        if (GestorAudio.Instance != null) GestorAudio.Instance.SonidoDados();
+
         if (textoTirada == null) return;
         string detalle = "";
         int sumaDados = 0;
@@ -504,6 +597,25 @@ public class EstadoOnline : NetworkBehaviour
         string txt = NombreVisible(numeroJugador) + " — " + tipo + ":  " + detalle + " = " + sumaDados;
         if (totalFinal != sumaDados) txt += "  →  " + totalFinal + " (con cartas)";   // bonus/multiplicador
         textoTirada.text = txt;
+    }
+
+    // ---------------- Sonidos del juego (SFX · B2) ----------------
+    // El server avisa a TODOS qué efecto suena. Los SFX son LOCALES: cada cliente los reproduce con
+    // SU propio GestorAudio (que vive desde el menú · DontDestroyOnLoad). Mismo patrón server→todos
+    // que MostrarTiradaRpc y FinRpc. Los dados y el ganador se disparan aparte (en esos dos RPCs).
+    [Rpc(SendTo.Everyone)]
+    private void SonidoRpc(SonidoJuego cual)
+    {
+        if (GestorAudio.Instance == null) return;
+        switch (cual)
+        {
+            case SonidoJuego.Danio:           GestorAudio.Instance.SonidoDanio();           break;
+            case SonidoJuego.Curacion:        GestorAudio.Instance.SonidoCuracion();        break;
+            case SonidoJuego.MonedasMuchas:   GestorAudio.Instance.SonidoMonedasMuchas();   break;
+            case SonidoJuego.MonedasPocas:    GestorAudio.Instance.SonidoMonedasPocas();    break;
+            case SonidoJuego.Comprar:         GestorAudio.Instance.SonidoComprar();         break;
+            case SonidoJuego.CambiarObjetivo: GestorAudio.Instance.SonidoCambiarObjetivo(); break;
+        }
     }
 
     // Crea la acción concreta según el tipo (como GameManager.CrearAccion).
@@ -675,6 +787,7 @@ public class EstadoOnline : NetworkBehaviour
             j.mano.Add(comprada);   // carta normal: va a la mano
         }
 
+        SonidoRpc(SonidoJuego.Comprar);   // SFX: compra exitosa (a todos)
         AvisarAlEmisor(sender, "OK: compraste una carta.");
         EspejarPartida();       // monedas y cantidad de cartas → público (todos lo ven)
         EnviarManoATodos();     // una grupal pudo cambiar las manos de todos
@@ -708,6 +821,7 @@ public class EstadoOnline : NetworkBehaviour
     private void RevisarFin()
     {
         partida.VerificarVictoria();   // marca Terminada si queda un solo vivo
+        if (IsServer) partidaTerminada.Value = partida.Terminada;   // espejo para apagar los botones del cliente
         if (partida.Terminada)         // (o se acabaron las rondas, que ya lo marca PasarTurno)
         {
             int ganador = (partida.Ganador != null) ? partida.Jugadores.IndexOf(partida.Ganador) : -1;
@@ -738,6 +852,9 @@ public class EstadoOnline : NetworkBehaviour
         }
 
         if (panelFin != null) panelFin.SetActive(true);
+
+        // SFX: victoria (local en cada cliente · igual que el HotSeat). B2.
+        if (GestorAudio.Instance != null) GestorAudio.Instance.SonidoGanador();
     }
 
     // ---------------- Botones del panel de fin (B2.4) ----------------

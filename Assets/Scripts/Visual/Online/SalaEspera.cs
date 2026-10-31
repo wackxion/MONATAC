@@ -191,6 +191,7 @@ public class SalaEspera : NetworkBehaviour
 
         // Config VÁLIDA: la guardamos para que el server cree la Partida con estos valores.
         if (textoError != null) textoError.text = "";
+        Debug.Log("[SalaEspera] Config OK → HP=" + hp + ", rondas=" + rondas);
         SesionRed.Instancia.GuardarConfig(hp, rondas);
 
         foreach (EntradaLobby e in entradas)

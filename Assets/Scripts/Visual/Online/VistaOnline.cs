@@ -11,6 +11,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;   // Dictionary (colores originales de los botones)
 
 public class VistaOnline : MonoBehaviour
 {
@@ -30,6 +31,9 @@ public class VistaOnline : MonoBehaviour
     public TMP_Text textoTurno;
     public TMP_Text textoMonedas;
 
+    [Header("Contador de rondas (B4) · opcional")]
+    public TMP_Text textoRonda;   // muestra las rondas que quedan (o la ronda actual si no hay límite)
+
     [Header("Colores de resaltado")]
     public Color colorTurno = Color.green;
     public Color colorObjetivo = new Color(1f, 0.3f, 0.3f);
@@ -37,6 +41,19 @@ public class VistaOnline : MonoBehaviour
 
     [Header("Números flotantes · opcional")]
     public NumerosFlotantesOnline numerosFlotantes;   // popea -N/+N sobre el panel que cambió de HP
+
+    [Header("Botones de acción (habilitar/apagar + resaltar el elegido · B4) · opcionales")]
+    public Button botonAtacar;
+    public Button botonCurarse;
+    public Button botonRecolectar;
+    public Button botonDescartar;
+    public Button botonCambiarObjetivo;
+    public Button botonLanzarDados;
+    public Button botonComprar;
+    public Button botonPasarTurno;
+    [Tooltip("Color 'glow' del botón de la acción que elegiste (el que vas a lanzar).")]
+    public Color colorAccionElegida = new Color(1f, 0.92f, 0.45f);
+    private Dictionary<Button, ColorBlock> coloresOriginales;   // para restaurar el color de cada botón
 
     // Animación de cada barra (si la barra tiene el componente AnimacionBarraHP). Opcional.
     private AnimacionBarraHP[] barrasAnim;
@@ -66,6 +83,14 @@ public class VistaOnline : MonoBehaviour
         estado.turnoActual.OnValueChanged += AlCambiarInt;
         estado.objetivoActual.OnValueChanged += AlCambiarInt;
         estado.hpMaximoSala.OnValueChanged += AlCambiarInt;
+        estado.rondaActual.OnValueChanged += AlCambiarInt;
+        estado.rondasTotales.OnValueChanged += AlCambiarInt;
+        // Fase del turno + elección local → refrescan los botones (habilitar/apagar/resaltar · B4).
+        estado.turnoYaActuo.OnValueChanged += AlCambiarBool;
+        estado.turnoResolviendo.OnValueChanged += AlCambiarBool;
+        estado.leyMarcialRed.OnValueChanged += AlCambiarBool;
+        estado.partidaTerminada.OnValueChanged += AlCambiarBool;
+        estado.UICambio += Refrescar;
         Refrescar();
     }
 
@@ -76,10 +101,18 @@ public class VistaOnline : MonoBehaviour
         estado.turnoActual.OnValueChanged -= AlCambiarInt;
         estado.objetivoActual.OnValueChanged -= AlCambiarInt;
         estado.hpMaximoSala.OnValueChanged -= AlCambiarInt;
+        estado.rondaActual.OnValueChanged -= AlCambiarInt;
+        estado.rondasTotales.OnValueChanged -= AlCambiarInt;
+        estado.turnoYaActuo.OnValueChanged -= AlCambiarBool;
+        estado.turnoResolviendo.OnValueChanged -= AlCambiarBool;
+        estado.leyMarcialRed.OnValueChanged -= AlCambiarBool;
+        estado.partidaTerminada.OnValueChanged -= AlCambiarBool;
+        estado.UICambio -= Refrescar;
     }
 
     private void AlCambiarLista(NetworkListEvent<EstadoJugador> e) => Refrescar();
     private void AlCambiarInt(int anterior, int nuevo) => Refrescar();
+    private void AlCambiarBool(bool anterior, bool nuevo) => Refrescar();
 
     private void Refrescar()
     {
@@ -178,6 +211,100 @@ public class VistaOnline : MonoBehaviour
         // Monedas: SIEMPRE las MÍAS (el ícono está al lado de mi propio panel), no las del que está en turno.
         if (textoMonedas != null && miNumero >= 0 && miNumero < cant)
             textoMonedas.text = lista[miNumero].monedas + "";
+
+        // Contador de rondas: si hay límite, cuenta cuántas QUEDAN (10, 9, 8...); si no, muestra la actual.
+        if (textoRonda != null)
+        {
+            int total = estado.rondasTotales.Value;
+            if (total > 0)
+            {
+                int restantes = Mathf.Max(0, total - estado.rondaActual.Value + 1);
+                textoRonda.text = "Rondas restantes: " + restantes;
+            }
+            else
+            {
+                textoRonda.text = "Ronda " + estado.rondaActual.Value;   // sin límite: va subiendo
+            }
+        }
+
+        // Botones: habilitar/apagar según lo que YO puedo hacer ahora, y resaltar la acción elegida.
+        ActualizarBotones(miNumero, turno, cant);
+    }
+
+    // Habilita/apaga cada botón según el estado del turno (mismo criterio que el HotSeat, pero del lado
+    // del cliente: lee las banderas de fase que el server espeja + mi estado de la lista sincronizada).
+    private void ActualizarBotones(int miNumero, int turno, int cant)
+    {
+        bool esMiTurno   = (turno == miNumero);
+        bool terminado   = estado.partidaTerminada.Value;
+        bool yaActuo     = estado.turnoYaActuo.Value;
+        bool resolviendo = estado.turnoResolviendo.Value;
+        bool leyMarcial  = estado.leyMarcialRed.Value;
+        bool haElegido   = estado.HaElegido;
+        TipoAccion accion = estado.AccionElegida;
+
+        bool hayCartas = estado.MiMano.Count > 0;
+
+        // ¿Me alcanza para comprar? Leo MIS monedas y cartas de la lista sincronizada.
+        bool puedoComprar = false;
+        if (miNumero >= 0 && miNumero < cant)
+        {
+            EstadoJugador yo = estado.jugadores[miNumero];
+            puedoComprar = yo.monedas >= Reglas.CostoCarta && yo.cartas < Reglas.ManoMaxima;
+        }
+
+        // Antes de tirar, en MI turno (sin dados girando ni haber actuado), puedo elegir/re-elegir acción.
+        bool puedeElegir = esMiTurno && !terminado && !resolviendo && !yaActuo;
+
+        SetInteractable(botonAtacar,     puedeElegir);
+        SetInteractable(botonCurarse,    puedeElegir && !leyMarcial);
+        SetInteractable(botonRecolectar, puedeElegir && !leyMarcial);
+        SetInteractable(botonDescartar,  puedeElegir && !leyMarcial && hayCartas);
+
+        // Cambiar objetivo: solo si elegiste Atacar y todavía no tiraste.
+        SetInteractable(botonCambiarObjetivo, puedeElegir && haElegido && accion == TipoAccion.Atacar);
+        // Lanzar: elegiste una acción (que no sea Descartar) y todavía no tiraste.
+        SetInteractable(botonLanzarDados,     puedeElegir && haElegido && accion != TipoAccion.Descartar);
+        // Comprar: en tu turno, sin dados girando, si te alcanza.
+        SetInteractable(botonComprar,         esMiTurno && !terminado && !resolviendo && puedoComprar);
+        // Pasar turno: recién cuando ya actuaste (y los dados pararon).
+        SetInteractable(botonPasarTurno,      esMiTurno && !terminado && !resolviendo && yaActuo);
+
+        // Resaltar ("glow") el botón de la acción que vas a lanzar.
+        bool resaltable = esMiTurno && haElegido && !yaActuo && !resolviendo;
+        ResaltarAccion(botonAtacar,     resaltable && accion == TipoAccion.Atacar);
+        ResaltarAccion(botonCurarse,    resaltable && accion == TipoAccion.Curarse);
+        ResaltarAccion(botonRecolectar, resaltable && accion == TipoAccion.Recolectar);
+        ResaltarAccion(botonDescartar,  resaltable && accion == TipoAccion.Descartar);
+    }
+
+    // Setea interactable si el botón está conectado (interactable=false lo oscurece y bloquea el clic).
+    private void SetInteractable(Button boton, bool valor)
+    {
+        if (boton != null) boton.interactable = valor;
+    }
+
+    // Resalta (o restaura) un botón cambiando su color NORMAL. Guardo el color original la 1ra vez
+    // para poder volver a dejarlo como estaba. El fundido propio del Button hace la transición suave.
+    private void ResaltarAccion(Button boton, bool resaltado)
+    {
+        if (boton == null) return;
+        if (coloresOriginales == null) coloresOriginales = new Dictionary<Button, ColorBlock>();
+        if (!coloresOriginales.ContainsKey(boton)) coloresOriginales[boton] = boton.colors;
+
+        ColorBlock original = coloresOriginales[boton];
+        if (resaltado)
+        {
+            ColorBlock cb = original;
+            cb.normalColor = colorAccionElegida;
+            cb.highlightedColor = colorAccionElegida;
+            cb.selectedColor = colorAccionElegida;
+            boton.colors = cb;
+        }
+        else
+        {
+            boton.colors = original;   // vuelve a su color de siempre
+        }
     }
 
     // Mi número de jugador: busco MI clientId en la lista sincronizada (igual que el lobby busca su slot).
