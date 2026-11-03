@@ -1,6 +1,6 @@
 # 🎲 MONATAC
 
-**Juego de combate por turnos con dados y cartas — Multijugador local (HotSeat) para 2 a 4 jugadores.**
+**Juego de combate por turnos con dados y cartas para 2 a 4 jugadores — en una PC (HotSeat) o en red local (Online, servidor autoritativo).**
 
 MONATAC es un juego de mesa digital donde la estrategia, la economía de recursos y la
 suerte de los dados determinan quién es el último en pie. Cada turno el jugador elige
@@ -14,8 +14,8 @@ una acción (**atacar, curarse, recolectar o descartar**) y potencia sus jugadas
 | Campo | Detalle |
 |---|---|
 | **Género** | Combate por turnos con gestión de recursos |
-| **Jugadores** | 2 a 4 (multijugador local · HotSeat) |
-| **Duración** | 15–30 minutos |
+| **Jugadores** | 2 a 4 — **HotSeat** (misma PC) u **Online** (red local, servidor autoritativo) |
+| **Duración** | 5–10 min (online) · 15–30 min (HotSeat) |
 | **Condición de victoria** | Ser el último jugador vivo, o el de más HP al agotarse las rondas |
 
 ---
@@ -87,6 +87,36 @@ El juego es **100% con el mouse** (HotSeat), con un atajo de teclado para la pau
 
 ---
 
+## 🌐 Multijugador Online (red local)
+
+Además del HotSeat, MONATAC tiene un **modo online** para jugar en **red local** con un
+**servidor autoritativo**, construido con **Netcode for GameObjects (NGO)**.
+
+- **Modelo:** un jugador hace de **Host** (hostea *y* juega) y el resto se **une** como clientes.
+  La **lógica corre solo en el servidor** (reusa la misma `Partida` de `/Rules`); los clientes **nunca
+  calculan resultados**, solo leen el estado sincronizado y lo dibujan.
+- **Cómo jugar:** Menú → **Online** → **Crear partida** (host) o **Unirse** escribiendo la IP del host
+  (vacío = misma PC). En el **lobby**, cada uno elige nombre y personaje, y el **host** configura **HP
+  inicial** y **cantidad de rondas** (con validación). **Iniciar** lleva a todos a la partida.
+- **Pantalla de carga:** al arrancar, cada jugador espera en una pantalla de carga y la partida se
+  **revela para todos a la vez** cuando terminaron de entrar.
+- **En partida:** mismo flujo de turno en 2 pasos (elegir acción → cambiar objetivo / elegir cartas →
+  **lanzar dados**), con los dados, cartas, defensivas y **grupales** sincronizados. Cada cliente ve su
+  **ID y el código de sala**, y el server le **informa el resultado** de cada acción (válido / rechazado).
+- **Pulido online:** sonidos, botones que se habilitan/apagan + resaltado de la acción, cartas usables
+  por acción en gris, contador de rondas, animación de la carta grupal, pausa, revancha y manejo de
+  desconexiones.
+
+> **Cómo se prueba:** abrir **2 instancias** (una build + el editor en Play, o dos builds). Una crea la
+> sala (Host) y la otra se une. *(Pendiente para Destacado: descubrir salas por LAN + espectador.)*
+
+**Qué se sincroniza:** lo público (turno, objetivo, HP, monedas, cantidad de cartas, rondas, fase del
+turno) por `NetworkVariable`/`NetworkList`; lo privado (tu mano, el resultado de tu acción) por **RPC
+dirigido** a cada jugador. El detalle completo está en el **informe técnico** y el **diagrama UML** del
+online (entregables del TFI).
+
+---
+
 ## 🏛️ Arquitectura de capas
 
 El código está separado en **tres capas** con responsabilidades distintas. `/Data` y
@@ -105,11 +135,15 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
     `LoadingScreen`.
   - **`Animacion/`** — `AnimacionDados`, `AnimacionBarraHP`, `AnimacionCartaGrupal`, `NumeroFlotante`,
     `SpawnerNumerosFlotantes`.
+  - **`Online/`** — la capa de **red** (NGO): `EstadoOnline` (estado sincronizado + RPCs), `SesionRed`
+    (conexión, roster y config), `VistaOnline`, `ManoOnline`, `InfoRed`, `NumerosFlotantesOnline`,
+    `MenuPausaOnline`, `SalaEspera`, `LobbyUI`, `PanelOnline`.
 
   Solo **muestra** información y **captura** clics; no conoce las reglas ni altera los datos directamente.
+  En el online, la lógica vive en el servidor y esta capa solo lee el estado sincronizado.
 
-**Escenas:** `Splash` (video de intro) · `MENU` (elegir jugadores) · `Loading` (pantalla de carga) ·
-`SeleccionPersonajes` (personaje y nombre) · `Personalizacion` (HP y rondas) · `juego` (partida).
+**Escenas:** `Splash` · `MENU` · `Loading` · `SeleccionPersonajes` · `Personalizacion` · `juego` (HotSeat)
+· **`Lobby`** (sala de espera online) · **`online`** (partida en red).
 
 ---
 
@@ -226,7 +260,7 @@ Relaciones destacadas: `Carta` y `Accion` **abstractas** con sus subtipos (heren
 
 ```
 Assets/
- ├─ Scenes/        # Splash, MENU, Loading, SeleccionPersonajes, Personalizacion, juego
+ ├─ Scenes/        # Splash, MENU, Loading, SeleccionPersonajes, Personalizacion, juego, Lobby, online
  ├─ Scripts/       # MONATAC.asmdef (un solo assembly con todo el código del juego)
  │   ├─ Data/      # Enums, Jugador, Cartas, Mazo, Config, Reglas
  │   ├─ Rules/     # Partida, GestorCartas, Accion, FabricaDeCartas, Dado,
@@ -237,7 +271,9 @@ Assets/
  │       │              #   NumeroFlotante, SpawnerNumerosFlotantes
  │       ├─ Managers/   # GameManager, GestorAudio, MenuManager, MenuPausa, Splash,
  │       │              #   PersonalizacionManager, SeleccionPersonajesManager
- │       └─ UI/         # VistaJuegoUI, PanelSimple, BotonValor, EfectoHoverCarta, LoadingScreen
+ │       ├─ UI/         # VistaJuegoUI, PanelSimple, BotonValor, EfectoHoverCarta, LoadingScreen
+ │       └─ Online/     # EstadoOnline, SesionRed, VistaOnline, ManoOnline, InfoRed,
+ │                      #   NumerosFlotantesOnline, MenuPausaOnline, SalaEspera, LobbyUI, PanelOnline
  ├─ Tests/         # EditMode: MONATAC.Tests.asmdef, JugadorTests, PartidaTests, CartasTests, MazoTests
  ├─ Audio/         # Música y efectos de sonido
  ├─ Video/         # Video del splash
@@ -261,6 +297,8 @@ Packages/          # Dependencias
 ### 📚 Librerías / paquetes de Unity usados
 | Paquete | Versión | Para qué |
 |---|---|---|
+| **Netcode for GameObjects** (`com.unity.netcode.gameobjects`) | 2.13.3 | **Multijugador online** (red local, servidor autoritativo) |
+| **Unity Transport (UTP)** (`com.unity.transport`) | (con NGO) | Transporte UDP para el online |
 | **Input System** (`com.unity.inputsystem`) | 1.18.0 | Entrada (tecla Esc de pausa, saltar splash) |
 | **Universal Render Pipeline (URP)** (`com.unity.render-pipelines.universal`) | 17.3.0 | Render 2D |
 | **uGUI + TextMeshPro** (`com.unity.ugui`) | 2.0.0 | Interfaz y textos |
@@ -357,3 +395,9 @@ apartado *Testing & Bugfix* y **[`Reporte_Testing_y_Bugfix.md`](Reporte_Testing_
 **instrucciones**, **botón salir** y **pantalla de fin con estadísticas** — más pulido de código
 (constantes en `Reglas`, desuscripción de eventos, OCP explícito) y ampliación de tests (18 tests).
 Materia Programación en Videojuegos II.
+
+**TFI – Etapa Final (Online):** se agregó el **multijugador en red local** con **servidor autoritativo**
+(Netcode for GameObjects): lobby con configuración validada, partida completa sincronizada (turnos,
+dados, cartas, grupales), UI informativa (ID + sala, resultado al emisor), pantalla de carga, pulido
+(sonidos, estados de botones, contador de rondas, animación grupal) y manejo de desconexiones.
+**Pendiente para Destacado:** lobby avanzado (descubrir salas por LAN + espectador).
