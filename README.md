@@ -115,6 +115,12 @@ turno) por `NetworkVariable`/`NetworkList`; lo privado (tu mano, el resultado de
 dirigido** a cada jugador. El detalle completo está en el **informe técnico** y el **diagrama UML** del
 online (entregables del TFI).
 
+### 📄 Entregables de esta etapa (TFI – red)
+- **Informe técnico:** [`Informe-Tecnico.md`](Informe-Tecnico.md)
+- **Diagrama UML (clases + RPCs + datos sincronizados):** [`UML-Online.md`](UML-Online.md)
+- **Declaración de uso de IA:** [`Declaracion-IA.md`](Declaracion-IA.md)
+- **Backlog:** ver la sección [Backlog](#backlog) más abajo (Trello + [`Backlog.md`](Backlog.md))
+
 ---
 
 ## 🏛️ Arquitectura de capas
@@ -150,7 +156,8 @@ El código está separado en **tres capas** con responsabilidades distintas. `/D
 ## 📐 Diagrama UML
 
 El diagrama de clases del proyecto (las 3 capas, las clases de cada una y sus relaciones de herencia,
-composición e interfaces) está en **[`UML.md`](UML.md)**.
+composición e interfaces) está en **[`UML.md`](UML.md)**. El UML de la **capa de red** (clases de red,
+**RPCs** y **datos sincronizados**, para el TFI) está en **[`UML-Online.md`](UML-Online.md)**.
 
 - **`/Data`** — entidades y estado (`Jugador`, `Carta` + subtipos, `Mazo`, `Config`, `Reglas`, enums).
 - **`/Rules`** — reglas puras + interfaces (`Partida`, `GestorCartas`, `Accion` + subtipos, `Dado`,
@@ -318,6 +325,8 @@ En este proyecto usé herramientas de IA como **apoyo**, no como reemplazo del t
 Todas las decisiones de diseño, la arquitectura y la comprensión del código son propias: revisé,
 entendí y validé cada cambio. La IA funcionó como tutor y asistente para acelerar el desarrollo y
 reforzar el aprendizaje de conceptos (POO, MVP, DIP, testing).
+
+> 📄 Declaración de uso de IA completa (entregable del TFI): [`Declaracion-IA.md`](Declaracion-IA.md).
 
 ---
 
