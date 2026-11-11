@@ -51,13 +51,15 @@ public class SalaEspera : NetworkBehaviour
     [Header("Config de la partida (la elige el HOST) · B3")]
     public TMP_InputField inputHp;        // HP inicial que escribe el host
     public TMP_InputField inputRondas;    // cantidad de rondas (0 = sin límite)
+    public TMP_InputField inputTiempo;    // segundos por turno (timer de turno)
     public TMP_Text textoError;           // mensajes de validación (ej: "HP fuera de rango")
     public GameObject panelConfigHost;    // (opcional) panel con la config · se muestra SOLO al host
 
     // Límites de la config (mismos que el HotSeat). 0 rondas = sin límite.
     private const int HpMin = 20, HpMax = 200;
     private const int RondasMax = 200;
-    private const int HpPorDefecto = 40, RondasPorDefecto = 0;
+    private const int TiempoMin = 5, TiempoMax = 120;   // segundos por turno
+    private const int HpPorDefecto = 40, RondasPorDefecto = 0, TiempoPorDefecto = 30;
 
     public NetworkList<EntradaLobby> entradas;
 
@@ -84,6 +86,7 @@ public class SalaEspera : NetworkBehaviour
         {
             if (inputHp != null && string.IsNullOrWhiteSpace(inputHp.text)) inputHp.text = HpPorDefecto.ToString();
             if (inputRondas != null && string.IsNullOrWhiteSpace(inputRondas.text)) inputRondas.text = RondasPorDefecto.ToString();
+            if (inputTiempo != null && string.IsNullOrWhiteSpace(inputTiempo.text)) inputTiempo.text = TiempoPorDefecto.ToString();
         }
         if (textoError != null) textoError.text = "";
 
@@ -172,6 +175,7 @@ public class SalaEspera : NetworkBehaviour
         // Leemos con TryParse: si no es un número, NO explota → avisamos y no arrancamos.
         int hp = HpPorDefecto;
         int rondas = RondasPorDefecto;
+        int tiempo = TiempoPorDefecto;
 
         if (inputHp != null && !string.IsNullOrWhiteSpace(inputHp.text))
         {
@@ -189,10 +193,18 @@ public class SalaEspera : NetworkBehaviour
             { MostrarError("Rondas fuera de rango: entre 0 (sin límite) y " + RondasMax + "."); return; }
         }
 
+        if (inputTiempo != null && !string.IsNullOrWhiteSpace(inputTiempo.text))
+        {
+            if (!int.TryParse(inputTiempo.text.Trim(), out tiempo))
+            { MostrarError("Tiempo inválido: escribí los segundos por turno (entre " + TiempoMin + " y " + TiempoMax + ")."); return; }
+            if (tiempo < TiempoMin || tiempo > TiempoMax)
+            { MostrarError("Tiempo fuera de rango: entre " + TiempoMin + " y " + TiempoMax + " segundos."); return; }
+        }
+
         // Config VÁLIDA: la guardamos para que el server cree la Partida con estos valores.
         if (textoError != null) textoError.text = "";
-        Debug.Log("[SalaEspera] Config OK → HP=" + hp + ", rondas=" + rondas);
-        SesionRed.Instancia.GuardarConfig(hp, rondas);
+        Debug.Log("[SalaEspera] Config OK → HP=" + hp + ", rondas=" + rondas + ", tiempo=" + tiempo);
+        SesionRed.Instancia.GuardarConfig(hp, rondas, tiempo);
 
         foreach (EntradaLobby e in entradas)
         {

@@ -42,10 +42,43 @@ public class SesionRed : MonoBehaviour
     public void GuardarNombre(int numero, string nombre) { nombreDeJugador[numero] = nombre; }
     public string NombreDe(int numero) => nombreDeJugador.TryGetValue(numero, out string n) ? n : "";
 
-    // Config que eligió el HOST en el lobby (HP inicial y cantidad de rondas). La sala la copia al iniciar (B3).
+    // Config que eligió el HOST en el lobby (HP inicial, rondas y tiempo de turno). La sala la copia al iniciar (B3).
     public int HpInicialConfig { get; private set; } = 40;
     public int RondasConfig { get; private set; } = 0;   // 0 = sin límite
-    public void GuardarConfig(int hp, int rondas) { HpInicialConfig = hp; RondasConfig = rondas; }
+    public int TiempoTurnoConfig { get; private set; } = 30;   // segundos por turno (timer de turno)
+    public void GuardarConfig(int hp, int rondas, int tiempoTurno) { HpInicialConfig = hp; RondasConfig = rondas; TiempoTurnoConfig = tiempoTurno; }
+
+    [Header("Reconexión")]
+    [Tooltip("Si está activo, usa Connection Approval + un playerId estable para que un jugador que se cae pueda volver a su lugar. Desactivalo si diera problemas de conexión.")]
+    public bool reconexionActivada = true;
+
+    // (server) playerId estable de cada jugador → su número. Sobrevive a la ausencia → reconoce al que vuelve.
+    private readonly Dictionary<string, int> numeroDePlayerId = new Dictionary<string, int>();
+    // (server) clientId → playerId que llegó en la aprobación; se lee al conectarse y se descarta.
+    private readonly Dictionary<ulong, string> playerIdPendiente = new Dictionary<ulong, string>();
+    public bool PartidaIniciada { get; private set; }
+
+    // Identificador ESTABLE de este jugador (sobrevive a cerrar/abrir la app). Guardado en PlayerPrefs, con
+    // prefijo editor/build para que, al probar en la MISMA PC, el editor (host) y la build (cliente) no choquen.
+    private string MiPlayerId()
+    {
+        // 1) Override por línea de comandos: permite probar DOS builds en la MISMA PC sin que choquen.
+        //    Ej:  MONATAC.exe -id host    /    MONATAC.exe -id cli
+        string[] args = System.Environment.GetCommandLineArgs();
+        for (int i = 0; i < args.Length - 1; i++)
+            if (args[i] == "-id" && !string.IsNullOrEmpty(args[i + 1]))
+                return "ARG-" + args[i + 1];
+
+        // 2) Si no, un GUID persistente (único por máquina). Prefijo editor/build para no chocar editor+build.
+        string guid = PlayerPrefs.GetString("monatac_playerId", "");
+        if (string.IsNullOrEmpty(guid))
+        {
+            guid = System.Guid.NewGuid().ToString("N");
+            PlayerPrefs.SetString("monatac_playerId", guid);
+            PlayerPrefs.Save();
+        }
+        return (Application.isEditor ? "ED-" : "BU-") + guid;
+    }
 
     void Awake()
     {
@@ -60,6 +93,13 @@ public class SesionRed : MonoBehaviour
         if (NetworkManager.Singleton == null) return;
         NetworkManager.Singleton.OnClientConnectedCallback += AlConectarse;
         NetworkManager.Singleton.OnClientDisconnectCallback += AlDesconectarse;
+
+        // Reconexión: el server aprueba las conexiones y lee el playerId para reconocer a los que vuelven.
+        if (reconexionActivada)
+        {
+            NetworkManager.Singleton.NetworkConfig.ConnectionApproval = true;
+            NetworkManager.Singleton.ConnectionApprovalCallback += AprobarConexion;
+        }
     }
 
     // Limpia TODO el estado de la sesión anterior. Como el singleton es persistente
@@ -74,6 +114,10 @@ public class SesionRed : MonoBehaviour
         CodigoSala = 0;
         HpInicialConfig = 40;   // vuelve a los valores por defecto (B3)
         RondasConfig = 0;
+        TiempoTurnoConfig = 30;
+        numeroDePlayerId.Clear();
+        playerIdPendiente.Clear();
+        PartidaIniciada = false;
     }
 
     // --- Crear / Unirse (lo llaman los botones del panel Online) ---
@@ -87,6 +131,11 @@ public class SesionRed : MonoBehaviour
         yield return CerrarRedSiHaceFalta();
         Limpiar();   // arranque limpio (por si venimos de una sala anterior)
         CodigoSala = Random.Range(1000, 10000);   // código de sala de 4 dígitos (1000-9999)
+        // El host escucha en TODAS las interfaces (0.0.0.0), no solo en localhost, así una PC remota
+        // de la misma red puede conectarse apuntando a la IP LAN del host (requisito para jugar entre 2 PCs).
+        UnityTransport th = NetworkManager.Singleton.GetComponent<UnityTransport>();
+        if (th != null) th.SetConnectionData("0.0.0.0", 7777, "0.0.0.0");
+        if (reconexionActivada) NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(MiPlayerId());
         NetworkManager.Singleton.StartHost();
         // Carga sincronizada: lleva al host (y después a los que se unan) a la sala de espera.
         NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
@@ -106,6 +155,7 @@ public class SesionRed : MonoBehaviour
             t.MaxConnectAttempts = 6;
             t.ConnectTimeoutMS   = 500;   // 6 × 500ms ≈ 3s y avisa
         }
+        if (reconexionActivada) NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(MiPlayerId());
         intentandoConectar = true;   // para detectar si el join falla (no había sala)
         NetworkManager.Singleton.StartClient();
         Debug.Log("[SesionRed] Uniéndome a " + ip + "...");
@@ -131,6 +181,7 @@ public class SesionRed : MonoBehaviour
     public void Iniciar()
     {
         if (!NetworkManager.Singleton.IsServer) return;   // solo el host puede iniciar
+        PartidaIniciada = true;   // a partir de acá, los desconocidos ya no entran (solo reconexiones)
         NetworkManager.Singleton.SceneManager.LoadScene("online", LoadSceneMode.Single);
         Debug.Log("[SesionRed] Iniciando partida → cargando el juego...");
     }
@@ -148,12 +199,54 @@ public class SesionRed : MonoBehaviour
             return;
         }
 
-        // Server: armo el roster por orden de conexión.
-        int numero = proximo++;
+        // Server: armo el roster. Con reconexión, si el playerId ya tenía número, se lo devuelvo.
+        string playerId = playerIdPendiente.TryGetValue(clientId, out string pid) ? pid : "";
+        playerIdPendiente.Remove(clientId);
+
+        int numero;
+        if (!string.IsNullOrEmpty(playerId) && numeroDePlayerId.TryGetValue(playerId, out int viejo))
+        {
+            numero = viejo;             // RECONEXIÓN: vuelve a su número de antes
+            QuitarClientesDe(numero);   // saco el clientId viejo (ya muerto) para no dejar mapeos colgados
+        }
+        else
+        {
+            numero = proximo++;         // jugador NUEVO (por orden de conexión)
+            if (!string.IsNullOrEmpty(playerId)) numeroDePlayerId[playerId] = numero;
+        }
         jugadorDeCliente[clientId] = numero;
         bool esHost = clientId == NetworkManager.ServerClientId;
         Debug.Log("[SesionRed] Jugador " + numero + " conectado" + (esHost ? " (host)" : "")
                   + "  [clientId " + clientId + "]");
+    }
+
+    // Saca del roster cualquier clientId que apuntara a 'numero' (la conexión anterior que se cayó).
+    private void QuitarClientesDe(int numero)
+    {
+        List<ulong> viejos = new List<ulong>();
+        foreach (KeyValuePair<ulong, int> par in jugadorDeCliente)
+            if (par.Value == numero) viejos.Add(par.Key);
+        foreach (ulong c in viejos) jugadorDeCliente.Remove(c);
+    }
+
+    // Server: decide si acepta a quien entra. Lee el playerId del payload para reconocer reconexiones.
+    private void AprobarConexion(NetworkManager.ConnectionApprovalRequest req, NetworkManager.ConnectionApprovalResponse resp)
+    {
+        resp.CreatePlayerObject = false;   // no usamos un objeto de jugador por conexión
+        resp.Pending = false;
+
+        string playerId = (req.Payload != null && req.Payload.Length > 0)
+            ? System.Text.Encoding.UTF8.GetString(req.Payload) : "";
+        playerIdPendiente[req.ClientNetworkId] = playerId;
+
+        bool conocido = !string.IsNullOrEmpty(playerId) && numeroDePlayerId.ContainsKey(playerId);
+        if (!PartidaIniciada || conocido)
+            resp.Approved = true;          // en el lobby (jugador nuevo) o reconexión de un conocido
+        else
+        {
+            resp.Approved = false;         // partida en curso y desconocido → no entra (espectador = futuro)
+            resp.Reason = "La partida ya está en curso.";
+        }
     }
 
     private void AlDesconectarse(ulong clientId)

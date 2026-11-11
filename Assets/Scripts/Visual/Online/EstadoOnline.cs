@@ -85,6 +85,16 @@ public class EstadoOnline : NetworkBehaviour
     public int cantidadJugadores = 2;
     public int hpInicial = 40;
 
+    [Header("Timer de turno")]
+    [Tooltip("Segundos que dura cada turno antes de pasar SOLO. Bajalo (ej. 10) para probar.")]
+    public float duracionTurno = 30f;
+    [Tooltip("Texto del contador del turno (ej. '23s'). Opcional: si está vacío, el timer igual funciona.")]
+    public TMP_Text textoTemporizador;
+
+    [Header("Reconexión")]
+    [Tooltip("Segundos que un jugador desconectado tiene para volver antes de quedar eliminado.")]
+    public float tiempoReconexion = 45f;
+
     // --- Estado sincronizado (server escribe, todos leen) ---
     public NetworkVariable<int> turnoActual = new NetworkVariable<int>(0);
     public NetworkVariable<int> codigoSala = new NetworkVariable<int>(0);   // código de la sala (B3.1)
@@ -103,6 +113,9 @@ public class EstadoOnline : NetworkBehaviour
     // Rondas (las escribe el server) para el contador del cliente. Total = 0 → sin límite (B4).
     public NetworkVariable<int> rondaActual   = new NetworkVariable<int>(1);   // ronda en curso (1-based)
     public NetworkVariable<int> rondasTotales = new NetworkVariable<int>(0);   // límite elegido (0 = sin límite)
+    // Instante (tiempo del servidor) en que vence el turno actual. Lo fija el server; el cliente calcula
+    // los segundos restantes con ServerTime, así NO se spamea la red frame a frame (timer de turno).
+    public NetworkVariable<double> turnoTerminaEn = new NetworkVariable<double>(0);
     public NetworkList<EstadoJugador> jugadores;
 
     // La Partida REAL (de /Rules). Solo existe en el server; el cliente la deja en null.
@@ -113,6 +126,9 @@ public class EstadoOnline : NetworkBehaviour
     private GestorCartas gestorCartas;   // resuelve el efecto de las cartas: bonus, dados, multiplicador
     private bool yaActuo = false;   // ¿el jugador en turno ya hizo su acción? (1 acción por turno · 7C)
     private readonly HashSet<ulong> clientesListos = new HashSet<ulong>();   // server: quiénes ya cargaron la escena (pantalla de carga)
+    // Server: jugadores desconectados que PUEDEN reconectar (no eliminados) + su fecha límite de regreso.
+    private readonly HashSet<int> ausentes = new HashSet<int>();
+    private readonly Dictionary<int, double> expulsaEn = new Dictionary<int, double>();
 
     // --- Mi mano (B2.2): el cliente la guarda como NOMBRES de carta (para dibujar los sprites) ---
     public readonly List<string> MiMano = new List<string>();   // nombres de MIS cartas, en orden
@@ -183,6 +199,7 @@ public class EstadoOnline : NetworkBehaviour
         {
             codigoSala.Value = (SesionRed.Instancia != null) ? SesionRed.Instancia.CodigoSala : 0;   // sala (B3.1)
             IniciarPartidaServidor();   // crea la Partida, reparte y espeja (se reusa en la revancha · B2.4)
+            NetworkManager.Singleton.OnClientConnectedCallback += ManejarReconexion;   // detectar a los que vuelven
         }
 
         MostrarTurno(turnoActual.Value);
@@ -190,6 +207,9 @@ public class EstadoOnline : NetworkBehaviour
 
         // Cada cliente avisa que ya cargó → cuando estén todos, el server revela la partida a la vez.
         StartCoroutine(AvisarListoCuandoCargue());
+
+        // Pido mi mano: en una RECONEXIÓN me devuelve mis cartas (en el arranque normal viene vacía).
+        PedirMiMano();
     }
 
     // Crea (o recrea) la Partida real en el server, reparte la mano inicial y la espeja.
@@ -203,6 +223,8 @@ public class EstadoOnline : NetworkBehaviour
         // Config elegida por el host en el lobby (B3). Defensivo: HP nunca menor a 1, rondas nunca negativas.
         int hp = Mathf.Max(1, (SesionRed.Instancia != null) ? SesionRed.Instancia.HpInicialConfig : hpInicial);
         int rondas = (SesionRed.Instancia != null) ? Mathf.Max(0, SesionRed.Instancia.RondasConfig) : 0;
+        // Tiempo de turno elegido por el host en el lobby (piso de 5s por las dudas · timer de turno).
+        if (SesionRed.Instancia != null) duracionTurno = Mathf.Max(5, SesionRed.Instancia.TiempoTurnoConfig);
         partida = new Partida(cant, hp, rondas);   // reusa /Rules (ahora HP y rondas son configurables)
         hpMaximoSala.Value = hp;                   // para calcular el llenado de las barras (B2)
         dado = new Dado(Reglas.CarasDado);                      // el dado vive en el server
@@ -211,9 +233,11 @@ public class EstadoOnline : NetworkBehaviour
         descarte = new PilaDescarte();                          // para reciclar si el mazo se vacía
         gestorCartas = new GestorCartas(descarte);              // resuelve las cartas (reusa /Rules)
         yaActuo = false;                                        // nadie actuó todavía en esta partida
+        ausentes.Clear(); expulsaEn.Clear();                    // nueva partida: nadie ausente
         RepartirManoInicial(0);                                 // todos arrancan SIN cartas (se consiguen comprando)
         generacionPartida.Value++;                              // nueva partida → la UI resetea su estado visual
         EspejarPartida();
+        ArrancarRelojTurno();                                   // arranca el timer del primer turno (y en la revancha)
     }
 
     public override void OnNetworkDespawn()
@@ -221,7 +245,10 @@ public class EstadoOnline : NetworkBehaviour
         turnoActual.OnValueChanged -= AlCambiarTurno;
         jugadores.OnListChanged -= AlCambiarJugadores;
         if (NetworkManager.Singleton != null)
+        {
             NetworkManager.Singleton.OnClientDisconnectCallback -= ManejarDesconexion;
+            NetworkManager.Singleton.OnClientConnectedCallback -= ManejarReconexion;
+        }
     }
 
     // ---------------- Pantalla de carga (esperar a que entren todos) ----------------
@@ -385,12 +412,85 @@ public class EstadoOnline : NetworkBehaviour
         // No pasar el turno mientras los dados giran (si no, el efecto se aplicaría sobre otro turno · B4).
         if (resolviendo) { AvisarAlEmisor(sender, "Esperá: los dados están girando."); return; }
 
+        AvanzarTurno();                       // lógica común: pasa turno, reinicia el reloj, espeja y revisa fin
+        AvisarAlEmisor(sender, "OK: pasaste el turno.");
+    }
+
+    // Avanza al siguiente turno. Lo usan el BOTÓN (SiguienteTurnoRpc), el TIMER (Update) y la desconexión.
+    // Centraliza la lógica para no repetirla en tres lados (solo server).
+    private void AvanzarTurno()
+    {
         partida.PasarTurno();                 // lógica real de /Rules (saltea muertos, cuenta rondas...)
         partida.ElegirObjetivoPorDefecto();   // re-elige el rival para el nuevo turno (como IniciarTurno)
         yaActuo = false;                      // nuevo turno: el jugador puede volver a actuar
-        AvisarAlEmisor(sender, "OK: pasaste el turno.");
+        ArrancarRelojTurno();                 // reinicia el reloj del turno nuevo
         EspejarPartida();
         RevisarFin();                         // PasarTurno pudo terminar por límite de rondas
+    }
+
+    // Fija el instante (tiempo del servidor) en que vence el turno actual. Solo server.
+    // El cliente lo lee para mostrar el contador; no se sincronizan los segundos frame a frame.
+    private void ArrancarRelojTurno()
+    {
+        if (!IsServer || NetworkManager.Singleton == null) return;
+        turnoTerminaEn.Value = NetworkManager.Singleton.ServerTime.Time + duracionTurno;
+    }
+
+    // El server revisa si venció el turno; TODAS las máquinas actualizan el texto del contador.
+    void Update()
+    {
+        ActualizarTextoTemporizador();
+
+        if (!IsServer || partida == null || partida.Terminada) return;
+        RevisarAusentes();                              // elimina a los que no reconectaron a tiempo
+        if (partida.Terminada) return;                  // la expulsión pudo terminar la partida
+        if (resolviendo) return;                        // no pasar mientras giran los dados
+        if (turnoTerminaEn.Value <= 0) return;          // reloj no arrancado todavía
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.ServerTime.Time >= turnoTerminaEn.Value)
+            AvanzarTurno();                              // se acabó el tiempo → paso el turno solo
+    }
+
+    // Server: a los jugadores AUSENTES que no volvieron antes de su fecha límite, ahora sí los elimina
+    // (para que la partida no quede esperando para siempre a alguien que se fue de verdad).
+    private void RevisarAusentes()
+    {
+        if (ausentes.Count == 0 || NetworkManager.Singleton == null) return;
+        double ahora = NetworkManager.Singleton.ServerTime.Time;
+        List<int> expulsar = null;
+        foreach (int numero in ausentes)
+            if (expulsaEn.TryGetValue(numero, out double fin) && ahora >= fin)
+                (expulsar ??= new List<int>()).Add(numero);
+        if (expulsar == null) return;
+
+        foreach (int numero in expulsar)
+        {
+            ausentes.Remove(numero);
+            expulsaEn.Remove(numero);
+            if (numero >= 0 && numero < partida.Jugadores.Count)
+            {
+                Jugador j = partida.Jugadores[numero];
+                if (j.EstaVivo()) j.RecibirDanio(j.hp);   // no volvió a tiempo → eliminado
+            }
+            Debug.Log("[EstadoOnline] El Jugador " + numero + " no reconectó a tiempo → eliminado.");
+            if (partida.IndiceActual == numero)          // si era su turno, seguimos
+            {
+                partida.PasarTurno();
+                partida.ElegirObjetivoPorDefecto();
+                ArrancarRelojTurno();
+            }
+        }
+        EspejarPartida();
+        RevisarFin();   // puede quedar un solo vivo → fin
+    }
+
+    // Muestra los segundos restantes del turno en todas las máquinas (opcional: solo si hay texto asignado).
+    private void ActualizarTextoTemporizador()
+    {
+        if (textoTemporizador == null || NetworkManager.Singleton == null) return;
+        if (partidaTerminada.Value || turnoTerminaEn.Value <= 0) { textoTemporizador.text = ""; return; }
+        double restante = turnoTerminaEn.Value - NetworkManager.Singleton.ServerTime.Time;
+        int seg = Mathf.Max(0, Mathf.CeilToInt((float)restante));
+        textoTemporizador.text = seg + "s";
     }
 
     // ---------------- Acciones: flujo en 2 pasos (B4) ----------------
@@ -972,10 +1072,11 @@ public class EstadoOnline : NetworkBehaviour
         if (textoResultado != null) textoResultado.text = "";
     }
 
-    // ---------------- Desconexiones (7B · B2.4) ----------------
+    // ---------------- Desconexiones (7B · B2.4 · reconexión) ----------------
     // Lo llama NetworkManager cuando se cae una conexión.
     //  · En un CLIENTE: si pierdo al host, no hay server para seguir → vuelvo al menú solo.
-    //  · En el SERVER: el cliente que se va queda ELIMINADO (HP a 0) → reusa la lógica de "muerto" de /Rules.
+    //  · En el SERVER: el cliente que se va queda AUSENTE (no eliminado) para poder reconectar; si no
+    //    vuelve a tiempo, RevisarAusentes lo elimina.
     private void ManejarDesconexion(ulong clientId)
     {
         // Cliente: cualquier desconexión que me llega es la MÍA (perdí al host o me cortaron) → al menú.
@@ -992,19 +1093,37 @@ public class EstadoOnline : NetworkBehaviour
         if (numero < 0 || numero >= partida.Jugadores.Count) return;
 
         Jugador jugador = partida.Jugadores[numero];
-        if (!jugador.EstaVivo()) return;   // ya estaba fuera
+        if (!jugador.EstaVivo()) return;   // ya estaba eliminado
 
-        jugador.RecibirDanio(jugador.hp);   // lo dejamos en 0 HP (eliminado)
-        Debug.Log("[EstadoOnline] El Jugador " + numero + " se desconectó → eliminado.");
+        // NO lo eliminamos: lo marcamos AUSENTE para que pueda reconectar y volver a su lugar (conserva
+        // HP/monedas/cartas). Si no vuelve antes de 'tiempoReconexion', RevisarAusentes lo elimina.
+        ausentes.Add(numero);
+        if (NetworkManager.Singleton != null)
+            expulsaEn[numero] = NetworkManager.Singleton.ServerTime.Time + tiempoReconexion;
+        Debug.Log("[EstadoOnline] El Jugador " + numero + " se desconectó → AUSENTE (puede reconectar).");
 
-        // Si justo era su turno, pasamos al siguiente vivo (si no, la partida quedaría trabada).
+        // Si justo era su turno, pasamos al siguiente para no trabar la partida (el timer igual lo haría).
         if (partida.IndiceActual == numero)
         {
             partida.PasarTurno();
             partida.ElegirObjetivoPorDefecto();
+            ArrancarRelojTurno();   // el turno cambió → reiniciar el reloj
         }
 
         EspejarPartida();
-        RevisarFin();   // puede quedar un solo vivo → fin
+    }
+
+    // Server: un cliente VOLVIÓ. Si su número estaba AUSENTE, lo devolvemos a la partida (cancelamos su
+    // expulsión y actualizamos su clientId en la lista para la vista egocéntrica). La mano la pide el cliente.
+    private void ManejarReconexion(ulong clientId)
+    {
+        if (!IsServer || partida == null) return;
+        int numero = (SesionRed.Instancia != null) ? SesionRed.Instancia.NumeroDe(clientId) : -1;
+        if (numero < 0 || !ausentes.Contains(numero)) return;   // no es el regreso de un ausente
+
+        ausentes.Remove(numero);
+        expulsaEn.Remove(numero);
+        Debug.Log("[EstadoOnline] El Jugador " + numero + " RECONECTÓ → vuelve a su lugar.");
+        EspejarPartida();   // su clientId cambió → se actualiza en la lista (el cliente reconoce su panel)
     }
 }
